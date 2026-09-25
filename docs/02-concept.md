@@ -1,6 +1,21 @@
-# H2Guard: design precis
+---
+doc_id: HGD-PRC-001
+title: H2Guard design precis
+project: H2Guard
+doc_type: Design precis
+version: "0.1"
+status: Draft
+date: '2026-09-25'
+author: Amish Chadha
+license: CERN-OHL-S-2.0
+revisions:
+- version: "0.1"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Initial scaffold
+---
 
-> Status: concept. This precis is a working draft and will be expanded before prototyping.
+# H2Guard design precis
 
 ## Summary
 
