@@ -1,7 +1,15 @@
 item,qty,spec,supplier,unit_cost_usd,make_buy,notes
-Catalytic or thermal conductivity hydrogen sensor,,,,,,
-Controller with relay outputs,,,,,,
-"Ventilation fan, spark-free",,,,,,
-Normally closed solenoid valve on the supply,,,,,,
-Alarm sounder and beacon,,,,,,
-Wall enclosure,,,,,,
+1 Detector head enclosure,1,"ABS or polycarbonate box about 110 x 80 x 90 mm, two 26 mm sensor ports in the floor, cable gland, wall or ceiling bracket",Electronics distributor,8.00,buy,Indicative price; mounted at the high point above the likely leak source
+2 Catalytic hydrogen sensor,1,"Catalytic (pellistor) combustible gas sensor with hydrogen response, 0 to 100 % LFL, for example Figaro TGS6812-D00, on a small carrier board with bridge supply",Electronics distributor,35.00,buy,Indicative price; primary trip sensor; t90 to be confirmed from the datasheet
+3 MOS hydrogen sensor,1,"Metal oxide hydrogen sensor, about 30 to 3000 ppm, for example Figaro TGS2616-C00, 5 V heater about 280 mW",Electronics distributor,15.00,buy,Indicative price; early warning and trend only; never used alone to trip
+4 Flame arrestor discs and drip skirt,1,"Two sintered stainless steel discs, 25 mm diameter, about 5 mm thick, pressed into the sensor ports; folded drip skirt",Industrial filter supplier,6.00,buy,Indicative price; not a certified flameproof assembly
+5 Controller enclosure,1,"IP65 polycarbonate wall box about 200 x 250 x 90 mm with cable glands",Electronics distributor,15.00,buy,Indicative price; mounted at chest height away from the ceiling layer
+6 Controller board,1,"RP2040-class microcontroller, sensor bridge and heater drivers, hardware window comparator trip independent of firmware, MOSFET and relay outputs for valve, fan and alarm, fan tachometer input, event log in flash",Electronics distributor; prototype board,25.00,make,Indicative parts price; firmware limited to a labeled sketch at this TRL
+7 Front panel,1,"Small OLED display, key-switch reset, test button, three status LEDs",Electronics distributor,12.00,buy,Indicative price
+8 24 V DC power supply,1,"Certified plug-in or desktop supply, 24 V, 2.5 A (60 W), with DC plug",Electronics distributor,15.00,buy,Indicative price; keeps mains out of the self-built parts
+9 Exhaust fan,1,"150 mm brushless DC duct fan, 24 V, about 300 m3/h free air, tachometer output, with inside grille and outside weather hood",HVAC or electronics supplier,35.00,buy,Indicative price; not rated for hazardous areas; runs continuously so it is never switched on in a flammable mixture
+10 Make-up air grille,1,"Low-level wall grille about 300 x 150 mm with insect mesh",Hardware store,8.00,buy,Indicative price; on the far side of the room from the fan
+11 Normally closed solenoid valve,1,"2/2-way, normally closed, 1/4 in, brass body with FKM seals, 24 V DC coil about 8 W, 0 to 10 bar, installed after the regulator",Pneumatic or valve supplier,30.00,buy,Indicative price; hydrogen compatibility and leak rating to be confirmed; certified gas valves cost several times more
+12 Sounder and beacon,1,"24 V DC combined sounder (about 90 dB at 1 m) and red flashing beacon",Electronics distributor,12.00,buy,Indicative price; mounted at the room entrance
+13 Cable and conduit,1,"Four-core and two-core cable, about 15 m total, cable glands, surface conduit",Electronics distributor,15.00,buy,Indicative price; no exploded-view callout
+14 Hardware and consumables,1,"Screws, wall plugs, ferrules, heat-shrink, labels",Hardware store,8.00,buy,Indicative price; no exploded-view callout
