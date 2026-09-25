@@ -1,0 +1,17 @@
+# Card metadata consumed by https://designmolecule.com
+name: H2Guard
+slug: h2guard
+area: Hydrogen
+status: concept          # concept | design | prototype | tested | released
+shortlisted: false
+pitch: >-
+  A hydrogen leak detector and ventilation interlock for small labs, workshops and electrolyzer rooms: it senses hydrogen near the ceiling, runs a fan and cuts the supply when readings rise.
+problem: >-
+  Small hydrogen setups in schools and startups often have no gas detection or interlock because commercial systems are priced for industrial plants.
+budget_usd: 180
+difficulty: 3  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [hydrogen, open-hardware, cern-ohl-s]
