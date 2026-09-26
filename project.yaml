@@ -1,6 +1,7 @@
 # Card metadata consumed by https://designmolecule.com
 name: H2Guard
 slug: h2guard
+repo: BoujeeEnjinia1701/h2guard         # GitHub repository, shown on every drawing and render
 area: Hydrogen
 trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
 trl_target: 3
