@@ -3,7 +3,7 @@ doc_id: HGD-PRC-001
 title: H2Guard design precis
 project: H2Guard
 doc_type: Design precis
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -17,50 +17,55 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Populate to TRL 2 (architecture, components, first-order numbers, design choices, safety, media)
+- version: "0.3"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: TRL 3 update; design choices adopted for TRL 3 per HGD-DDR-001 (pending Amish's review); numbers from HGD-CAL-001; fan re-specified, thinner arrestors, bump test cup and port added; series trip relay; parametric model and drawing HGD-DWG-001
 ---
 
 # H2Guard design precis
 
-H2Guard protects one small room where hydrogen is used. A detector head at the ceiling carries a catalytic sensor that reads 0 to 100 % of the lower flammability limit (LFL) and a metal oxide sensor for early warning. A wall controller at chest height keeps a 150 mm exhaust fan running at high level, holds a normally closed solenoid valve on the hydrogen supply open only while all is well, and drives a sounder and beacon. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve and latches the alarm. Loss of power, a sensor fault, a stopped fan or a crashed controller all close the valve, and a hardware comparator can trip the valve without the firmware. First-order numbers suggest the valve closes about 35 s after hydrogen reaches the head, continuous ventilation keeps the 5 L/min design leak at about 5 % LFL in a well-mixed 30 m3 room, and the parts cost about $239 against a $180 budget. H2Guard is a research and teaching prototype, not a certified gas detection system.
+H2Guard protects one small room where hydrogen is used. A detector head at the ceiling carries a catalytic sensor that reads 0 to 100 % of the lower flammability limit (LFL) and a metal oxide sensor for early warning. A wall controller at chest height keeps a 150 mm exhaust fan running at high level, holds a normally closed solenoid valve on the hydrogen supply open only while all is well, and drives a sounder and beacon. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve and latches the alarm. Loss of power, a sensor fault, a stopped fan or a crashed controller all close the valve, and a hardware comparator opens a relay in series with the valve without the firmware. The TRL 3 calculations (HGD-CAL-001) give 35.7 s from a leak to the valve closing with an assumed 30 s sensor t90, about 5 % LFL in the 30 m3 room for the 5 L/min design leak with the fan running, and a parts cost of $264 against a $180 budget. H2Guard is a research and teaching prototype, not a certified gas detection system.
 
 ![Hero render](../media/hero.png)
 
-*Figure 1. H2Guard in a 30 m3 teaching room, with a 1.75 m person for scale. Detector head (orange) above the bench, exhaust fan (blue) high on the wall, make-up air grille low on the far side, solenoid valve (gold) on the supply line, controller and beacon near the room entrance. Grey parts are context. Massing model.*
+*Figure 1. H2Guard in the 30 m3 reference room, with a 1.75 m person for scale. Detector head (orange) above the bench apparatus, exhaust fan (blue) high on the back wall, make-up air grille low on the far side wall, solenoid valve (gold) on the supply line, controller with its bump test port, and beacon near the door. Grey parts are context. Built from the parametric model.*
 
 ## How it works
 
-1. **Sense.** Hydrogen rises and collects under the ceiling. The detector head sits at the high point directly above the likely leak source, within 0.3 m of the ceiling. The catalytic sensor measures 0 to 100 % LFL and sets the warning and trip. The metal oxide sensor responds from about 30 ppm and shows small, slow leaks as a trend long before the catalytic reading moves; it never trips the system alone, because humidity and other vapors affect it.
-2. **Decide.** The controller reads both sensors. The microcontroller handles set points, display, logging and self-test. In parallel, a hardware window comparator watches the catalytic sensor bridge: above the trip level, or if the bridge reads open or shorted, it removes power from the valve directly.
+1. **Sense.** Hydrogen rises from a leak as a buoyant plume and spreads under the ceiling. The detector head sits directly above the likely leak source, with its sensor ports 175 mm below the ceiling. The catalytic sensor measures 0 to 100 % LFL and sets the warning and trip. The metal oxide sensor responds from about 30 ppm and shows small, slow leaks as a trend long before the catalytic reading moves; it never trips the system alone, because humidity and other vapors affect it. Each sensor sits about 2 mm behind a 2 mm sintered arrestor disc, which adds about 1.5 s of lag.
+2. **Decide.** The controller reads both sensors. The microcontroller handles set points, display, logging and self-test, and switches the valve through a MOSFET. In parallel, a hardware window comparator watches the catalytic sensor bridge: above the trip level, or if the bridge reads open or shorted, it sets a hardware latch that opens a relay in series with that MOSFET. Either switch opening closes the valve, and only the key resets the latch.
 3. **Act.**
    - **Normal:** fan at continuous speed, valve energized (open), green light.
    - **Warning, 10 % LFL (0.4 % vol):** fan to boost, amber light, intermittent sounder. Clears itself when the reading falls.
    - **Trip, 25 % LFL (1.0 % vol):** valve de-energized (closed), fan on boost, continuous sounder and red beacon. Latched: the supply stays closed until someone turns the reset key and the reading is below 10 % LFL.
-   - **Fault:** any loss of 24 V power, sensor fault, heater failure, watchdog timeout or fan stop (no tachometer pulses for 10 s) closes the valve and shows the fault.
+   - **Fault:** any loss of 24 V power, sensor fault, heater failure, watchdog timeout (1 s) or fan stop (no tachometer pulses for 10 s) closes the valve and shows the fault.
 4. **Ventilate.** The fan runs all the time, so it is never switched on in a flammable mixture, and so no gas can flow unless the room is being ventilated. Make-up air enters through a low grille on the far side of the room, sweeping the room toward the high exhaust.
-5. **Record and test.** The controller logs readings, warnings, trips, faults and resets. A test button runs the sounder, beacon, fan boost and valve close. A bump test with certified 1 % vol hydrogen span gas checks the sensor response (the gas port is not yet designed, see Open questions).
+5. **Record and test.** The controller logs readings, warnings, trips, faults and resets. A test button runs the sounder, beacon, fan boost and valve close. For a bump test, certified 1 % vol hydrogen span gas is connected to a capped port beside the controller; a 4 mm tube carries it up the cable route to a nozzle in the drip skirt under the head, which acts as a test cup. The reading settles in about 67 s. Because 1 % vol is the trip level, a full-span bump test also trips the system and proves the chain.
 
 ![Detect, decide, act chain](../media/flow.png)
 
-*Figure 2. Detect, decide and act chain for the design leak in the 30 m3 reference room. All values are estimates; the sensor t90 is a target not yet confirmed from a datasheet.*
+*Figure 2. Detect, decide and act chain for the design leak in the 30 m3 reference room, with values from HGD-CAL-001. They are estimates; the sensor t90 is an assumption not yet confirmed from a datasheet.*
 
 ## Main components
 
-Table 1. Main components. Numbers match `bom/bom.csv` and Figure 3.
+Table 1. Main components. Numbers match `bom/bom.csv`, Figure 3 and drawing HGD-DWG-001.
 
-| # | Component | Proposed choice | Notes |
+| # | Component | Choice | Notes |
 | --- | --- | --- | --- |
-| 1 | Detector head enclosure | ABS or polycarbonate box, about 110 x 80 x 90 mm, two sensor ports facing down | Ceiling or high wall mount above the source |
+| 1 | Detector head enclosure | ABS or polycarbonate box 110 x 80 x 90 mm, two 26 mm sensor ports facing down | Directly above the source, ports 175 mm below the ceiling |
 | 2 | Catalytic hydrogen sensor | Catalytic (pellistor) sensor with hydrogen response, 0 to 100 % LFL, for example Figaro TGS6812 | Primary trip sensor; needs oxygen and can be poisoned by silicones |
 | 3 | Metal oxide hydrogen sensor | About 30 to 3,000 ppm, for example Figaro TGS2616-C00 | Early warning and trend only |
-| 4 | Flame arrestor discs and drip skirt | Sintered stainless discs in the sensor ports | Keeps flame from the hot sensor element inside the head; not a certified flameproof assembly |
-| 5 | Controller enclosure | IP65 polycarbonate wall box, about 200 x 250 x 90 mm | At chest height, at least 1 m below the ceiling |
-| 6 | Controller board | RP2040-class microcontroller; hardware comparator trip; drivers for valve, fan and alarm; tachometer input; event log | Firmware beyond a labeled sketch is TRL 4 work |
+| 4 | Flame arrestor discs and bump test cup | Sintered stainless discs 25 x 2 mm, pores 50 µm or less; drip skirt 96 x 66 x 22 mm forming the test cup | Not a certified flameproof assembly |
+| 5 | Controller enclosure | IP65 polycarbonate wall box 200 x 250 x 90 mm | Top 1,025 mm below the ceiling |
+| 6 | Controller board | RP2040-class microcontroller with 4 MB flash; comparator with hardware latch and series relay; drivers for valve, fan and alarm; tachometer input; event log | Firmware beyond a labeled sketch is TRL 4 work |
 | 7 | Front panel | OLED display, key-switch reset, test button, status lights | The key keeps students from clearing a trip |
 | 8 | 24 V DC power supply | Certified plug-in supply, 24 V, 60 W | Only mains part; bought certified |
-| 9 | Exhaust fan | 150 mm brushless DC duct fan, 24 V, about 300 m3/h free air, tachometer | High on the wall near the ceiling; runs continuously |
-| 10 | Make-up air grille | Low-level wall grille with insect mesh | Far side of the room from the fan |
-| 11 | Normally closed solenoid valve | 1/4 in, brass, FKM seals, 24 V DC, 0 to 10 bar | After the regulator; closes on loss of power |
-| 12 | Sounder and beacon | 24 V, about 90 dB at 1 m, red flashing | At the room entrance |
+| 9 | Exhaust fan | 150 mm mixed-flow EC duct fan, 24 V, about 450 m3/h free air, 200 Pa shut-off, tachometer; grille, sleeve, backdraft shutter, weather hood | Re-specified at TRL 3; runs continuously at about 43 % speed |
+| 10 | Make-up air grille | Low-level wall grille 300 x 160 mm with insect mesh | Far side of the room from the fan |
+| 11 | Normally closed solenoid valve | 1/4 in, direct acting, brass, FKM seals, 24 V DC, 0 to 10 bar, Zener clamp | After the regulator; closes on loss of power |
+| 12 | Sounder and beacon | 24 V, about 90 dB at 1 m, red flashing | By the door, top 450 mm below the ceiling |
+| 15 | Bump test port and tube | Capped push-fit port beside the controller, about 3 m of 4 mm tube to the cup nozzle | New at TRL 3 for R12 |
 
 ![Exploded view](../media/exploded.png)
 
@@ -68,55 +73,49 @@ Table 1. Main components. Numbers match `bom/bom.csv` and Figure 3.
 
 ![Cutaway](../media/cutaway.png)
 
-*Figure 4. Sections through the controller (left) and the detector head (right), each cut on a vertical plane and seen from the side. The head section passes through the catalytic sensor and its flame arrestor disc. The head is drawn beside the controller for this view.*
+*Figure 4. Sections through the controller (left) and the detector head (right), each cut on a vertical plane and seen from the side. The head section passes through the catalytic sensor, its arrestor disc and the bump test cup. The head is drawn beside the controller for this view.*
 
-The blueprint concept sheet ([PDF](../media/concept-blueprint.pdf)) shows the arrangement in plan and elevation with the key figures, and the [interactive 3D model](../media/viewer.html) shows the parts in place.
+The general arrangement drawing [HGD-DWG-001](../cad/drawings/HGD-DWG-001.pdf) (Rev P1) gives the mounting heights and main dimensions from the parametric model `cad/src/model.py`. The blueprint concept sheet ([PDF](../media/concept-blueprint.pdf)) and the [interactive 3D model](../media/viewer.html) show the parts in place.
 
-## First-order numbers
+## Key numbers
 
-All values are estimates for the concept, to be checked by calculation at TRL 3.
+All values are from HGD-CAL-001, which gives the method and assumptions. They are first-principles estimates.
 
-**Hydrogen made by a small electrolyzer.** Faraday's law gives the production rate as n = I x N / (2F), where I x N is the stack current times the number of cells. A 100 W PEM stack at about 1.9 V per cell gives I x N of about 53 A, so n is about 2.7 x 10^-4 mol/s, or about 0.4 L/min at 20 °C (24.1 L/mol). Even a total leak of the full output of an H2Bench-sized electrolyzer is well below the 5 L/min design leak.
+Table 2. Key numbers for the 30 m3 reference room and the 5 L/min design leak.
 
-**How fast a ceiling layer builds up.** In the 30 m3 reference room, take a 0.3 m layer under the 12 m2 ceiling (3.6 m3), well mixed and unventilated.
+| Quantity | Value |
+| --- | --- |
+| Hydrogen from a 100 W electrolyzer | 0.39 L/min |
+| Ceiling layer (0.3 m) to 25 % LFL without ventilation | 7.2 min (whole room mixed: 60 min) |
+| Room and upper layer with 150 m3/h exhaust | 5.0 % LFL (2.5 % LFL on boost) |
+| Plume at the detector head | About 15 % LFL mean, about 30 % LFL on the plume axis |
+| Leak to valve closed | 35.7 s with an assumed 30 s sensor t90; 0.17 s from trip to closed |
+| Hydrogen released before closing | 3.0 L, plus 0.47 L in the line downstream |
+| Fan delivery against duct losses | 347 m3/h at full speed (the TRL 2 fan gave 237 m3/h) |
+| Inventory limit | 300 L at 1 atm (25.1 g); a 0.13 mm orifice at 10 bar gauge limits a failure to 5 L/min |
+| Power | 13.1 W normal, 48.3 W warning, 40.3 W trip |
+| Bump test | About 67 s; 1.36 L of span gas per test |
+| Parts cost | $264.00 (without fan and grille $206) |
 
-Table 2. Time to reach set points with a 5 L/min leak, no ventilation (estimates).
-
-| Level | Hydrogen needed in the layer | Time at 5 L/min | Whole room well mixed |
-| --- | --- | --- | --- |
-| 10 % LFL (0.4 % vol) | about 14 L | about 3 min | about 24 min |
-| 25 % LFL (1.0 % vol) | about 36 L | about 7 min | about 60 min |
-| 100 % LFL (4 % vol) | about 144 L | about 29 min | about 4 h |
-
-A plume directly above the leak reaches these levels sooner than the layer average, which is why the head goes directly above the source.
-
-**Dilution by the fan.** With 150 m3/h (2,500 L/min, 5 air changes per hour) of continuous exhaust, the steady well-mixed concentration for a 5 L/min leak is 5 / 2,505, about 0.20 % vol or 5 % LFL. On boost (300 m3/h) it falls to about 0.10 % vol. Stratification can make the ceiling layer several times richer than the room average; with a factor of 5 the head would read about 25 % LFL, which is the trip point. So continuous ventilation alone keeps the room well below the LFL for the design leak, and the interlock stops the source if it does not. For the 0.4 L/min electrolyzer case the mixed value is about 0.016 % vol.
-
-**Time from leak to valve closed.** Transport from the source to the head: a few seconds for a buoyant plume 1.4 m below the ceiling (estimate, up to 5 s). Sensor t90: 30 s target (not yet confirmed for the chosen catalytic sensor). Comparator and driver: under 0.1 s. Valve closing: under 1 s (typical for small direct-acting solenoid valves, to be confirmed). Total about 35 s, within the R4 limit of 60 s. About 3 L of hydrogen escapes at 5 L/min in that time, plus the gas held in the supply line downstream of the valve (under 1 L for a few meters of small tubing at 10 bar).
-
-**Inventory limit.** If the whole inventory leaks and mixes into the room, it stays below 25 % LFL only if it is 1 % of the room volume or less: 300 L at atmospheric pressure (about 25 g) for 30 m3. A 10 L cylinder at 200 bar holds about 1.7 m3, more than five times this, so an unrestricted cylinder is outside what H2Guard can protect; a metal hydride canister or low-pressure store of a few hundred liters, as planned for H2Bench, is inside it. This rule is proposed for R9.
-
-**Power budget (estimates).** Normal: catalytic sensor about 0.5 W, metal oxide sensor about 0.3 W, controller and display about 0.5 W, valve coil held open about 8 W, fan at continuous speed about 12 W, total about 21 W. Alarm: valve off, fan boost about 25 W, beacon and sounder about 3 W, total about 29 W. The 60 W supply leaves a margin of about two.
-
-**Cost.** About $239 in indicative parts prices (`bom/bom.csv`), about 33 % over the $180 budget. Without the fan and grille (about $43), which some rooms already have in another form, the detector, controller, valve, alarm and cabling (lines 1 to 8 and 11 to 14) come to about $196, still over budget.
+Two findings matter for the design. First, the design leak trips the system only if the head is on the plume axis; beside it, the head sees about 15 % LFL and warns without closing the supply, although the room stays at about 5 % LFL. Second, a fan rated at the boost flow in free air cannot deliver it through a real duct, so the fan is re-specified. The review note proposes remedies for the first, awaiting Amish.
 
 ## Key design choices
 
-All choices below are proposed, awaiting Amish.
+The choices below are adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review (HGD-DDR-001).
 
-1. **Catalytic sensor for the trip, metal oxide sensor for early warning.** Options: (a) catalytic plus metal oxide (about $50 of sensors); (b) a certified molecular property spectrometer sensor (about $249, t90 under 20 s, poisoning resistant, [NevadaNano](https://nevadanano.com/mps-hydrogen-gas-sensor/)); (c) metal oxide only (cheapest, but its range ends at about 0.3 % vol and it drifts with humidity). Recommendation: (a) for the teaching prototype, with (b) documented as the upgrade for any room used without close supervision.
-2. **Normally closed valve, energize to open.** Fail-safe on power loss, at the cost of about 8 W of coil power all the time. A latching or motorized valve would save power but would not close when the power fails. Recommendation: normally closed.
-3. **Independent hardware trip.** A comparator trip beside the microcontroller, so a firmware bug cannot hold the valve open. Recommendation: keep; it is the core of the design.
-4. **Continuous ventilation with a boost, rather than a fan that starts on alarm.** Avoids switching a motor on in a flammable mixture and proves airflow before gas can flow. Recommendation: continuous.
-5. **Set points 10 % LFL (warn) and 25 % LFL (trip).** More conservative than the 25 % and 50 % levels often used in industry. Recommendation: keep for teaching use, where people are close to the source.
-6. **24 V DC throughout, with a certified plug-in supply.** Keeps mains out of the self-built parts. Recommendation: keep.
-7. **Key-switch reset.** Stops students from clearing a trip without a supervisor. Recommendation: keep.
-8. **One detector head per room.** A second head is needed if the ceiling has beams or pockets that could trap gas away from the first head. Recommendation: one head as the base kit, with a second head as an option.
+1. **Catalytic sensor for the trip, metal oxide sensor for early warning** (D1). Options were (a) catalytic plus metal oxide (about $50 of sensors); (b) a certified molecular property spectrometer sensor (about $249, t90 under 20 s, poisoning resistant, [NevadaNano](https://nevadanano.com/mps-hydrogen-gas-sensor/)); (c) metal oxide only. Adopted: (a) for the teaching prototype, with (b) documented as the upgrade for any room used without close supervision.
+2. **Normally closed valve, energize to open** (D3). Fail-safe on power loss, at the cost of 8 W of coil power all the time.
+3. **Independent hardware trip** (D8). A comparator with its own latch opens a relay in series with the microcontroller's valve switch, so a firmware bug cannot hold the valve open.
+4. **Continuous ventilation with a boost** (D4). Avoids switching a motor on in a flammable mixture and proves fan rotation before gas can flow.
+5. **Set points 10 % LFL (warn) and 25 % LFL (trip)** (D2). More conservative than the 25 % and 50 % levels often used in industry.
+6. **24 V DC throughout, with a certified plug-in supply** (D9).
+7. **Key-switch reset** (D6). Stops students from clearing a trip without a supervisor.
+8. **One detector head per room** (D6). A second head is an option where the ceiling has beams or pockets, or where leak points are far apart (see Key numbers).
 
 ## Relation to other lab projects
 
-- **H2Bench** is the first host. Its README states that it is "Protected by H2Guard", and its gas system (electrolyzer, low-pressure store, regulator and tubing) is where the valve and any flow restrictor go. The inventory rule (R9) would apply to H2Bench's storage.
-- H2Guard does not use a SwapCell pack or any lithium cell.
+- **H2Bench** is the first host. Its README states that it is "Protected by H2Guard", and its gas system (electrolyzer, low-pressure store, regulator and tubing) is where the valve and any flow restrictor go. The inventory rule (R9, D5) applies to H2Bench's storage; its 2 L tank at 300 kPa gauge holds 7.9 L, 2.6 % of the limit. H2Bench's review asks for interlock outputs to cut its power supply and close its tank solenoid; H2Guard has one valve output at present (see the review note).
+- H2Guard does not use a SwapCell pack or any lithium cell, and it does not depend on FieldNode, CellGuard, MotionCore, ThermaCart, TwinKit or CalRig.
 
 ## Safety
 
@@ -124,18 +123,19 @@ All choices below are proposed, awaiting Amish.
 
 > **Safety:** The parts are not certified for hazardous areas. The catalytic sensor element runs hot, and the fan motor, relays and supply are possible ignition sources. The design limits this by keeping the controller and supply low on the wall, running the fan continuously and fitting flame arrestors to the sensor ports, but it does not remove the risk.
 
-> **Safety:** The design leak assumes a flow restrictor. A failed regulator on an unrestricted high-pressure cylinder can release gas far faster than the fan can remove it. Keep inventories within the proposed limit, and have gas fittings made and leak-tested by a competent person.
+> **Safety:** The design leak assumes a flow restrictor. A failed regulator on an unrestricted high-pressure cylinder can release gas far faster than the fan can remove it. Keep inventories within the R9 limit (300 L at atmospheric pressure for the 30 m3 room) or fit a restrictor, and have gas fittings made and leak-tested by a competent person.
 
 > **Safety:** Catalytic sensors need oxygen and can be poisoned by silicones, sulfur compounds and some solvents, which makes them read low without warning. Bump test before each teaching session and after any exposure to these vapors, and replace the sensor when it fails a bump test.
 
+> **Safety:** A blocked duct or a stuck shutter is not detected while the fan still turns, and a leaking valve seat is not detected at all (HGD-CAL-001, Table 4). Check the airflow and the valve at every session until airflow proving and a valve proof test are designed.
+
 > **Safety:** Mains power enters only through a certified plug-in supply. Do not open it or wire mains inside the controller.
 
-## Open questions for TRL 3
+## Open questions
 
-- Confirm t90, power and poisoning behavior of the chosen catalytic sensor from its datasheet, and whether it responds to hydrogen well enough across 0 to 100 % LFL.
-- Design a bump test cap and gas port for the detector head (R12, not yet met), and decide how span gas is supplied. CalRig might host a hydrogen span check; that is for CalRig to decide.
-- Check the fan against duct, grille and weather hood losses, and decide how airflow is proven (tachometer only, or a differential pressure switch).
-- Carry out a failure modes and effects analysis of the trip chain, including a welded relay contact, a stuck valve and a blocked sensor port.
-- Hydrogen compatibility and leak rating of low-cost solenoid valves, or whether a certified gas valve is needed.
-- Where set points and the inventory rule come from for each country the first users are in.
-- Whether the parts cost can be brought to $180, or the budget should change (proposed, awaiting Amish).
+- Confirm t90, power and poisoning behavior of the chosen catalytic sensor from its datasheet, and whether its hydrogen output gives 1 % LFL resolution (R1, R4).
+- Measure the delivery factor of the open bump test cup and set the pass level.
+- How airflow is proven: tachometer only, or a differential pressure switch (HGD-DDR-001, O4). Proposed, awaiting Amish.
+- Low-cost solenoid valve or a certified gas valve (O5). Proposed, awaiting Amish.
+- Where set points and the inventory rule come from for each country the first users are in (O3); oxygen depletion monitoring (O2). Proposed, awaiting Amish.
+- The budget (O1) and the new proposals in the review note (timed escalation from warning to trip, head placement rule, R13 scope). Proposed, awaiting Amish.

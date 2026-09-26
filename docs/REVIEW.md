@@ -67,3 +67,73 @@ Requirements not met or unverified:
 ### Recommended next step
 
 Review this note and the media, then decide items 1, 2 and 6. If approved, run `/advance-trl3` to confirm the sensor data, calculate the ventilation with duct losses, write the FMEA of the trip chain, design the bump test port and produce the parametric model and drawing sheet.
+
+## Session 2026-09-25: TRL 3
+
+On 2026-09-25 Amish asked for this batch of repos to be taken through the usual process with the instruction "you know the drill, nothing gets past TRL 3". He has not reviewed the H2Guard TRL 2 points item by item, so every item with a recommendation is adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review. This session ran `/advance-trl3` on that basis and stopped at TRL 3.
+
+### What was done
+
+- `docs/decisions/0001-trl2-review-decisions.md` (HGD-DDR-001 v0.1, status proposed): nine items adopted as recommended for TRL 3, open for Amish's review (D1 to D9), and five items left open (O1 to O5), including the budget figure.
+- `docs/04-calcs/01-sizing.md` (HGD-CAL-001 v0.1) and `docs/04-calcs/sizing.py` (writes `docs/04-calcs/results.txt`): sources and inventory, flow restrictor sizing, build-up, dilution, the plume at the detector head, arrestor lag, the response and fault chain, fan and duct losses, power, bump test and log, alarm level, placement, installation time, cost, and a first-pass FMEA of the trip chain, with a status for every requirement. The script imports the model's parameters and reads the BOM and `project.yaml`.
+- `cad/src/model.py`: parametric build123d model of all H2Guard parts in the 30 m3 reference room (head with ports, sensors, arrestors and bump test cup; controller, board and panel; supply; fan with grille, sleeve and hood; make-up grille; valve; beacon; bump test port and tube) plus grey context. Exports `cad/step/` and `cad/stl/` for `h2guard-assembly`, `detector-head`, `controller` and `exhaust-fan`.
+- `cad/src/sheets.py` and `cad/drawings/HGD-DWG-001.svg`, `.pdf`, `.png`: general arrangement at Rev P1, 1:50, with mounting heights, a detector head detail and interface notes, marked "CONCEPT, NOT FOR FABRICATION" and "PRELIMINARY, NOT FOR FABRICATION". HGD-DWG-001 was free because the concept blueprint is HGD-DWG-010 (now Rev P2 from the model).
+- `bom/bom.csv` (15 lines, all priced with a supplier type, $264.00) and `bom/bom-notes.md`.
+- `cad/src/concept_media.py` now builds from the model; all of `media/` was re-rendered and every image checked (the person was moved clear of the controller and callout 15 clear of the panel). Temporary `_views` folders removed.
+- HGD-PRB-001, HGD-PRC-001 and HGD-REQ-001 revised to v0.3; `README.md` (TRL 3, cost, findings, links) and `project.yaml` (`trl: 3`, `trl_target: 3`, evidence list) updated. PDFs rebuilt in `docs/pdf/`.
+
+Design changes the calculations required, within the adopted choices: the exhaust fan is re-specified from a 300 m3/h axial fan (237 m3/h against the losses) to a 450 m3/h mixed-flow EC fan (347 m3/h); the arrestor discs are 2 mm instead of 5 mm with the sensors about 2 mm behind them (lag 1.5 s instead of about 21 s); a bump test cup, tube and capped port are added (R12); the comparator trip now has a hardware latch and a relay in series with the microcontroller's valve switch; the board needs 4 MB of flash for the 90-day log; the reference room in the model is the 4 x 3 x 2.5 m room of the requirements (the TRL 2 media used a 2.6 m ceiling).
+
+### Requirement status (HGD-CAL-001, Table 5)
+
+2 not met, 2 at risk, 1 not verifiable at TRL 3, 6 met on paper, 4 met by design.
+
+| ID | Status | Key number |
+| --- | --- | --- |
+| R14 Cost | **Not met** | $264.00 against $180; also $14 over the $250 recommended at TRL 2 |
+| R13 Installation | **Not met** on estimate | 6.0 h (4 h limit); 4.1 h if the wall openings are made by others |
+| R4 Response | At risk | 35.7 s leak to valve closed with an assumed 30 s t90; 0.17 s trip to closed |
+| R7 Ventilation | At risk | 347 m3/h boost on an assumed fan curve (target 300); the TRL 2 fan gave 237 |
+| R1 Measurement | Not verifiable at TRL 3 | Resolution needs sensor data; ports 175 mm below the ceiling |
+| R2, R5, R8, R10, R11, R12 | Met on paper | Plume 15 % LFL at the head; worst listed fault 1.12 s; room 5.0 % LFL; 76 dB at 5 m; 48.3 W peak; bump test 67 s |
+| R3, R6, R9, R15 | Met by design | Latched trip; series hardware relay; 300 L inventory rule (H2Bench 2.6 % of it); controller 1,025 mm below the ceiling |
+
+Key numbers: electrolyzer 0.39 L/min; design leak plume at the head about 15 % LFL mean and 30 % LFL on the axis; 3.0 L released before the valve closes; restrictor orifice 0.13 mm at 10 bar gauge; 13.1 W normal power.
+
+### Decisions recorded (HGD-DDR-001)
+
+Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review: D1 catalytic plus metal oxide sensors, certified sensor as the upgrade; D2 set points 10 % and 25 % LFL; D3 normally closed valve; D4 continuous ventilation with boost; D5 inventory rule (R9); D6 key-switch reset and one head per room, second head optional; D7 a university teaching lab as first users; D8 independent hardware trip; D9 24 V DC with a certified supply. No pitch or problem rewording was recommended, so none was applied.
+
+### Still awaiting Amish
+
+1. **O1, budget.** The TRL 2 recommendation was to raise `budget_usd` to $250; `budget_usd` is unchanged at $180. The priced BOM is $264, over both. Options: (a) $265, covering the TRL 3 kit; (b) $250 with the fan and grille treated as site ventilation ($206 kit); (c) keep $180 and accept R14 not met. Recommendation: (a), because the fan is part of the safety function.
+2. **O2 to O5.** Oxygen depletion monitoring; set points and inventory rules per country; airflow proving (tachometer only or a differential pressure switch); low-cost or certified gas valve. No recommendations were made.
+3. **New, timed escalation.** The design leak trips the system only on the plume axis; beside it, or for leaks under about 3.8 L/min, the head warns without closing the supply (HGD-CAL-001, E). Options: (a) close the valve when a warning persists for 5 min; (b) lower the trip to 20 % LFL; (c) accept warning-only for small leaks. Recommendation: (a). Not applied.
+4. **New, head placement rule.** Keep the head directly above each likely leak point, within a horizontal distance to be set from the plume width, with a second head where leak points are far apart. Recommendation: adopt with the distance set at TRL 4. Not applied.
+5. **New, R13 scope.** Options: (a) keep 4 h including the wall openings (not met); (b) exclude the fan and grille openings as builder's work (4.1 h, at risk). Recommendation: (b). Not applied.
+6. **New, bump test and trip.** A full-span 1 % vol bump test trips the system. Options: (a) keep, as a proof test of the whole chain, with a key reset after each test; (b) use a lower span gas, for example 0.5 % vol. No recommendation until the cup delivery factor is known.
+
+### Cross-repo notes
+
+- H2Guard does not depend on FieldNode, CellGuard, MotionCore, ThermaCart, TwinKit or CalRig, so no shared interface applies. CalRig hosting a hydrogen span check remains a suggestion for CalRig.
+- H2Bench (host project, read only): its review lists an H2Guard interlock that cuts its bench power supply and closes its tank solenoid, with set point and response time undefined. H2Guard now defines both (25 % LFL; 0.17 s trip to closed) but has one 24 V valve output. A second output, a dry contact for the bench supply, is not in the design; this is an interface point for Amish and H2Bench, not edited here. H2Bench's 7.9 L inventory is within the adopted R9 rule.
+
+### Safety concerns
+
+- False reassurance: a low-cost kit invites use as the only safeguard. The documents say it is a research and teaching prototype, not a certified gas detection system.
+- Small or off-axis leaks can hold the head in the warning band with the supply open (new proposal 3).
+- Four dangerous undetected faults (HGD-CAL-001, Table 4): blocked duct with the fan turning, poisoned sensor, blocked port and a leaking valve seat. Bump tests cover two; airflow proving and a valve proof test are not designed.
+- Ignition sources: the catalytic element runs hot and no part is rated for hazardous areas; the fan motor sits in the exhaust stream.
+- An unrestricted high-pressure cylinder overwhelms the fan; the restrictor and inventory rule are essential. Mains appears only inside a certified supply.
+
+### Gaps and notes
+
+- Citations: WebSearch was exhausted. A WebFetch of the Figaro TGS6812 product page was not approved in time; the cited Figaro 2025 overview PDF was fetched and says only that the TGS6812 detects hydrogen up to 100 % LEL with a "fast response", so the sensor t90, power and output remain unconfirmed. No other citation was flagged as unchecked at TRL 2.
+- Assumptions only tests can settle: sensor t90 and sensitivity, fan curve, duct losses, plume axis factor and cup delivery factor. Installation times are judgment.
+- The exploded view's MOS sensor (3) is too small to see at that scale; its callout marks its position.
+- The kit's cutaway cuts only near the origin; `concept_media.py` keeps its own cut function (as at TRL 2). Worth fixing in the kit.
+- Existing material beyond TRL 3: `build-log/README.md` (scaffold) is present, untouched and not extended. No test, build, purchasing or firmware material exists.
+
+### Recommended next step
+
+Review HGD-DDR-001 and decide O1 and the four new proposals, above all the timed escalation (item 3), which changes how the system responds to small leaks. TRL 4 is on hold by Amish's instruction; nothing further should be built or tested. For reference only, TRL 4 would need: sensor datasheet confirmation and a bench test of t90 and resolution; a fan curve test against the real duct and grille; a measured bump cup delivery factor; a lab-built controller with the hardware trip exercised against every fault in Table 4; a TST report with `environment: lab`; and build log entries.

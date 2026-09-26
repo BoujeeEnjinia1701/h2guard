@@ -1,14 +1,14 @@
 # H2Guard
 
-![TRL 2](https://img.shields.io/badge/TRL-2%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
+![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Hydrogen · **TRL:** 2 of 9 (concept formulated) · **Prototype budget:** about $180 USD · **Difficulty:** 3 of 5
+**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** $180 USD · **Difficulty:** 3 of 5
 
 A hydrogen leak detector and ventilation interlock for small labs, workshops and electrolyzer rooms: it senses hydrogen near the ceiling, runs a fan and cuts the supply when readings rise.
 
 ![H2Guard concept](media/hero.png)
 
-[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement HGD-DWG-001 (PDF)](cad/drawings/HGD-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -58,20 +58,20 @@ Full problem statement: [docs/01-problem.md](docs/01-problem.md)
 
 ## Concept
 
-A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan or a crashed controller also close the valve. First estimates: about 35 s from hydrogen reaching the head to the valve closing, and about 5 % LFL in a well-mixed 30 m3 room for a 5 L/min leak with the fan running.
+A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan or a crashed controller also close the valve, and a hardware comparator trip works without the firmware. The TRL 3 calculations give 35.7 s from a 5 L/min leak to the valve closing (with an assumed 30 s sensor response), and about 5 % LFL in the 30 m3 reference room with the fan running. They also show that the design leak trips the system only if the detector head is on the plume axis above the leak; beside it, the head warns without closing the supply.
 
-Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md)
+Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Calculations: [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) · Decisions: [docs/decisions/0001-trl2-review-decisions.md](docs/decisions/0001-trl2-review-decisions.md)
 
 ## Key components
 
-- Detector head with a catalytic hydrogen sensor (0 to 100 % LFL) and a metal oxide early-warning sensor, behind sintered flame arrestors
-- Controller with an independent hardware trip, display, key-switch reset and event log
+- Detector head with a catalytic hydrogen sensor (0 to 100 % LFL) and a metal oxide early-warning sensor, behind thin sintered flame arrestors, with a drip skirt that doubles as a bump test cup
+- Controller with an independent hardware trip (latched comparator and series relay), display, key-switch reset, event log and a bump test gas port
 - Certified 24 V DC power supply
-- 150 mm exhaust fan at high level, running continuously, and a low-level make-up air grille
+- 150 mm mixed-flow exhaust fan at high level, running continuously, and a low-level make-up air grille
 - Normally closed 24 V DC solenoid valve on the supply
 - Sounder and beacon
 
-The working bill of materials is in [bom/bom.csv](bom/bom.csv). Parts come to about $239 (indicative), over the $180 budget; see the [review note](docs/REVIEW.md).
+The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Parts come to $264 (indicative prices), over the $180 budget and over the $250 recommended at TRL 2, which awaits Amish; see the [review note](docs/REVIEW.md). The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
 
 ## Safety
 

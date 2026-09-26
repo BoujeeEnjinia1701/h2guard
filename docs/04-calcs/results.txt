@@ -1,0 +1,48 @@
+[A1] LFL 4.0 % vol; warning 10 % LFL = 0.40 % vol; trip 25 % LFL = 1.00 % vol; molar volume 24.05 L/mol at 20 °C
+[A2] Reference room 30.0 m3, ceiling 12.0 m2, height 2500 mm
+[B1] 100 W PEM stack at 1.9 V/cell: I x N = 52.6 A, 2.73 x 10^-4 mol/s, 0.39 L/min; design leak 5 L/min is 13 times this
+[B2] Inventory limit (1 % of room volume): 300 L at 1 atm, 25.1 g
+[B3] H2Bench 2 L tank at 300 kPa gauge: 7.9 L (2.6 % of the limit); 10 L cylinder at 200 bar: 1.75 m3, 5.8 times the limit
+[B4] Restrictor for 5 L/min: orifice 0.13 mm at 10 bar gauge, 0.21 mm at 3 bar gauge (choked, Cd 0.8)
+[C1] Ceiling layer 0.3 m x 12 m2 = 3.6 m3
+[C2] 10 % LFL: layer needs 14 L, 2.9 min at 5 L/min; whole room 120 L, 24 min
+[C2] 25 % LFL: layer needs 36 L, 7.2 min at 5 L/min; whole room 300 L, 60 min
+[C2] 100 % LFL: layer needs 144 L, 28.8 min at 5 L/min; whole room 1200 L, 240 min
+[D1] Steady well-mixed (and exhaust) concentration, 5 L/min: 0.200 % vol (5.0 % LFL) at 150 m3/h; 0.100 % vol (2.5 % LFL) at 300 m3/h; electrolyzer case 0.0157 % vol
+[D2] 5.0 air changes per hour; time constant 12 min; 95 % of steady state after 36 min
+[D3] High-level exhaust: at steady state all hydrogen leaves through the fan, so the upper layer settles at the exhaust value, 0.20 % vol (5.0 % LFL)
+[D4] Plume flow equals 150 m3/h exhaust 2.28 m above the source; source to ceiling is 1.35 m, so the plume reaches the ceiling before it carries the exhaust flow and the upper layer extends down to about source height
+[E1] Buoyancy flux 7.61 x 10^-4 m4/s3; plume rise to the sensor ports 1.175 m
+[E2] Plume flow at the head 13.8 L/s; mean 0.60 % vol (15 % LFL); on the axis about 1.21 % vol (30 % LFL)
+[E3] Plume velocity at the head 0.22 m/s; rise time 4.0 s
+[E4] Head reading with the fan running: layer 5 % LFL plus plume 15 to 30 % LFL; plume mean above the warning, plume axis above the trip
+[E5] Leak that brings the plume axis at the head to 25 % LFL: 3.8 L/min; plume mean to 10 % LFL: 2.7 L/min
+[E6] Entrainment coefficient 0.08 to 0.12 instead of 0.10: head values x0.78 to x1.35, axis 24 to 41 % LFL
+[F1] Arrestor disc 25 x 2 mm, porosity 0.4, tortuosity 3.0: D_eff 9.2 x 10^-6 m2/s; slab 0.43 s; cavity 1.08 mL behind it, 90 % in 1.10 s; total 1.5 s
+[F2] TRL 2 arrangement (5 mm disc, sensor 15 mm behind it): 21 s
+[F3] Leak to valve closed: rise 4.0 + arrestor 1.5 + sensor t90 30 (assumed) + comparator 0.05 + relay 0.02 + valve 0.1 = 35.7 s
+[F4] Trip to valve closed 0.17 s (R4 limit 2 s); alarm within 32 s of a step at the head (R4 limit 60 s)
+[F5] Released before closing: 3.0 L at 5 L/min; plus downstream line (3 m of 4.3 mm bore at 10 bar gauge) 0.47 L
+[F6] Fault to valve closed: watchdog 1.0 s + relay + valve = 1.12 s; sensor open or short via comparator 0.17 s; fan stop detected at 10 s then 0.12 s (R5 limit 2 s after detection)
+[G1] Duct velocity at 150 m3/h: 2.36 m/s; exhaust side K 3.44; make-up grille free area 0.024 m2, K 2.0
+[G2] System pressure drop: 15.1 Pa at 150 m3/h; 60.5 Pa at 300 m3/h (room runs slightly below ambient)
+[G3] TRL 2 spec (axial, 300 m3/h free air, 100 Pa shut-off, assumed): full speed 237 m3/h (7.9 air changes per hour), -21 % against the 300 m3/h boost
+[G3] TRL 3 spec (mixed flow, 450 m3/h free air, 200 Pa shut-off, assumed): full speed 347 m3/h (11.6 air changes per hour), +16 % against the 300 m3/h boost
+[G4] Continuous 150 m3/h at 43 % speed; fan power about 3.8 W continuous, 36 W on boost (35 W rated input assumed)
+[G5] Room depression at boost 19.4 Pa across the make-up grille
+[H1] Normal: 13.1 W
+[H1] Warning (valve open, fan boost, sounder): 48.3 W
+[H1] Trip (valve closed, fan boost, alarm): 40.3 W
+[H2] Peak 48.3 W against the 60 W supply: margin x1.24; valve coil heat 8 W continuous; energy in normal state 0.31 kWh/day
+[J1] Bump test at 1.0 L/min: tube 2.69 m, 13.2 mL, delay 0.8 s; cup 114 mL, five volumes in 34 s; reading settles after about 67 s (R12 limit 120 s)
+[J2] Span gas 1.36 L per test (with 15 s margin); a 34 L disposable cylinder gives about 25 tests
+[J3] Log: one 16 B record per minute for 90 days = 2.07 MB, plus events; needs a board with 4 MB flash or more
+[K1] Sounder 90 dB at 1 m: 90 dB at 1 m (free field)
+[K1] Sounder 90 dB at 1 m: 80 dB at 3 m (free field)
+[K1] Sounder 90 dB at 1 m: 76 dB at 5 m (free field)
+[K2] Farthest point in the room 5.0 m: 76 dB, 16 dB above a 60 dB lab background
+[L1] Sensor ports 175 mm below the ceiling (R1: 300 mm or less); fan grille top 80 mm below the ceiling
+[L2] Controller top 1025 mm below the ceiling (R15: 1000 mm or more); beacon top 450 mm; supply on the floor
+[M1] Installation estimate 360 min (6.0 h) with both wall openings; 245 min (4.1 h) if the openings are made by others (R13 limit 240 min)
+[N1] BOM 15 lines, total $264.00; budget_usd $180: +47 %; recommended $250 (awaiting Amish): +14.00
+[N2] Without the fan and make-up grille ($58.00): $206.00

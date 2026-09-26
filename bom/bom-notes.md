@@ -1,7 +1,9 @@
 # BOM notes
 
-- Line numbers 1 to 12 match the callouts in `media/exploded.png` and the numbered parts in `cad/src/concept_media.py`. Lines 13 and 14 have no callout.
-- All prices are indicative single-unit estimates in USD (September 2026) and have not been checked against quotes. Total: about $239, against a concept budget of $180. The budget change is proposed, awaiting Amish (see `docs/REVIEW.md`).
-- Not included: the hydrogen source, regulator, supply tubing, any flow restrictor and the gas fitting work. These belong to the gas system (for example H2Bench) and must be installed by a competent person.
-- Not included: certified span gas for bump tests (about 1 % hydrogen in air or nitrogen), which is a running cost.
-- A certified hydrogen sensing element (for example a NevadaNano MPS sensor, listed at about $249) would replace lines 2 and 3 and raise the total to about $440; see the precis.
+- Line numbers 1 to 12 and 15 match the callouts in `media/exploded.png`, the numbered parts in `cad/src/concept_media.py` and the part keys in `cad/src/model.py` (`BOM_ORDER`). Lines 13 and 14 have no callout.
+- All prices are indicative single-unit estimates in USD (September 2026) and have not been checked against quotes. Total: $264.00 (HGD-CAL-001, N1), against the $180 `budget_usd` and the $250 recommended at TRL 2, which awaits Amish. Without the fan and make-up grille the kit is $206.
+- Changes at TRL 3: the fan (line 9) is re-specified as a 450 m3/h mixed-flow fan (+$15) because a 300 m3/h axial fan cannot give the 300 m3/h boost against the duct losses; the arrestor discs (line 4) are 2 mm instead of 5 mm and the drip skirt becomes the bump test cup (+$1); the bump test port and tube (line 15, $9) are new; the controller board (line 6) now calls for 4 MB of flash and a series trip relay at no price change.
+- Supplier types are given; no line is tied to a quote or a purchase. Purchasing is TRL 4 work and is not started.
+- Not included: the hydrogen source, regulator, supply tubing, any flow restrictor and the gas fitting work. These belong to the gas system (for example H2Bench) and must be installed by a competent person. HGD-CAL-001 (B4) sizes the restrictor orifice.
+- Not included: certified span gas for bump tests (1 % hydrogen in air), its cylinder regulator and the wall openings for the fan and grille.
+- A certified hydrogen sensing element (for example a NevadaNano MPS sensor, listed at about $249) would replace lines 2 and 3 and raise the total to about $465; see the precis (D1 upgrade path).

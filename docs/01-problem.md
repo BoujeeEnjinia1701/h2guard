@@ -3,7 +3,7 @@ doc_id: HGD-PRB-001
 title: H2Guard problem statement
 project: H2Guard
 doc_type: Problem statement
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Populate to TRL 2 (problem, users, context, constraints, out of scope, prior work, open questions)
+- version: "0.3"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: TRL 3 update; open questions resolved by HGD-DDR-001 marked as adopted for TRL 3 pending Amish's review; cost figure from HGD-CAL-001
 ---
 
 # H2Guard problem statement
@@ -57,7 +61,7 @@ The gap for small users is threefold:
 
 ## Constraints
 
-- Garage-buildable prototype. Concept budget about $180 USD (`project.yaml`). The current estimate exceeds this; see the requirements and the review note.
+- Garage-buildable prototype. Concept budget $180 USD (`project.yaml`). The priced BOM comes to $264 (HGD-CAL-001), over this and over the $250 recommended at TRL 2; the budget is proposed, awaiting Amish (HGD-DDR-001, O1).
 - All self-built wiring is extra-low voltage (24 V DC). Mains is used only inside a certified power supply.
 - Fail-safe by design: loss of power, a sensor fault or a controller fault must leave the hydrogen supply closed.
 - Parts off the shelf where possible, with open firmware and published set points.
@@ -79,7 +83,13 @@ The gap for small users is threefold:
 
 ## Open questions
 
-- Which first users to design with: a school science department running H2Bench, a university teaching lab or a startup? Proposed, awaiting Amish.
-- Is a catalytic plus metal oxide pair good enough for a teaching prototype, or should the certified sensing element be the baseline despite its cost? Proposed, awaiting Amish.
-- Should H2Guard enforce an inventory limit (the hydrogen that could leak into the room) as a hard rule for H2Bench and other lab projects?
-- Should it also watch for oxygen depletion when used with cylinders of inert gas in the same room?
+Resolved for TRL 3 work by HGD-DDR-001 (adopted as recommended under Amish's 2026-09-25 instruction, open for his review):
+
+- First users: a university teaching lab first (D7).
+- Sensor baseline: catalytic plus metal oxide pair, with the certified sensing element documented as the upgrade (D1).
+- Inventory limit: 1 % of room volume at atmospheric pressure, or a flow restrictor, as a condition for H2Bench and other lab projects (D5).
+
+Still open, proposed, awaiting Amish:
+
+- Should it also watch for oxygen depletion when used with cylinders of inert gas in the same room (O2)?
+- Where do the set points and the inventory rule come from in each country the first users are in (O3)?
