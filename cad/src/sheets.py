@@ -1,4 +1,4 @@
-"""H2Guard general arrangement sheet HGD-DWG-001, Rev P1 (TRL 3).
+"""H2Guard general arrangement sheet HGD-DWG-001, Rev P2 (TRL 3).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/HGD-DWG-001.svg, .pdf and .png from the parametric model in
@@ -99,10 +99,11 @@ def main():
     head = Compound(children=[S[k] for k in ("head", "cat", "mos", "arrest")])
     hv = safe_project_views(head, work / "head", names=("iso",))
     bb = asm.bounding_box()
-    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P1",
+    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P2",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Bought-in parts per bom/bom.csv; room, bench and gas store are context. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
+                         ("P2", "Notes: head placement rule, timed escalation (DDR-002)", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -157,6 +158,8 @@ def main():
         f"Fan 150 duct, sleeve {D['sleeve_len']:.0f}; grille top {D['fan_below_ceiling']:.0f} below ceiling",
         f"Make-up grille {P['inlet'][0]:.0f} x {P['inlet'][1]:.0f} on far wall, center {P['inlet_z']:.0f}",
         "Valve 1/4 in NC after regulator; gas fitting by a competent person",
+        "Head directly above each likely leak point; offset limit set at TRL 4",
+        "Warning held 5 min closes valve and latches (firmware, DDR-002)",
         "Third-angle; front view from -Y (room side); HGD-CAL-001",
     ], x=276, y=118, width=146)
     out = s.save(ROOT / "cad" / "drawings" / "HGD-DWG-001")

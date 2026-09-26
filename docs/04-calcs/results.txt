@@ -18,12 +18,15 @@
 [E4] Head reading with the fan running: layer 5 % LFL plus plume 15 to 30 % LFL; plume mean above the warning, plume axis above the trip
 [E5] Leak that brings the plume axis at the head to 25 % LFL: 3.8 L/min; plume mean to 10 % LFL: 2.7 L/min
 [E6] Entrainment coefficient 0.08 to 0.12 instead of 0.10: head values x0.78 to x1.35, axis 24 to 41 % LFL
+[E7] Plume top-hat radius at the sensor ports 141 mm (6/5 alpha z); the head placement rule keeps the ports over the leak point, offset limit set at TRL 4
 [F1] Arrestor disc 25 x 2 mm, porosity 0.4, tortuosity 3.0: D_eff 9.2 x 10^-6 m2/s; slab 0.43 s; cavity 1.08 mL behind it, 90 % in 1.10 s; total 1.5 s
 [F2] TRL 2 arrangement (5 mm disc, sensor 15 mm behind it): 21 s
 [F3] Leak to valve closed: rise 4.0 + arrestor 1.5 + sensor t90 30 (assumed) + comparator 0.05 + relay 0.02 + valve 0.1 = 35.7 s
 [F4] Trip to valve closed 0.17 s (R4 limit 2 s); alarm within 32 s of a step at the head (R4 limit 60 s)
 [F5] Released before closing: 3.0 L at 5 L/min; plus downstream line (3 m of 4.3 mm bore at 10 bar gauge) 0.47 L
 [F6] Fault to valve closed: watchdog 1.0 s + relay + valve = 1.12 s; sensor open or short via comparator 0.17 s; fan stop detected at 10 s then 0.12 s (R5 limit 2 s after detection)
+[F7] Timed escalation, off-axis design leak (warning only): warning at 35.5 s, valve closed at 336 s (5.6 min); 28 L released at 5 L/min (9 % of the R9 inventory limit); 15 L at the 2.7 L/min warning threshold leak
+[F8] Well-mixed room when the escalation closes the valve: 1.9 % LFL (steady state 5.0 % LFL); leaks below 2.7 L/min at the head give no warning and are not escalated
 [G1] Duct velocity at 150 m3/h: 2.36 m/s; exhaust side K 3.44; make-up grille free area 0.024 m2, K 2.0
 [G2] System pressure drop: 15.1 Pa at 150 m3/h; 60.5 Pa at 300 m3/h (room runs slightly below ambient)
 [G3] TRL 2 spec (axial, 300 m3/h free air, 100 Pa shut-off, assumed): full speed 237 m3/h (7.9 air changes per hour), -21 % against the 300 m3/h boost
@@ -43,6 +46,6 @@
 [K2] Farthest point in the room 5.0 m: 76 dB, 16 dB above a 60 dB lab background
 [L1] Sensor ports 175 mm below the ceiling (R1: 300 mm or less); fan grille top 80 mm below the ceiling
 [L2] Controller top 1025 mm below the ceiling (R15: 1000 mm or more); beacon top 450 mm; supply on the floor
-[M1] Installation estimate 360 min (6.0 h) with both wall openings; 245 min (4.1 h) if the openings are made by others (R13 limit 240 min)
-[N1] BOM 15 lines, total $264.00; budget_usd $180: +47 %; recommended $250 (awaiting Amish): +14.00
+[M1] Installation estimate 360 min (6.0 h) with both wall openings; 245 min (4.1 h) with the openings made by others as builder's work, as R13 now scopes it (HGD-DDR-002; limit 240 min, +5 min)
+[N1] BOM 15 lines, total $264.00; budget_usd $265 (HGD-DDR-002): -1.00 (-0.4 %); within budget
 [N2] Without the fan and make-up grille ($58.00): $206.00

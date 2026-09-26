@@ -77,7 +77,8 @@ KEY_FIGURES = ["Warn at 10 % LFL (0.4 % vol H2); trip at 25 % LFL (1.0 % vol)",
                "Exhaust 150 m3/h continuous, 347 m3/h boost; room 5 % LFL",
                "Fail-safe: NC valve, series hardware trip relay, 1 s watchdog",
                "24 V DC build; mains only inside a certified supply",
-               "Parts $264 (indicative); budget $180"]
+               "Warning held 5 min also closes the valve (DDR-002)",
+               "Parts $264 (indicative); budget $265"]
 
 render_all(
     parts, project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010",
@@ -95,10 +96,11 @@ room_ctx = [c for c in ctx if not c.name.startswith("Person")]
 md = ROOT / "media"
 views = project_views(Compound(children=[p.shape for p in parts + room_ctx]), md / "_views")
 views["iso"] = project_views(Compound(children=[p.shape for p in parts + ctx]), md / "_views_fig")["iso"]
-sheet = Sheet(project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010", rev="P2",
+sheet = Sheet(project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010", rev="P3",
               author="Amish Chadha", date="2026-09-25", theme="blueprint",
               material="Built from cad/src/model.py; room, bench and gas store are context. GA is HGD-DWG-001",
-              revisions=[("P1", "Concept sheet", "2026-09-25", "AC"), ("P2", "From the TRL 3 parametric model", "2026-09-25", "AC")])
+              revisions=[("P1", "Concept sheet", "2026-09-25", "AC"), ("P2", "From the TRL 3 parametric model", "2026-09-25", "AC"),
+                         ("P3", "Key figures after DDR-002", "2026-09-25", "AC")])
 sheet.add_ortho(views)
 sheet.add_svg(views["iso"], 276, 32, 140, 118, label="Isometric view",
               sublabel="Not to scale; figure is a 1.75 m person")

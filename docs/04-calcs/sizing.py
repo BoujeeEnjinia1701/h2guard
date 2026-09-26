@@ -1,4 +1,4 @@
-"""H2Guard sizing calculations, HGD-CAL-001 v0.1 (TRL 3).
+"""H2Guard sizing calculations, HGD-CAL-001 v0.2 (TRL 3).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Every number quoted in docs/04-calcs/01-sizing.md is printed here, tagged [A1], [B2] and so on.
@@ -37,7 +37,7 @@ G = 9.81
 ROOM = D["room_m3"]       # m3
 LEAK = 5.0                # L/min design leak
 VENT, BOOST = 150.0, 300.0          # m3/h, R7 targets for the 30 m3 room
-BUDGET_REC = 250.0                  # $ recommended in the TRL 2 review, awaiting Amish
+ESCALATE_S = 300.0                  # s, warning held this long closes the valve (HGD-DDR-002, firmware rule)
 
 say("A1", f"LFL {LFL:.1f} % vol; warning 10 % LFL = {WARN:.2f} % vol; trip 25 % LFL = {TRIP:.2f} % vol; molar volume {VM:.2f} L/mol at 20 °C")
 say("A2", f"Reference room {ROOM:.1f} m3, ceiling {D['ceiling_m2']:.1f} m2, height {P['room'][2]:.0f} mm")
@@ -122,6 +122,9 @@ say("E5", f"Leak that brings the plume axis at the head to 25 % LFL: {q_trip:.1f
 # plume flow scales with alpha^(4/3), so the head concentration scales with alpha^(-4/3)
 f_lo, f_hi = (0.10 / 0.12) ** (4 / 3), (0.10 / 0.08) ** (4 / 3)
 say("E6", f"Entrainment coefficient 0.08 to 0.12 instead of 0.10: head values x{f_lo:.2f} to x{f_hi:.2f}, axis {100 * c_axis * f_lo / LFL:.0f} to {100 * c_axis * f_hi / LFL:.0f} % LFL")
+# E7 plume width at the ports: basis for the head placement rule (offset limit set at TRL 4)
+b_top = 6 / 5 * alpha * z
+say("E7", f"Plume top-hat radius at the sensor ports {b_top * 1000:.0f} mm (6/5 alpha z); the head placement rule keeps the ports over the leak point, offset limit set at TRL 4")
 
 # ---------------- F. response time chain (R4, R5) ----------------
 D_h2 = 0.61e-4 * (T / 273.15) ** 1.75          # m2/s, H2 in air
@@ -151,6 +154,17 @@ say("F5", f"Released before closing: {rel:.1f} L at {LEAK:.0f} L/min; plus downs
 wd = 1.0
 say("F6", f"Fault to valve closed: watchdog {wd:.1f} s + relay + valve = {wd + t_relay + t_valve:.2f} s; sensor open or short via comparator {t_comp + t_relay + t_valve:.2f} s; "
     f"fan stop detected at 10 s then {t_relay + t_valve:.2f} s (R5 limit 2 s after detection)")
+
+# F7 timed escalation (HGD-DDR-002): a warning held for ESCALATE_S closes the valve through the microcontroller
+t_warn = t_rise + t_arr + t90_sensor
+t_esc = t_warn + ESCALATE_S + t_relay + t_valve
+rel_esc = LEAK * t_esc / 60
+rel_esc_small = q_warn * t_esc / 60
+say("F7", f"Timed escalation, off-axis design leak (warning only): warning at {t_warn:.1f} s, valve closed at {t_esc:.0f} s ({t_esc / 60:.1f} min); "
+    f"{rel_esc:.0f} L released at {LEAK:.0f} L/min ({100 * rel_esc / inv_l:.0f} % of the R9 inventory limit); {rel_esc_small:.0f} L at the {q_warn:.1f} L/min warning threshold leak")
+tau_s = tau_min * 60
+c_esc = 100 * c_v / LFL * (1 - math.exp(-t_esc / tau_s))
+say("F8", f"Well-mixed room when the escalation closes the valve: {c_esc:.1f} % LFL (steady state {100 * c_v / LFL:.1f} % LFL); leaks below {q_warn:.1f} L/min at the head give no warning and are not escalated")
 
 # ---------------- G. fan and duct system (R7) ----------------
 d = P["fan_d"] / 1000
@@ -236,7 +250,7 @@ tasks = [("Plan and mark out", 20), ("Detector head bracket and head", 30), ("Co
          ("Commissioning: test button and first bump test", 25)]
 t_all = sum(t for _, t in tasks)
 t_nowall = t_all - 90 - 60 + 20 + 15
-say("M1", f"Installation estimate {t_all} min ({t_all / 60:.1f} h) with both wall openings; {t_nowall} min ({t_nowall / 60:.1f} h) if the openings are made by others (R13 limit 240 min)")
+say("M1", f"Installation estimate {t_all} min ({t_all / 60:.1f} h) with both wall openings; {t_nowall} min ({t_nowall / 60:.1f} h) with the openings made by others as builder's work, as R13 now scopes it (HGD-DDR-002; limit 240 min, {t_nowall - 240:+d} min)")
 
 # ---------------- N. cost (R14) ----------------
 bom = list(csv.DictReader((ROOT / "bom" / "bom.csv").open()))
@@ -246,7 +260,7 @@ for line in (ROOT / "project.yaml").read_text().splitlines():
     if line.startswith("budget_usd:"):
         budget = float(line.split(":")[1].split("#")[0])
 fan_grille = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in bom if r["item"].split()[0] in ("9", "10"))
-say("N1", f"BOM {len(bom)} lines, total ${total:.2f}; budget_usd ${budget:.0f}: {100 * (total / budget - 1):+.0f} %; recommended ${BUDGET_REC:.0f} (awaiting Amish): {total - BUDGET_REC:+.2f}")
+say("N1", f"BOM {len(bom)} lines, total ${total:.2f}; budget_usd ${budget:.0f} (HGD-DDR-002): {total - budget:+.2f} ({100 * (total / budget - 1):+.1f} %); {'within' if total <= budget else 'over'} budget")
 say("N2", f"Without the fan and make-up grille (${fan_grille:.2f}): ${total - fan_grille:.2f}")
 
 (Path(__file__).parent / "results.txt").write_text("\n".join(OUT) + "\n")

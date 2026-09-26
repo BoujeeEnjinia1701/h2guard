@@ -40,14 +40,16 @@ Requirements not met or unverified:
 
 ### Proposed, awaiting Amish
 
-1. **Budget.** Options: (a) raise `budget_usd` to $250; (b) treat the fan and grille as site ventilation outside the kit, giving about $196, still over; (c) drop the metal oxide sensor and use a cheaper enclosure and valve to approach $180, losing early warning. Recommendation: (a). `project.yaml` is unchanged.
-2. **Sensor baseline.** Options: (a) catalytic plus metal oxide pair (about $50); (b) certified MPS sensor (about $249, total about $440); (c) metal oxide only. Recommendation: (a) for supervised teaching, with (b) documented as the upgrade.
-3. **Set points** of 10 % LFL warning and 25 % LFL trip, more conservative than the 25 % and 50 % levels common in industry. Recommendation: keep.
-4. **Normally closed valve, energize to open**, rather than a latching or motorized valve. Recommendation: keep.
-5. **Continuous ventilation with boost**, rather than a fan that starts on alarm. Recommendation: keep.
-6. **Inventory rule (R9):** 1 % of room volume at atmospheric pressure, or a flow restrictor sized to the design leak, as a condition for H2Bench and any other lab project using H2Guard. Recommendation: adopt, and ask H2Bench to reflect it.
-7. **Key-switch reset and one detector head per room** as the base kit, with a second head as an option.
-8. **First users:** a school science department running H2Bench, a university teaching lab or a startup. Recommendation: a university teaching lab first, because supervision and a technician are in place.
+Status update 2026-09-25: items 1 to 8 are decided by Amish, 2026-09-25: go with recommendation (HGD-DDR-001, HGD-DDR-002). For item 1 the later TRL 3 recommendation ($265) superseded the $250 figure.
+
+1. **Budget.** Options: (a) raise `budget_usd` to $250; (b) treat the fan and grille as site ventilation outside the kit, giving about $196, still over; (c) drop the metal oxide sensor and use a cheaper enclosure and valve to approach $180, losing early warning. Recommendation: (a). `project.yaml` is unchanged. Decided by Amish, 2026-09-25: go with recommendation, as revised at TRL 3 to $265.
+2. **Sensor baseline.** Options: (a) catalytic plus metal oxide pair (about $50); (b) certified MPS sensor (about $249, total about $440); (c) metal oxide only. Recommendation: (a) for supervised teaching, with (b) documented as the upgrade. Decided by Amish, 2026-09-25: go with recommendation.
+3. **Set points** of 10 % LFL warning and 25 % LFL trip, more conservative than the 25 % and 50 % levels common in industry. Recommendation: keep. Decided by Amish, 2026-09-25: go with recommendation.
+4. **Normally closed valve, energize to open**, rather than a latching or motorized valve. Recommendation: keep. Decided by Amish, 2026-09-25: go with recommendation.
+5. **Continuous ventilation with boost**, rather than a fan that starts on alarm. Recommendation: keep. Decided by Amish, 2026-09-25: go with recommendation.
+6. **Inventory rule (R9):** 1 % of room volume at atmospheric pressure, or a flow restrictor sized to the design leak, as a condition for H2Bench and any other lab project using H2Guard. Recommendation: adopt, and ask H2Bench to reflect it. Decided by Amish, 2026-09-25: go with recommendation.
+7. **Key-switch reset and one detector head per room** as the base kit, with a second head as an option. Decided by Amish, 2026-09-25: go with recommendation.
+8. **First users:** a school science department running H2Bench, a university teaching lab or a startup. Recommendation: a university teaching lab first, because supervision and a technician are in place. Decided by Amish, 2026-09-25: go with recommendation.
 
 ### Safety concerns
 
@@ -106,12 +108,12 @@ Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for 
 
 ### Still awaiting Amish
 
-1. **O1, budget.** The TRL 2 recommendation was to raise `budget_usd` to $250; `budget_usd` is unchanged at $180. The priced BOM is $264, over both. Options: (a) $265, covering the TRL 3 kit; (b) $250 with the fan and grille treated as site ventilation ($206 kit); (c) keep $180 and accept R14 not met. Recommendation: (a), because the fan is part of the safety function.
-2. **O2 to O5.** Oxygen depletion monitoring; set points and inventory rules per country; airflow proving (tachometer only or a differential pressure switch); low-cost or certified gas valve. No recommendations were made.
-3. **New, timed escalation.** The design leak trips the system only on the plume axis; beside it, or for leaks under about 3.8 L/min, the head warns without closing the supply (HGD-CAL-001, E). Options: (a) close the valve when a warning persists for 5 min; (b) lower the trip to 20 % LFL; (c) accept warning-only for small leaks. Recommendation: (a). Not applied.
-4. **New, head placement rule.** Keep the head directly above each likely leak point, within a horizontal distance to be set from the plume width, with a second head where leak points are far apart. Recommendation: adopt with the distance set at TRL 4. Not applied.
-5. **New, R13 scope.** Options: (a) keep 4 h including the wall openings (not met); (b) exclude the fan and grille openings as builder's work (4.1 h, at risk). Recommendation: (b). Not applied.
-6. **New, bump test and trip.** A full-span 1 % vol bump test trips the system. Options: (a) keep, as a proof test of the whole chain, with a key reset after each test; (b) use a lower span gas, for example 0.5 % vol. No recommendation until the cup delivery factor is known.
+1. **O1, budget.** The TRL 2 recommendation was to raise `budget_usd` to $250; `budget_usd` is unchanged at $180. The priced BOM is $264, over both. Options: (a) $265, covering the TRL 3 kit; (b) $250 with the fan and grille treated as site ventilation ($206 kit); (c) keep $180 and accept R14 not met. Recommendation: (a), because the fan is part of the safety function. Decided by Amish, 2026-09-25: go with recommendation ($265).
+2. **O2 to O5.** Oxygen depletion monitoring; set points and inventory rules per country; airflow proving (tachometer only or a differential pressure switch); low-cost or certified gas valve. No recommendations were made. Still proposed, awaiting Amish.
+3. **New, timed escalation.** The design leak trips the system only on the plume axis; beside it, or for leaks under about 3.8 L/min, the head warns without closing the supply (HGD-CAL-001, E). Options: (a) close the valve when a warning persists for 5 min; (b) lower the trip to 20 % LFL; (c) accept warning-only for small leaks. Recommendation: (a). Decided by Amish, 2026-09-25: go with recommendation; applied (see the session below).
+4. **New, head placement rule.** Keep the head directly above each likely leak point, within a horizontal distance to be set from the plume width, with a second head where leak points are far apart. Recommendation: adopt with the distance set at TRL 4. Decided by Amish, 2026-09-25: go with recommendation; rule applied, distance on hold with TRL 4.
+5. **New, R13 scope.** Options: (a) keep 4 h including the wall openings (not met); (b) exclude the fan and grille openings as builder's work (4.1 h, at risk). Recommendation: (b). Decided by Amish, 2026-09-25: go with recommendation; applied.
+6. **New, bump test and trip.** A full-span 1 % vol bump test trips the system. Options: (a) keep, as a proof test of the whole chain, with a key reset after each test; (b) use a lower span gas, for example 0.5 % vol. No recommendation until the cup delivery factor is known. Still proposed, awaiting Amish.
 
 ### Cross-repo notes
 
@@ -137,3 +139,54 @@ Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for 
 ### Recommended next step
 
 Review HGD-DDR-001 and decide O1 and the four new proposals, above all the timed escalation (item 3), which changes how the system responds to small leaks. TRL 4 is on hold by Amish's instruction; nothing further should be built or tested. For reference only, TRL 4 would need: sensor datasheet confirmation and a bench test of t90 and resolution; a fan curve test against the real duct and grille; a measured bump cup delivery factor; a lab-built controller with the hardware trip exercised against every fault in Table 4; a TST report with `environment: lab`; and build log entries.
+
+## Session 2026-09-25: recommendations accepted
+
+On 2026-09-25 Amish wrote: "i accept all your recommendations, go with them across all repos." Every item with a recommendation is now decided by Amish, 2026-09-25: go with recommendation. The record is `docs/decisions/0002-recommendations-accepted.md` (HGD-DDR-002 v0.1); HGD-DDR-001 is revised to v0.2 with D1 to D9 and O1 marked decided.
+
+### Decisions applied and what changed
+
+| Item | Decision | Before | After |
+| --- | --- | --- | --- |
+| Budget (TRL 2 item 1, O1) | $265, covering the TRL 3 kit with fan and grille | `budget_usd` 180; R14 not met, $264 is +47 % | `budget_usd` 265; R14 met on paper, $1 margin |
+| Timed escalation | A warning held 5 min closes the valve and latches (firmware rule) | Off-axis design leak warned but never closed the supply | Valve closed at 5.6 min, 28 L released (9 % of the R9 limit), room about 1.9 % LFL [F7, F8]; R3 restated |
+| Head placement rule | Head directly above each likely leak point; second head where leak points are far apart; offset limit at TRL 4 | Rule proposed only | R1 restated; plume radius 141 mm at the ports as the paper basis [E7]; offset limit on hold with TRL 4 |
+| R13 scope | Fan and grille wall openings are builder's work | Target included openings: 6.0 h, not met | Target excludes them: 4.1 h, at risk (5 min over) |
+| D1 to D9 | As recommended (sensor pair, set points, NC valve, continuous ventilation, inventory rule, key reset and one head, university teaching lab first, hardware trip, 24 V DC) | Adopted for TRL 3, open for review | Decided; wording only |
+| H2Bench to reflect the inventory rule | Adopt | Asked through the review note | Listed below as a cross-repo action |
+
+Files changed: `project.yaml` (budget, evidence list), `README.md` (budget, concept, key components, decisions links, What sparked the idea), HGD-PRB-001 v0.4, HGD-PRC-001 v0.4, HGD-REQ-001 v0.4, HGD-CAL-001 v0.2 (`sizing.py` adds E7, F7 and F8 and reads the new budget; `results.txt` regenerated), HGD-DDR-001 v0.2, new HGD-DDR-002, `bom/bom-notes.md`, HGD-DWG-001 Rev P1 to P2 (two new notes: placement rule and timed escalation), concept blueprint HGD-DWG-010 Rev P2 to P3 (key figures). No part was added or resized, so `bom/bom.csv` ($264.00) and the model geometry are unchanged; `cad/src/model.py` was re-run and STEP and STL re-exported. No pitch or problem rewording was recommended.
+
+All PDFs, drawings and media were regenerated so that no generated file still shows the old personal domain. `README.md` "What sparked the idea" now traces the design to the 1937 New London School explosion and the odorization law that followed, since hydrogen cannot be odorized (OSHA); the earlier text about a portfolio review was removed.
+
+### Requirement status now (HGD-CAL-001 v0.2, Table 5)
+
+0 not met, 3 at risk, 1 not verifiable at TRL 3, 7 met on paper, 4 met by design (before: 2 not met, 2 at risk, 1, 6, 4).
+
+| ID | Status | Key number |
+| --- | --- | --- |
+| R13 Installation | At risk | 4.1 h against 4 h, wall openings excluded |
+| R4 Response | At risk | 35.7 s leak to valve closed with an assumed 30 s t90 |
+| R7 Ventilation | At risk | 347 m3/h boost on an assumed fan curve |
+| R1 Measurement | Not verifiable at TRL 3 | Resolution needs sensor data; placement rule adopted |
+| R2, R5, R8, R10, R11, R12, R14 | Met on paper | R14: $264.00 against $265 |
+| R3, R6, R9, R15 | Met by design | R3 now includes the 5 min escalation |
+
+### Still awaiting Amish (no recommendation was made)
+
+- O2 oxygen depletion monitoring; O3 source of set points and inventory rule per country; O4 airflow proving (tachometer or differential pressure switch); O5 low-cost or certified gas valve.
+- Whether a full-span bump test trips the system or a lower span gas is used (no recommendation until the cup delivery factor is known).
+- A second interlock output (dry contact) for H2Bench's bench supply (interface point, no recommendation).
+
+### Cross-repo actions
+
+- **H2Bench:** reflect the decided R9 inventory rule (1 % of room volume at atmospheric pressure, or a flow restrictor sized to 5 L/min) in its gas system documents. Its 7.9 L tank is already within the rule. H2Bench was not edited.
+
+### Safety
+
+- The timed escalation is a firmware rule and is not independent like the comparator trip; a leak below about 2.7 L/min at the head gives no warning and is not escalated.
+- The other safety concerns of the TRL 3 session stand: false reassurance from a low-cost kit, four dangerous undetected faults, ignition sources, and the need for the inventory rule or a restrictor.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. `trl: 3` and `trl_target: 3` are unchanged. Setting the head offset limit by test, the escalation firmware beyond a sketch, and all build, test and purchasing work are decided where recommended but not started.

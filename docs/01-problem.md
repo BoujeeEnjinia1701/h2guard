@@ -3,7 +3,7 @@ doc_id: HGD-PRB-001
 title: H2Guard problem statement
 project: H2Guard
 doc_type: Problem statement
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: TRL 3 update; open questions resolved by HGD-DDR-001 marked as adopted for TRL 3 pending Amish's review; cost figure from HGD-CAL-001
+- version: "0.4"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002); budget $265; resolved questions marked as decided
 ---
 
 # H2Guard problem statement
@@ -61,7 +65,7 @@ The gap for small users is threefold:
 
 ## Constraints
 
-- Garage-buildable prototype. Concept budget $180 USD (`project.yaml`). The priced BOM comes to $264 (HGD-CAL-001), over this and over the $250 recommended at TRL 2; the budget is proposed, awaiting Amish (HGD-DDR-001, O1).
+- Garage-buildable prototype. Concept budget $265 USD (`project.yaml`), raised from $180 when Amish accepted the recommendation on 2026-09-25 (HGD-DDR-002). The priced BOM comes to $264 (HGD-CAL-001).
 - All self-built wiring is extra-low voltage (24 V DC). Mains is used only inside a certified power supply.
 - Fail-safe by design: loss of power, a sensor fault or a controller fault must leave the hydrogen supply closed.
 - Parts off the shelf where possible, with open firmware and published set points.
@@ -83,7 +87,7 @@ The gap for small users is threefold:
 
 ## Open questions
 
-Resolved for TRL 3 work by HGD-DDR-001 (adopted as recommended under Amish's 2026-09-25 instruction, open for his review):
+Decided by Amish, 2026-09-25: go with recommendation (HGD-DDR-001 and HGD-DDR-002):
 
 - First users: a university teaching lab first (D7).
 - Sensor baseline: catalytic plus metal oxide pair, with the certified sensing element documented as the upgrade (D1).

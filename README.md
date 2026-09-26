@@ -2,7 +2,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** $180 USD · **Difficulty:** 3 of 5
+**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** $265 USD · **Difficulty:** 3 of 5
 
 A hydrogen leak detector and ventilation interlock for small labs, workshops and electrolyzer rooms: it senses hydrogen near the ceiling, runs a fan and cuts the supply when readings rise.
 
@@ -48,7 +48,7 @@ Small-scale accidents show the cost of missing safeguards. In 2016 a hydrogen an
 
 ## What sparked the idea
 
-It came out of a September 2026 review of Design Molecule's applied research areas against the open projects already in the lab. The hydrogen economy is a Design Molecule research area with no open project yet; safety comes before any rig. The trigger in the wider world is the gap between how fast hydrogen is being adopted ([IEA](https://www.iea.org/reports/global-hydrogen-review-2025/executive-summary)) and how often small-scale accidents, such as the University of Hawaii explosion, trace back to missing basics like grounding, detection and supply control ([UH investigation report](http://www.hawaii.edu/news/wp-content/uploads/2016/07/Report-2-University-of-Hawaii.pdf)).
+The idea traces back to the New London School explosion in Texas on March 18, 1937. Gas from a faulty connection on a cheap residue gas line collected unnoticed in a nearly closed space beneath the school and exploded, killing about 298 students and teachers; the most important result was a state law requiring a distinctive malodorant in commercial and industrial gas so that people could smell a leak ([Texas State Historical Association, Handbook of Texas](https://www.tshaonline.org/handbook/entries/new-london-school-explosion)). That fix does not carry over to hydrogen. It is colorless and odorless, and there are no known odorants light enough to travel with it, so by the time an odorant could be smelled the gas may already be above its flammability limit ([OSHA](https://www.osha.gov/green-jobs/hydrogen/fire-explosion)). A room that uses hydrogen therefore needs what the nose cannot give it: an electronic detector at the ceiling, where the gas collects, tied to ventilation and a valve that shuts the supply without waiting for a person to notice. H2Guard is that chain, sized for the classrooms and small labs now taking up hydrogen.
 
 ## Problem
 
@@ -58,9 +58,9 @@ Full problem statement: [docs/01-problem.md](docs/01-problem.md)
 
 ## Concept
 
-A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan or a crashed controller also close the valve, and a hardware comparator trip works without the firmware. The TRL 3 calculations give 35.7 s from a 5 L/min leak to the valve closing (with an assumed 30 s sensor response), and about 5 % LFL in the 30 m3 reference room with the fan running. They also show that the design leak trips the system only if the detector head is on the plume axis above the leak; beside it, the head warns without closing the supply.
+A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan or a crashed controller also close the valve, and a hardware comparator trip works without the firmware. The TRL 3 calculations give 35.7 s from a 5 L/min leak to the valve closing (with an assumed 30 s sensor response), and about 5 % LFL in the 30 m3 reference room with the fan running. They also show that the design leak trips the system at once only if the detector head is on the plume axis above the leak. Two rules accepted by Amish cover the rest: a warning held for 5 min also closes the valve (about 5.6 min for the design leak off the axis), and a head goes directly above each likely leak point.
 
-Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Calculations: [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) · Decisions: [docs/decisions/0001-trl2-review-decisions.md](docs/decisions/0001-trl2-review-decisions.md)
+Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Calculations: [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) · Decisions: [DDR-001](docs/decisions/0001-trl2-review-decisions.md), [DDR-002](docs/decisions/0002-recommendations-accepted.md)
 
 ## Key components
 
@@ -71,7 +71,7 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [d
 - Normally closed 24 V DC solenoid valve on the supply
 - Sounder and beacon
 
-The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Parts come to $264 (indicative prices), over the $180 budget and over the $250 recommended at TRL 2, which awaits Amish; see the [review note](docs/REVIEW.md). The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
+The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Parts come to $264 (indicative prices), within the $265 budget that Amish set on 2026-09-25 when he accepted the review recommendations; see the [review note](docs/REVIEW.md). The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
 
 ## Safety
 
@@ -100,4 +100,4 @@ Controlled documents follow the portfolio [documentation standard](.kit/STANDARD
 - **Hardware** (CAD, drawings, BOM, electronics): [CERN-OHL-S v2](LICENSE)
 - **Software** (firmware, scripts, notebooks): [MIT](LICENSE-SOFTWARE)
 
-A project of the [Design Molecule](https://designmolecule.com) lab. Gap-filling areas set.
+A project of the [Design Molecule](https://designmolecule.com) lab.
