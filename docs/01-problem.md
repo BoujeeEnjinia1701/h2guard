@@ -3,9 +3,9 @@ doc_id: HGD-PRB-001
 title: H2Guard problem statement
 project: H2Guard
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-09-26'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); budget $265; resolved questions marked as decided
+- version: "0.5"
+  date: '2026-09-26'
+  author: Amish Chadha
+  change: Stronger sources
 ---
 
 # H2Guard problem statement
@@ -37,7 +41,7 @@ Hydrogen behaves differently from the gases most small labs are used to. It is f
 
 Hydrogen use is spreading to smaller and less specialized users. Installed water electrolysis capacity reached about 2 GW in 2024 ([IEA, Global Hydrogen Review 2025](https://www.iea.org/reports/global-hydrogen-review-2025/executive-summary)), national programs are funding skills training (for example India's National Green Hydrogen Mission, [PIB, 2023](https://www.pib.gov.in/PressReleasePage.aspx?PRID=1888547)), and teaching benches such as the lab's own H2Bench put electrolyzers and fuel cells in ordinary classrooms.
 
-Laboratory accidents show what happens when detection, grounding and supply control are missing. In March 2016 a hydrogen and oxygen gas mixture in an ungrounded 49 L tank exploded in a University of Hawaii lab; a postdoctoral researcher lost an arm, and the state regulator fined the university $115,500 for 15 violations ([C&EN, 2016](https://cen.acs.org/articles/94/web/2016/09/University-Hawaii-fined-115500-lab.html)). In May 2019 a hydrogen tank used by a fuel cell company at a technopark in Gangneung, South Korea, exploded, killing two people and injuring six ([Korea Herald, 2019](https://www.koreaherald.com/article/2006624)). An analysis of 576 statistically relevant events in the European hydrogen incident database found organizational and human factors in a large share of them ([Wen et al., 2022](https://www.sciencedirect.com/science/article/pii/S0360319922012976)), which argues for automatic safeguards that do not depend on a person noticing.
+Laboratory accidents show what happens when detection, grounding and supply control are missing. In March 2016 a hydrogen and oxygen gas mixture in an ungrounded 49 L tank exploded in a University of Hawaii lab; a postdoctoral researcher lost an arm, and the state regulator cited the university for 15 violations with $115,500 in fines ([C&EN, 2016](https://cen.acs.org/articles/94/web/2016/09/University-Hawaii-fined-115500-lab.html)), later settled at nine violations and $69,300 ([Honolulu Star-Advertiser, 2016](https://www.staradvertiser.com/2016/10/07/breaking-news/state-agrees-to-reduced-violations-fines-in-uh-lab-explosion/)). In May 2019 a hydrogen tank used by a fuel cell company at a technopark in Gangneung, South Korea, exploded, killing two people and injuring six ([Korea Herald, 2019](https://www.koreaherald.com/article/2006624)). An analysis of 576 statistically relevant events in the European hydrogen incident database found organizational and human factors in a large share of them ([Wen et al., 2022](https://www.sciencedirect.com/science/article/pii/S0360319922012976)), which argues for automatic safeguards that do not depend on a person noticing.
 
 The gap for small users is threefold:
 

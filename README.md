@@ -20,7 +20,7 @@ It is open and garage-buildable because the people now starting to use hydrogen,
 
 Hydrogen is moving into classrooms, startups and small labs faster than safe practice is reaching them. Installed water electrolysis capacity reached about 2 GW in 2024, with more than 1 GW added in the first seven months of 2025 ([IEA, Global Hydrogen Review 2025](https://www.iea.org/reports/global-hydrogen-review-2025/executive-summary)). The gas is flammable in air from about 4 % to 74 % by volume, ignites with about 0.02 mJ, and collects under ceilings in poorly ventilated rooms ([US DOE](https://www1.eere.energy.gov/hydrogenandfuelcells/pdfs/h2_safety_fsheet.pdf)).
 
-Small-scale accidents show the cost of missing safeguards. In 2016 a hydrogen and oxygen mixture exploded in a University of Hawaii lab, costing a researcher an arm and the university a $115,500 fine for 15 violations ([C&EN](https://cen.acs.org/articles/94/web/2016/09/University-Hawaii-fined-115500-lab.html)). In 2019 a hydrogen tank used by a fuel cell company at a technopark in Gangneung, South Korea, exploded, killing two people and injuring six ([Korea Herald](https://www.koreaherald.com/article/2006624)). An analysis of the European HIAD 2.0 incident database found organizational factors in about half of the relevant events ([Wen et al., 2022](https://www.sciencedirect.com/science/article/pii/S0360319922012976)), which is the case for safeguards that act automatically.
+Small-scale accidents show the cost of missing safeguards. In 2016 a hydrogen and oxygen mixture exploded in a University of Hawaii lab, costing a researcher an arm; the state safety regulator cited the university for 15 violations with $115,500 in fines ([C&EN, 2016](https://cen.acs.org/articles/94/web/2016/09/University-Hawaii-fined-115500-lab.html)), later settled at nine violations and $69,300 ([Honolulu Star-Advertiser, 2016](https://www.staradvertiser.com/2016/10/07/breaking-news/state-agrees-to-reduced-violations-fines-in-uh-lab-explosion/)). In 2019 a hydrogen tank used by a fuel cell company at a technopark in Gangneung, South Korea, exploded, killing two people and injuring six ([Korea Herald](https://www.koreaherald.com/article/2006624)). An analysis of the European HIAD 2.0 incident database found organizational factors in about half of the relevant events ([Wen et al., 2022](https://www.sciencedirect.com/science/article/pii/S0360319922012976)), which is the case for safeguards that act automatically.
 
 ## Where it could be used
 
@@ -39,12 +39,12 @@ Small-scale accidents show the cost of missing safeguards. In 2016 a hydrogen an
 
 | Country or region | Why it matters there |
 | --- | --- |
-| United States | The 2016 University of Hawaii explosion led to 15 violations and a $115,500 fine ([C&EN](https://cen.acs.org/articles/94/web/2016/09/University-Hawaii-fined-115500-lab.html)); many teaching labs handle small gas quantities without fixed detection |
+| United States | After the 2016 University of Hawaii lab explosion, the state safety regulator cited the university for 15 violations with $115,500 in fines ([C&EN, 2016](https://cen.acs.org/articles/94/web/2016/09/University-Hawaii-fined-115500-lab.html)), settled later that year at nine violations and $69,300 ([Honolulu Star-Advertiser, 2016](https://www.staradvertiser.com/2016/10/07/breaking-news/state-agrees-to-reduced-violations-fines-in-uh-lab-explosion/)) |
 | South Korea | A hydrogen tank explosion at a Gangneung technopark in 2019 killed two visitors from venture businesses and research groups ([Korea Herald](https://www.koreaherald.com/article/2006624)) |
 | European Union | The EU hydrogen strategy aims for at least 40 GW of renewable hydrogen electrolyzers by 2030 ([European Commission, COM(2020) 301](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52020DC0301)), which needs many trained technicians |
 | China | Holds 65 % of the world's installed and committed electrolyzer capacity ([IEA](https://www.iea.org/reports/global-hydrogen-review-2025/executive-summary)), with a large and growing training need |
 | India | The National Green Hydrogen Mission targets at least 5 Mt per year of green hydrogen by 2030 and includes a skills program ([PIB, 2023](https://www.pib.gov.in/PressReleasePage.aspx?PRID=1888547)); colleges and startups need low-cost lab safety |
-| Namibia and southern Africa | Namibia runs a national green hydrogen program ([Namibia Green Hydrogen Programme](https://gh2namibia.com/)); local colleges training for it may lack budgets for industrial detection |
+| Namibia | The government runs a national green hydrogen program ([Namibia Green Hydrogen Programme](https://gh2namibia.com/)); the vice-chancellor of the Namibia University of Science and Technology has warned of a talent gap of up to 130,000 workers by 2040 ([The Namibian, 2025](https://www.namibian.com.na/namibia-risks-130-000-worker-shortage-in-green-hydrogen-sector/)), and the university's IGNITE GH2 project is retraining 685 unemployed graduates and 40 instructors ([NUST, 2026](https://www.nust.na/igniting-namibias-green-hydrogen-dream-science-building-national-tvet-workforce-green-hydrogen)) |
 
 ## What sparked the idea
 
@@ -94,6 +94,12 @@ The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Parts come to $26
 ## Documentation
 
 Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (HGD-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `HGD-PRC-001/v1.0`.
+
+## Credits
+
+Designed by Amish Chadha. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for roles. To cite this design, use [CITATION.cff](CITATION.cff) (GitHub shows it as "Cite this repository").
+
+AI assistance (Claude) was used to accelerate concept renders, prototype documentation and first-pass sizing calculations. Design direction and all decisions are Amish Chadha's, recorded in this repository's decision records (`docs/decisions/`).
 
 ## Licenses
 

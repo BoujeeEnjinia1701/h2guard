@@ -190,3 +190,12 @@ All PDFs, drawings and media were regenerated so that no generated file still sh
 ### TRL 4
 
 TRL 4 remains on hold by Amish's instruction. `trl: 3` and `trl_target: 3` are unchanged. Setting the head offset limit by test, the escalation firmware beyond a sketch, and all build, test and purchasing work are decided where recommended but not started.
+
+## Session 2026-09-26: sources strengthened
+
+Every README link in the four rationale sections was re-fetched with WebFetch and checked against its claim.
+
+- **Namibia row:** the link to the Namibia Green Hydrogen Programme site loads and confirms a government program, but the row's second clause (local colleges may lack budgets for industrial detection) had no source. It was replaced with the NUST vice-chancellor's warning of a talent gap of up to 130,000 workers by 2040 (*The Namibian*, 21 September 2025) and NUST's own IGNITE GH2 page (685 graduates and 40 instructors). The row label is now "Namibia."
+- **University of Hawaii fine (Burning platform, United States row and HGD-PRB-001):** C&EN alone replaced by C&EN plus the *Honolulu Star-Advertiser* (7 October 2016), which also reports that the 15 violations and $115,500 were later settled at nine violations and $69,300. The uncited clause "many teaching labs handle small gas quantities without fixed detection" was removed from the United States row. HGD-PRB-001 moved to v0.5.
+- Confirmed unchanged: IEA Global Hydrogen Review 2025, US DOE hydrogen safety fact sheet, Korea Herald (Gangneung, 2019), Wen et al. (2022), OSHA 1910.178(g)(2), EU hydrogen strategy COM(2020) 301 (40 GW by 2030), PIB (National Green Hydrogen Mission), Texas State Historical Association (New London, 1937) and OSHA hydrogen fire and explosion page.
+- No budget change.
