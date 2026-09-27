@@ -199,3 +199,31 @@ Every README link in the four rationale sections was re-fetched with WebFetch an
 - **University of Hawaii fine (Burning platform, United States row and HGD-PRB-001):** C&EN alone replaced by C&EN plus the *Honolulu Star-Advertiser* (7 October 2016), which also reports that the 15 violations and $115,500 were later settled at nine violations and $69,300. The uncited clause "many teaching labs handle small gas quantities without fixed detection" was removed from the United States row. HGD-PRB-001 moved to v0.5.
 - Confirmed unchanged: IEA Global Hydrogen Review 2025, US DOE hydrogen safety fact sheet, Korea Herald (Gangneung, 2019), Wen et al. (2022), OSHA 1910.178(g)(2), EU hydrogen strategy COM(2020) 301 (40 GW by 2030), PIB (National Green Hydrogen Mission), Texas State Historical Association (New London, 1937) and OSHA hydrogen fire and explosion page.
 - No budget change.
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose this repo for the first batch of product renders on 2026-09-26.
+
+### What was added
+
+`cad/src/product_model.py` exposes `product_parts()` (53 parts: 28 shell, 14 internal, 5 accessory, 6 context), `TITLE` and `RENDER_VIEWS` (hero, exploded and a detail view of the head and controller without context). It reuses PARAMS and derived() from `cad/src/model.py`; every part size, the head-to-ceiling gap, the offsets from the wall and the controller position are as model.py. It adds:
+
+- Detector head: filleted housing with a parting line, wall plate and screws, cable gland, teal accent band and a printed label, the catalytic and MOS sensor cans on their carrier board, the sintered arrestor discs, and the filleted drip skirt and bump test cup with its nozzle.
+- Controller: filleted IP65 box with side ribs, a lid frame with a clear polycarbonate window over the board, four lid screws, a teal name plate, cable glands, an OLED display with a lit readout, the key-switch reset, a teal test button and three status lights with the green one lit.
+- Controller board: PCB, microcontroller module with its shield can, the series trip relay and the fan interlock relay and valve driver (in the model.py envelopes, with labels), terminal strip and screws.
+- Bump test port with bracket and teal dust cap; the 4 mm tube.
+- Normally closed solenoid valve: brass body with hex port fittings, coil with a label, and the coil connector.
+- Context (not in the BOM): two wall panels, a ceiling section over the head, surface conduit, the hydrogen supply pipe and its stand-off clips.
+
+`README.md` now shows `media/render-hero.png` and links `media/render-exploded.png`; the orchestrator produces both files.
+
+### Differences from model.py (Proposed, awaiting Amish)
+
+1. **Render layout of the head and valve.** In the reference room the head is 1.6 m and the valve 2.35 m from the controller along the wall, and the head ports are about 1.15 m above the controller top. At that spacing each device is too small in a product render. The appearance model therefore shows the head, with its own ceiling section, on a separate wall panel beside the controller panel, drawn 820 mm lower than installed, and the valve on the head panel below it. The head keeps its 85 mm gap to its ceiling and all sizes are unchanged. Proposed, awaiting Amish. Recommendation: keep this as a render-only layout, with the hero caption saying the panels are not at installed heights (the view note does); the installed heights stay as in model.py and HGD-DWG-001 (ports 175 mm below the ceiling, controller top at least 1 m below it). Option: render the true room layout instead, accepting small devices.
+2. **Clear window in the controller lid.** BOM line 5 specifies an IP65 polycarbonate wall box without saying whether the lid is clear. The appearance model uses a lid frame with a clear polycarbonate window so the board and relays show, which suits a teaching prototype. Proposed, awaiting Amish. Recommendation: adopt a clear-lid IP65 box (common and similar in price) and add "clear lid" to BOM line 5 at the next BOM revision; it was not edited now.
+3. **Omitted parts.** The exhaust fan, make-up air grille, sounder and beacon and power supply (BOM lines 8, 9, 10, 12) are not in the appearance model, to keep the render compact; they remain in model.py and the concept media. Proposed, awaiting Amish. Recommendation: accept for the product renders.
+4. **Fixings and label detail.** Screws, glands, labels and the conduit are appearance detail, with BOM lines 13 and 14 for cable and hardware; no new BOM lines are implied.
+
+### Status
+
+This is an appearance model only: no tolerances, no fabrication detail, nothing past TRL 3. `trl: 3` and `trl_target: 3` are unchanged, and TRL 4 remains on hold. model.py, the BOM and the other documents were not edited.
