@@ -3,9 +3,9 @@ doc_id: HGD-PRC-001
 title: H2Guard design precis
 project: H2Guard
 doc_type: Design precis
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); timed escalation firmware rule, head placement rule, budget $265, R13 scope; drawing HGD-DWG-001 to Rev P2
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Design made constructable (HGD-DDR-003) with a build plan (HGD-BLD-001); cost against the value-engineering target; drawing HGD-DWG-001 to Rev P4
 ---
 
 # H2Guard design precis
 
-H2Guard protects one small room where hydrogen is used. A detector head at the ceiling carries a catalytic sensor that reads 0 to 100 % of the lower flammability limit (LFL) and a metal oxide sensor for early warning. A wall controller at chest height keeps a 150 mm exhaust fan running at high level, holds a normally closed solenoid valve on the hydrogen supply open only while all is well, and drives a sounder and beacon. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve and latches the alarm. Loss of power, a sensor fault, a stopped fan or a crashed controller all close the valve, and a hardware comparator opens a relay in series with the valve without the firmware. The TRL 3 calculations (HGD-CAL-001) give 35.7 s from a leak to the valve closing with an assumed 30 s sensor t90, about 5 % LFL in the 30 m3 room for the 5 L/min design leak with the fan running, and a parts cost of $264 against the $265 budget. A warning held for 5 min also closes the supply, so a leak that the head sees off the plume axis is stopped within about 6 min. H2Guard is a research and teaching prototype, not a certified gas detection system.
+H2Guard protects one small room where hydrogen is used. A detector head at the ceiling carries a catalytic sensor that reads 0 to 100 % of the lower flammability limit (LFL) and a metal oxide sensor for early warning. A wall controller at chest height keeps a 150 mm exhaust fan running at high level, holds a normally closed solenoid valve on the hydrogen supply open only while all is well, and drives a sounder and beacon. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve and latches the alarm. Loss of power, a sensor fault, a stopped fan or a crashed controller all close the valve, and a hardware comparator opens a relay in series with the valve without the firmware. The TRL 3 calculations (HGD-CAL-001) give 35.7 s from a leak to the valve closing with an assumed 30 s sensor t90, about 5 % LFL in the 30 m3 room for the 5 L/min design leak with the fan running, and an estimated cost of USD 289 for the constructable design against a USD 265 value-engineering target (USD 24 over). A warning held for 5 min also closes the supply, so a leak that the head sees off the plume axis is stopped within about 6 min. H2Guard is a research and teaching prototype, not a certified gas detection system.
 
 ![Hero render](../media/hero.png)
 
@@ -79,7 +83,7 @@ Table 1. Main components. Numbers match `bom/bom.csv`, Figure 3 and drawing HGD-
 
 *Figure 4. Sections through the controller (left) and the detector head (right), each cut on a vertical plane and seen from the side. The head section passes through the catalytic sensor, its arrestor disc and the bump test cup. The head is drawn beside the controller for this view.*
 
-The general arrangement drawing [HGD-DWG-001](../cad/drawings/HGD-DWG-001.pdf) (Rev P2) gives the mounting heights and main dimensions from the parametric model `cad/src/model.py`. The blueprint concept sheet ([PDF](../media/concept-blueprint.pdf)) and the [interactive 3D model](../media/viewer.html) show the parts in place.
+The general arrangement drawing [HGD-DWG-001](../cad/drawings/HGD-DWG-001.pdf) (Rev P4) gives the mounting heights and main dimensions from the parametric model `cad/src/model.py`. The blueprint concept sheet ([PDF](../media/concept-blueprint.pdf)) and the [interactive 3D model](../media/viewer.html) show the parts in place. The design is constructable: every part can be made or bought and has a fixing (HGD-DDR-003), and the [prototype build plan](05-build-plan.md) (HGD-BLD-001) shows how each is made and fitted. The changes for construction are the openings in the bump test cup, 22 mm ports with the arrestor discs bonded on a ledge, standoffs that hold the sensor board and cup, a mounting plate and drilled lid in the controller, a bracket for the test port, a 200 mm wall sleeve and fan plate for the fan, and a bracket for the valve.
 
 ## Key numbers
 
@@ -100,7 +104,7 @@ Table 2. Key numbers for the 30 m3 reference room and the 5 L/min design leak.
 | Power | 13.1 W normal, 48.3 W warning, 40.3 W trip |
 | Bump test | About 67 s; 1.36 L of span gas per test |
 | Timed escalation, off-axis design leak | Valve closed at 5.6 min, 28 L released, room about 1.9 % LFL |
-| Parts cost | $264.00 against the $265 budget (without fan and grille $206) |
+| Estimated cost | USD 289.00 for the constructable design; value-engineering target USD 265, USD 24 over (without fan and grille USD 226) |
 
 Two findings matter for the design. First, the design leak trips the system only if the head is on the plume axis; beside it, the head sees about 15 % LFL and warns without closing the supply, although the room stays at about 5 % LFL. Second, a fan rated at the boost flow in free air cannot deliver it through a real duct, so the fan is re-specified. Amish accepted two remedies for the first on 2026-09-25 (HGD-DDR-002): the timed escalation and the head placement rule, both now in the design.
 

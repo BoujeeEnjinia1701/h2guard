@@ -20,9 +20,11 @@ from concept import Part, render_all, human_figure, _render  # noqa: E402
 from model import PARAMS as P, build_parts, context, bump_kit, derived  # noqa: E402
 
 D = derived(P)
-S = build_parts(P)
+from model import build_components  # noqa: E402
+CC = build_components(P)
+S = build_parts(P, comps=CC)
 C = context(P)
-port, run = bump_kit(P)
+port, run = bump_kit(P, comps=CC)
 
 TEAL = "#0F766E"
 spec = [("head", "Detector head enclosure", "#F59E0B", 1),
@@ -44,7 +46,7 @@ parts.append(Part("Bump test port (tube shown grey)", port, "#7C3AED", 15))
 targets = {
     1: (150, -40, 1150), 2: (80, -40, 1030), 3: (220, -40, 1030), 4: (150, -40, 920),
     12: (150, -120, 700), 8: (150, -150, 470), 11: (150, -120, 250),
-    5: (650, -47, 900), 6: (650, -260, 900), 7: (650, -470, 900), 15: (380, -700, 760),
+    5: (650, -47, 900), 6: (650, -260, 900), 7: (650, -470, 900), 15: (380, -700, 1150),
     9: (700, -40, 470), 10: (700, -40, 150),
 }
 for p in parts:
@@ -78,11 +80,11 @@ KEY_FIGURES = ["Warn at 10 % LFL (0.4 % vol H2); trip at 25 % LFL (1.0 % vol)",
                "Fail-safe: NC valve, series hardware trip relay, 1 s watchdog",
                "24 V DC build; mains only inside a certified supply",
                "Warning held 5 min also closes the valve (DDR-002)",
-               "Parts $264 (indicative); budget $265"]
+               "Estimated cost USD 289; value-engineering target USD 265"]
 
 render_all(
     parts, project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010",
-    key_figures=KEY_FIGURES, date="2026-09-25", cut=False, scale_figure=False, context=ctx, flow=flow,
+    key_figures=KEY_FIGURES, date="2026-10-01", cut=False, scale_figure=False, context=ctx, flow=flow,
 )
 
 # Hero again with a clearer note (the kit lists every context part name, which is long here)
@@ -96,11 +98,12 @@ room_ctx = [c for c in ctx if not c.name.startswith("Person")]
 md = ROOT / "media"
 views = project_views(Compound(children=[p.shape for p in parts + room_ctx]), md / "_views")
 views["iso"] = project_views(Compound(children=[p.shape for p in parts + ctx]), md / "_views_fig")["iso"]
-sheet = Sheet(project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010", rev="P3",
-              author="Amish Chadha", date="2026-09-25", theme="blueprint",
+sheet = Sheet(project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010", rev="P4",
+              author="Amish Chadha", date="2026-10-01", theme="blueprint",
               material="Built from cad/src/model.py; room, bench and gas store are context. GA is HGD-DWG-001",
               revisions=[("P1", "Concept sheet", "2026-09-25", "AC"), ("P2", "From the TRL 3 parametric model", "2026-09-25", "AC"),
-                         ("P3", "Key figures after DDR-002", "2026-09-25", "AC")])
+                         ("P3", "Key figures after DDR-002", "2026-09-25", "AC"),
+                         ("P4", "Constructable design (DDR-003)", "2026-10-01", "AC")])
 sheet.add_ortho(views)
 sheet.add_svg(views["iso"], 276, 32, 140, 118, label="Isometric view",
               sublabel="Not to scale; figure is a 1.75 m person")

@@ -3,9 +3,9 @@ doc_id: HGD-PRB-001
 title: H2Guard problem statement
 project: H2Guard
 doc_type: Problem statement
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-09-26'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-09-26'
   author: Amish Chadha
   change: Stronger sources
+- version: "0.6"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Cost constraint restated against the value-engineering target after the design for construction (HGD-DDR-003)
 ---
 
 # H2Guard problem statement
@@ -69,7 +73,7 @@ The gap for small users is threefold:
 
 ## Constraints
 
-- Garage-buildable prototype. Concept budget $265 USD (`project.yaml`), raised from $180 when Amish accepted the recommendation on 2026-09-25 (HGD-DDR-002). The priced BOM comes to $264 (HGD-CAL-001).
+- Garage-buildable prototype. Value-engineering target USD 265 (`project.yaml`, a hypothetical control target, not a limit), raised from USD 180 when Amish accepted the recommendation on 2026-09-25 (HGD-DDR-002). Estimated cost of the constructable design: USD 289, USD 24 over the target (HGD-CAL-001 v0.3).
 - All self-built wiring is extra-low voltage (24 V DC). Mains is used only inside a certified power supply.
 - Fail-safe by design: loss of power, a sensor fault or a controller fault must leave the hydrogen supply closed.
 - Parts off the shelf where possible, with open firmware and published set points.

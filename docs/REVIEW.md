@@ -233,3 +233,52 @@ This is an appearance model only: no tolerances, no fabrication detail, nothing 
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-10-01: design for construction and prototype build plan (kit 1.7.0)
+
+Kit 1.7.0 installed (`.kit/`, `.claude/commands/`, `CLAUDE.md`). On 2026-09-30 Amish asked for an illustrated build plan in every repo and wrote: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." The changes below were made under that instruction to make the design physically buildable; they are recorded in HGD-DDR-003 (status Draft) and are open for his review. None changes what H2Guard does, its pitch or its safety case.
+
+### Design changes made for construction
+
+`cad/src/model.py` now builds every part a maker handles, with its fixings, and runs 127 constructability checks (`python cad/src/model.py --check`, all pass).
+
+1. Bump test cup: its solid top covered both sensor ports; two 22 mm openings added over the ports.
+2. Arrestor discs: 25 mm discs in 26 mm ports would fall through; ports now 22 mm, discs rest on the ledge and are bonded with two-part epoxy (no silicone).
+3. Detector head: the fused wall plate cut into the box and nothing held it; the plate is gone and two M4 screws through the back hold the stock box, lid facing the room.
+4. Sensor board and cup: no fixing; four 22 mm M3 standoffs, screwed from below through the cup and from above through the board.
+5. Cup nozzle: a solid stub; now an M5 push-in fitting for the 4 mm tube in a printed boss.
+6. Controller board: floating, with modules cutting into it; now a 2 mm aluminium mounting plate on the box's four bosses with modules on 6 mm nylon standoffs.
+7. Front panel: floating in front of an open box; now the box's own lid, cut for the display, key switch, button and lights.
+8. Controller: five M16 cable glands and four corner wall screws added.
+9. Bump test port: overlapped a solid block; now a 30 x 30 x 3 mm aluminium angle bracket with the port pointing down, and seven tube clips.
+10. Exhaust fan: a 170 mm fan drawn as a 146 mm motor floating in a 150 mm sleeve; now a 200 mm sleeve with the fan held by a 3 mm aluminium fan plate on the inside wall, the grille screwed to the plate, shutter on the outlet spigot and a hood with fixing tabs. The air path is still 150 mm, so the fan delivery is unchanged.
+11. Solenoid valve: hung in mid-air with the supply pipe through its body; now on a bent 40 x 5 mm flat-bar bracket with two M5 screws.
+
+Knock-on: BOM lines 1, 2, 4, 5, 6, 7, 9, 11, 14 and 15 re-specified and line 16 (made brackets and plates) added. Re-run calculations (HGD-CAL-001 v0.3): bump test tube 2.72 m, reading still settles in about 67 s [J1]; installation 4.2 h, 15 min over R13 (still at risk) [M1]; estimated cost USD 289.00 against the USD 265 value-engineering target, USD 24 over [N1]. HGD-REQ-001 v0.5, HGD-PRC-001 v0.5, HGD-PRB-001 v0.6 and `bom/bom-notes.md` updated.
+
+### What was added or regenerated
+
+- `docs/05-build-plan.md` (HGD-BLD-001 v0.1) with `cad/src/build_plan_media.py`: overview, nine making sketches (`cad/drawings/HGD-DWG-101` to `109`), seven joint close-ups, fifteen assembly step pictures and a block-level wiring diagram in `docs/05-build-plan/`.
+- `docs/06-design-decisions.md` (HGD-DEC-001 v0.1): 12 open decisions, 7 items to confirm when parts are bought, a value engineering section, and the decisions made.
+- `docs/decisions/0003-design-for-construction.md` (HGD-DDR-003 v0.1, Draft).
+- `cad/drawings/HGD-DWG-001` Rev P4; concept blueprint HGD-DWG-010 Rev P4; `media/hero.png`, `exploded.png`, `cutaway.png`, `flow.png`, `model.glb`, `viewer.html`; STEP and STL in `cad/step/` and `cad/stl/`.
+- `project.yaml`: `design_state: constructable`, the three new documents in `trl_evidence`; `budget_usd` unchanged. `README.md`: links line, cost wording and a "Building the prototype" section.
+
+### Proposed, awaiting Amish
+
+- Accept the changes above (HGD-DDR-003, Table 1). Recommendation: accept.
+- A1: the head stays on the back wall, 110 mm from the apparatus's back edge and 260 mm from its centre, against a plume radius of about 141 mm; the offset limit is a TRL 4 test. Recommendation: keep the wall mounting.
+- A2: the fan motor now sits inside the wall sleeve in the exhaust stream. Recommendation: accept.
+- All other open items are listed in the design decisions register.
+
+### Stale media
+
+The photoreal renders (`media/render-*.png`, made on Amish's Mac and not in this copy), `media/card.png` and `media/social-preview.png` show the concept head, controller and valve without the new brackets, fan plate and larger sleeve, and should be regenerated on the Mac. `cad/src/product_model.py` reads the new 22 mm port size from `model.py` but does not yet model the new brackets and plates.
+
+### Safety
+
+No new hazard is introduced. The build plan adds safety stops before power, before gas reaches the valve, before the first bump test and before hydrogen is used, and keeps silicone and solvents away from the sensors. The earlier concerns stand: false reassurance from a low-cost kit, undetected blocked ducts and leaking valve seats, ignition sources, and the need for the inventory rule or a restrictor.
+
+### Recommended next step
+
+Amish reviews HGD-DDR-003 and the register. TRL 4 (building and testing to the plan) remains on hold.

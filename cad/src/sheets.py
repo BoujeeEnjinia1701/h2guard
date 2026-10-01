@@ -1,4 +1,4 @@
-"""H2Guard general arrangement sheet HGD-DWG-001, Rev P3 (TRL 3).
+"""H2Guard general arrangement sheet HGD-DWG-001, Rev P4 (TRL 3, constructable design).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/HGD-DWG-001.svg, .pdf and .png from the parametric model in
@@ -15,6 +15,7 @@ from drawing import Sheet, _viewbox, _t, M, TB_Y, INK, MUTED  # noqa: E402
 from model import PARAMS as P, build_parts, context, derived  # noqa: E402
 
 DATE = "2026-09-25"
+DATE4 = "2026-10-01"
 
 
 def safe_project_views(part, workdir, line_weight=0.35, names=("front", "top", "right", "iso")):
@@ -99,12 +100,13 @@ def main():
     head = Compound(children=[S[k] for k in ("head", "cat", "mos", "arrest")])
     hv = safe_project_views(head, work / "head", names=("iso",))
     bb = asm.bounding_box()
-    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P3",
-              author="Amish Chadha", date=DATE, scale=None, theme="technical",
+    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P4",
+              author="Amish Chadha", date=DATE4, scale=None, theme="technical",
               material="Bought-in parts per bom/bom.csv; room, bench and gas store are context. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
                          ("P2", "Notes: head placement rule, timed escalation (DDR-002)", DATE, "AC"),
-                         ("P3", "Layout and labels tidied", DATE, "AC")])
+                         ("P3", "Layout and labels tidied", DATE, "AC"),
+                         ("P4", "Design for construction (DDR-003): brackets, plates, sleeve", DATE4, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -156,9 +158,9 @@ def main():
         f"Arrestor discs {P['disc'][0]:.0f} x {P['disc'][1]:.0f}; sensor {D['sensor_gap']:.1f} behind disc",
         f"Bump cup {P['cup'][0]:.0f} x {P['cup'][1]:.0f} x {P['cup'][2]:.0f} ({D['cup_ml']:.0f} mL); tube 4 OD, {D['tube_run']:,.0f} run",
         f"Controller {P['ctrl'][0]:.0f} x {P['ctrl'][2]:.0f} x {P['ctrl'][1]:.0f}; top {D['ctrl_below_ceiling']:,.0f} below ceiling",
-        f"Fan 150 duct, sleeve {D['sleeve_len']:.0f}; grille top {D['fan_below_ceiling']:.0f} below ceiling",
+        f"Fan 150 spigots, body in a {P['sleeve'][0]:.0f} wall sleeve; grille top {D['fan_below_ceiling']:.0f} below ceiling",
         f"Make-up grille {P['inlet'][0]:.0f} x {P['inlet'][1]:.0f} on far wall, center {P['inlet_z']:.0f}",
-        "Valve 1/4 in NC after regulator; gas fitting by a competent person",
+        "Valve 1/4 in NC on a wall bracket; gas fitting by a competent person",
         "Head directly above each likely leak point; offset limit set at TRL 4",
         "Warning held 5 min closes valve and latches (firmware, DDR-002)",
         "Third-angle; front view from -Y (room side); HGD-CAL-001",

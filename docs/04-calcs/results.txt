@@ -37,7 +37,7 @@
 [H1] Warning (valve open, fan boost, sounder): 48.3 W
 [H1] Trip (valve closed, fan boost, alarm): 40.3 W
 [H2] Peak 48.3 W against the 60 W supply: margin x1.24; valve coil heat 8 W continuous; energy in normal state 0.31 kWh/day
-[J1] Bump test at 1.0 L/min: tube 2.69 m, 13.2 mL, delay 0.8 s; cup 114 mL, five volumes in 34 s; reading settles after about 67 s (R12 limit 120 s)
+[J1] Bump test at 1.0 L/min: tube 2.72 m, 13.3 mL, delay 0.8 s; cup 114 mL, five volumes in 34 s; reading settles after about 67 s (R12 limit 120 s)
 [J2] Span gas 1.36 L per test (with 15 s margin); a 34 L disposable cylinder gives about 25 tests
 [J3] Log: one 16 B record per minute for 90 days = 2.07 MB, plus events; needs a board with 4 MB flash or more
 [K1] Sounder 90 dB at 1 m: 90 dB at 1 m (free field)
@@ -46,6 +46,6 @@
 [K2] Farthest point in the room 5.0 m: 76 dB, 16 dB above a 60 dB lab background
 [L1] Sensor ports 175 mm below the ceiling (R1: 300 mm or less); fan grille top 80 mm below the ceiling
 [L2] Controller top 1025 mm below the ceiling (R15: 1000 mm or more); beacon top 450 mm; supply on the floor
-[M1] Installation estimate 360 min (6.0 h) with both wall openings; 245 min (4.1 h) with the openings made by others as builder's work, as R13 now scopes it (HGD-DDR-002; limit 240 min, +5 min)
-[N1] BOM 15 lines, total $264.00; budget_usd $265 (HGD-DDR-002): -1.00 (-0.4 %); within budget
-[N2] Without the fan and make-up grille ($58.00): $206.00
+[M1] Installation estimate 370 min (6.2 h) with both wall openings; 255 min (4.2 h) with the openings made by others as builder's work, as R13 now scopes it (HGD-DDR-002; limit 240 min, +15 min)
+[N1] BOM 16 lines, estimated cost of the constructable design $289.00; value-engineering target $265 (budget_usd, a hypothetical control target): $24.00 over the target (+9.1 %)
+[N2] Without the fan and make-up grille ($63.00): $226.00

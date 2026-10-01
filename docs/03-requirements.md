@@ -3,9 +3,9 @@ doc_id: HGD-REQ-001
 title: H2Guard requirements
 project: H2Guard
 doc_type: Requirements
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); R1 placement rule, R3 timed escalation, R13 scope and R14 budget restated; status from HGD-CAL-001 v0.2
+- version: "0.5"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Design for construction (HGD-DDR-003); R13 and R14 status from HGD-CAL-001 v0.3; R14 reported against the value-engineering target
 ---
 
 # H2Guard requirements
 
-These are first-pass requirements for the concept. Targets are proposals for review, not user-validated needs, and will be revised after sessions with the first users. At TRL 3 each requirement is checked by calculation in HGD-CAL-001 v0.2 against the design in HGD-PRC-001 v0.4 and the model in `cad/src/model.py`. No requirement is now **not met**. Three are at risk: R4 (assumed sensor t90), R7 (assumed fan curve) and R13 (installation, 4.1 h against 4 h). R1 cannot be verified without sensor data. On 2026-09-25 Amish accepted the review recommendations (HGD-DDR-002): R1 gains the head placement rule, R3 gains the timed escalation, R13 excludes the fan and grille wall openings as builder's work, and R14 follows the new $265 budget. The set points (R2, R3) and the inventory rule (R9) are decided by Amish (HGD-DDR-001, D2 and D5).
+These are first-pass requirements for the concept. Targets are proposals for review, not user-validated needs, and will be revised after sessions with the first users. At TRL 3 each requirement is checked by calculation in HGD-CAL-001 v0.3 against the design in HGD-PRC-001 v0.5, the constructable model in `cad/src/model.py` (HGD-DDR-003) and the build plan HGD-BLD-001. No requirement is **not met**. Three are at risk: R4 (assumed sensor t90), R7 (assumed fan curve) and R13 (installation, 4.2 h against 4 h). R14 is reported against the value-engineering target: the constructable design is estimated at USD 289, USD 24 over the USD 265 target. R1 cannot be verified without sensor data. On 2026-09-25 Amish accepted the review recommendations (HGD-DDR-002): R1 gains the head placement rule, R3 gains the timed escalation, R13 excludes the fan and grille wall openings as builder's work, and R14 follows the USD 265 figure, which is a value-engineering target, not a limit (Amish, 2026-10-01). The set points (R2, R3) and the inventory rule (R9) are decided by Amish (HGD-DDR-001, D2 and D5).
 
 Table 1. Requirements. LFL is the lower flammability limit of hydrogen in air, taken as 4.0 % by volume, so 10 % LFL is 0.4 % vol and 25 % LFL is 1.0 % vol. Tags in brackets refer to lines of HGD-CAL-001.
 
@@ -47,8 +51,8 @@ Table 1. Requirements. LFL is the lower flammability limit of hydrogen in air, t
 | R10 | Alert people | Sounder 85 dB(A) or more at 1 m and a red beacon visible from the room entrance | Component ratings | Met on paper: 90 dB at 1 m, 76 dB at 5 m [K2] |
 | R11 | Keep mains out of the self-built parts | All self-built wiring 24 V DC; mains only inside a certified power supply; power draw 60 W or less | Design review | Met on paper: 48.3 W peak in the warning state [H2] |
 | R12 | Be checkable in use | Bump test with 1 % vol hydrogen span gas through the test port and head cup in 2 min or less; self-test button runs the alarm, fan boost and valve close; event log of readings, warnings, trips and resets kept for 90 days or more | Design review | Met on paper: bump reading settles in about 67 s [J1]; log 2.07 MB in 4 MB of flash [J3]; cup delivery factor unknown |
-| R13 | Install simply | Mounted and wired by one person with hand tools in 4 h or less, excluding the gas fitting, which a competent person makes, and the wall openings for the fan and make-up grille, which are builder's work | Task time estimate; walk-through at TRL 4 | **At risk:** 4.1 h on estimate, 5 min over [M1] (6.0 h if the openings were included) |
-| R14 | Stay within the concept budget | Parts $265 or less (`budget_usd`) | Priced BOM | Met on paper: $264.00 [N1], $1 margin on indicative prices |
+| R13 | Install simply | Mounted and wired by one person with hand tools in 4 h or less, excluding the gas fitting, which a competent person makes, and the wall openings for the fan and make-up grille, which are builder's work | Task time estimate; walk-through at TRL 4 | **At risk:** 4.2 h on estimate, 15 min over [M1] (6.2 h if the openings were included) |
+| R14 | Cost against the value-engineering target | Value-engineering target USD 265 (`budget_usd`, a hypothetical control target) | Priced BOM | Over the value-engineering target by USD 24: estimated cost of the constructable design USD 289.00 [N1] on indicative prices |
 | R15 | Avoid adding ignition sources in the ceiling layer | Fan never switched on in a flammable mixture (runs continuously); controller, relays and power supply mounted at least 1 m below the ceiling; sensor ports behind sintered flame arrestors | Design review | Met by design: controller top 1,025 mm below the ceiling [L2]; **not certified** for hazardous areas, and the catalytic element runs hot |
 
 ## Assumptions
@@ -57,4 +61,4 @@ Table 1. Requirements. LFL is the lower flammability limit of hydrogen in air, t
 - Design leak: 5 L/min of hydrogen, representing a failed fitting downstream of a regulator with a flow restrictor. A small electrolyzer of about 100 W makes only about 0.39 L/min (HGD-CAL-001, B1), so this covers it with margin. A failed regulator on an unrestricted cylinder can release far more, and H2Guard does not protect against that (R9).
 - Hydrogen rises from the leak as a buoyant plume and collects under the ceiling. HGD-CAL-001 uses plume theory for the head and a well-mixed or displacement model for the room.
 - Set points follow common practice for hydrogen detection (warning at 10 % LFL, shutdown at 25 % LFL); ISO 26142 describes alarm levels at 25 % or 50 % LFL. The set points are decided by Amish, 2026-09-25 (HGD-DDR-001, D2).
-- Budget: the $265 in `project.yaml` (raised from $180 by Amish's acceptance of the recommendation, HGD-DDR-002) covers the H2Guard kit including the fan and make-up grille, but not the gas system, span gas, wall openings or installation labor.
+- Value-engineering target: the USD 265 in `project.yaml` (raised from USD 180 by Amish's acceptance of the recommendation, HGD-DDR-002) is a hypothetical control target, not a limit. It covers the H2Guard kit including the fan and make-up grille, but not the gas system, span gas, wall openings or installation labor.

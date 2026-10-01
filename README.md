@@ -2,13 +2,13 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1388476795.svg)](https://zenodo.org/badge/latestdoi/1388476795) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/h2guard/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/h2guard/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/h2guard/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/h2guard)
 
-**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** $265 USD · **Difficulty:** 3 of 5
+**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** USD 265 (estimated cost USD 289) · **Difficulty:** 3 of 5
 
 A hydrogen leak detector and ventilation interlock for small labs, workshops and electrolyzer rooms: it senses hydrogen near the ceiling, runs a fan and cuts the supply when readings rise.
 
 ![H2Guard: hydrogen leak detector and ventilation interlock, product render](media/render-hero.png)
 
-[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement HGD-DWG-001 (PDF)](cad/drawings/HGD-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
+[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement HGD-DWG-001 (PDF)](cad/drawings/HGD-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions register](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -60,7 +60,7 @@ Full problem statement: [docs/01-problem.md](docs/01-problem.md)
 
 A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan or a crashed controller also close the valve, and a hardware comparator trip works without the firmware. The TRL 3 calculations give 35.7 s from a 5 L/min leak to the valve closing (with an assumed 30 s sensor response), and about 5 % LFL in the 30 m3 reference room with the fan running. They also show that the design leak trips the system at once only if the detector head is on the plume axis above the leak. Two rules accepted by Amish cover the rest: a warning held for 5 min also closes the valve (about 5.6 min for the design leak off the axis), and a head goes directly above each likely leak point.
 
-Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Calculations: [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) · Decisions: [DDR-001](docs/decisions/0001-trl2-review-decisions.md), [DDR-002](docs/decisions/0002-recommendations-accepted.md)
+Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Calculations: [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) · Decisions: [DDR-001](docs/decisions/0001-trl2-review-decisions.md), [DDR-002](docs/decisions/0002-recommendations-accepted.md), [DDR-003](docs/decisions/0003-design-for-construction.md), [register](docs/06-design-decisions.md)
 
 ## Key components
 
@@ -71,7 +71,13 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [d
 - Normally closed 24 V DC solenoid valve on the supply
 - Sounder and beacon
 
-The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Parts come to $264 (indicative prices), within the $265 budget that Amish set on 2026-09-25 when he accepted the review recommendations; see the [review note](docs/REVIEW.md). The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
+The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Value-engineering target: USD 265. Estimated cost of the constructable design: USD 289 at indicative prices (USD 24 over the target); the [design decisions register](docs/06-design-decisions.md) lists the main cost drivers and savings worth trying. The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
+
+## Building the prototype
+
+![Every H2Guard component, pulled apart and numbered in build order](docs/05-build-plan/overview.png)
+
+The [prototype build plan](docs/05-build-plan.md) (HGD-BLD-001) shows how to make and fit every component, with a making sketch for each made part, close-ups of the joints and a picture for each of the 15 assembly steps. Nine parts are made or drilled in a small workshop (the two boxes and the controller lid, the printed bump test cup, the sensor board and four aluminium brackets and plates); the rest are bought. Making the design buildable added standoffs, a mounting plate, a fan plate with a 200 mm wall sleeve and brackets for the test port and valve ([HGD-DDR-003](docs/decisions/0003-design-for-construction.md)). It is a plan: nothing has been built or tested.
 
 ## Safety
 

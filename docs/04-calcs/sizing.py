@@ -244,9 +244,9 @@ say("L1", f"Sensor ports {D['port_below_ceiling']:.0f} mm below the ceiling (R1:
 say("L2", f"Controller top {D['ctrl_below_ceiling']:.0f} mm below the ceiling (R15: 1000 mm or more); beacon top {D['beacon_below_ceiling']:.0f} mm; supply on the floor")
 
 # ---------------- M. installation time (R13) ----------------
-tasks = [("Plan and mark out", 20), ("Detector head bracket and head", 30), ("Core drill 160 mm through the wall; sleeve, fan and hood", 90),
+tasks = [("Plan and mark out", 20), ("Detector head bracket and head", 30), ("Core drill 206 mm through the wall; sleeve, fan plate with fan, and hood", 90),
          ("Opening and make-up air grille", 60), ("Controller", 25), ("Sounder and beacon", 15), ("Power supply", 5),
-         ("15 m of cable in surface conduit", 60), ("Bump test tube and port", 20), ("Valve coil connection (gas fitting by others)", 10),
+         ("15 m of cable in surface conduit", 60), ("Bump test tube and port", 20), ("Valve bracket on the wall and valve coil connection (gas fitting by others)", 20),
          ("Commissioning: test button and first bump test", 25)]
 t_all = sum(t for _, t in tasks)
 t_nowall = t_all - 90 - 60 + 20 + 15
@@ -260,7 +260,8 @@ for line in (ROOT / "project.yaml").read_text().splitlines():
     if line.startswith("budget_usd:"):
         budget = float(line.split(":")[1].split("#")[0])
 fan_grille = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in bom if r["item"].split()[0] in ("9", "10"))
-say("N1", f"BOM {len(bom)} lines, total ${total:.2f}; budget_usd ${budget:.0f} (HGD-DDR-002): {total - budget:+.2f} ({100 * (total / budget - 1):+.1f} %); {'within' if total <= budget else 'over'} budget")
+say("N1", f"BOM {len(bom)} lines, estimated cost of the constructable design ${total:.2f}; value-engineering target ${budget:.0f} (budget_usd, a hypothetical control target): "
+    f"${abs(total - budget):.2f} {'under' if total <= budget else 'over'} the target ({100 * (total / budget - 1):+.1f} %)")
 say("N2", f"Without the fan and make-up grille (${fan_grille:.2f}): ${total - fan_grille:.2f}")
 
 (Path(__file__).parent / "results.txt").write_text("\n".join(OUT) + "\n")
