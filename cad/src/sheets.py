@@ -1,4 +1,4 @@
-"""H2Guard general arrangement sheet HGD-DWG-001, Rev P2 (TRL 3).
+"""H2Guard general arrangement sheet HGD-DWG-001, Rev P3 (TRL 3).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/HGD-DWG-001.svg, .pdf and .png from the parametric model in
@@ -99,11 +99,12 @@ def main():
     head = Compound(children=[S[k] for k in ("head", "cat", "mos", "arrest")])
     hv = safe_project_views(head, work / "head", names=("iso",))
     bb = asm.bounding_box()
-    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P2",
+    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P3",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Bought-in parts per bom/bom.csv; room, bench and gas store are context. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
-                         ("P2", "Notes: head placement rule, timed escalation (DDR-002)", DATE, "AC")])
+                         ("P2", "Notes: head placement rule, timed escalation (DDR-002)", DATE, "AC"),
+                         ("P3", "Layout and labels tidied", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -116,26 +117,26 @@ def main():
     Z = lambda mz: y + h - (mz - bb.min.Z) * k
     z0 = Z(0)
     xl = X(bb.min.X) - 4
-    heights = [(rz, f"{rz:.0f} ceiling"), (D["port_face"], f"{D['port_face']:.0f} sensor ports"),
+    heights = [(D["port_face"], f"{D['port_face']:.0f} sensor ports"),
                (P["beacon_z"], f"{P['beacon_z']:.0f} beacon"), (D["ctrl_top"], f"{D['ctrl_top']:.0f} controller top"),
                (D["src_z"], f"{D['src_z']:.0f} leak source")]
     for i, (zz, label) in enumerate(heights):
-        xd = xl - 5 * i
+        xd = xl - 5 * (i + 1)
         L += [ext(X(bb.min.X), Z(zz), xd - 1, Z(zz))]
         L += dim_v(xd, Z(zz), z0, label)
     L += leader(X(P["app_x"]), Z(D["head_z"]), X(P["app_x"]) - 2, Z(rz) - 6, "1-4 DETECTOR HEAD ABOVE SOURCE", "end")
     L += leader(X(P["fan_x"]), Z(P["fan_z"]), X(P["fan_x"]) + 6, Z(rz) - 6, f"9 EXHAUST FAN, CENTER {P['fan_z']:.0f}")
-    L += leader(X(P["ctrl_x"] - 60), Z(P["ctrl_z"] + 60), X(2850), Z(1900), "5-7 CONTROLLER, 15 TEST PORT", "end")
+    L += leader(X(P["ctrl_x"] - 60), Z(P["ctrl_z"] + 60), X(3400), Z(1250), "5-7 CONTROLLER, 15 TEST PORT", "end")
     L += leader(X(P["valve_x"]), Z(P["supply_z"]), X(P["valve_x"]) + 8, Z(P["supply_z"] + 280), "11 NC VALVE ON SUPPLY")
-    L += leader(X(P["store_x"]), Z(1000), X(1000), Z(2150), "GAS STORE (CONTEXT)")
-    L += leader(X(P["psu_x"]), Z(40), X(3900), Z(650), "8 SUPPLY", "end")
+    L += leader(X(P["store_x"]), Z(1000), X(150), Z(rz) - 3, "GAS STORE (CONTEXT)")
+    L += leader(X(P["psu_x"]), Z(40), X(4150), Z(650), "8 SUPPLY", "end")
 
     # top view (from +Z): X to the right, Y up the sheet
     x, y, w, h = c["top"]
     Xt = lambda mx: x + (mx - bb.min.X) * k
     Yt = lambda my: y + h - (my - bb.min.Y) * k
     L += dim_h(Xt(0), Xt(rx), Yt(-ry) - 6, f"{rx:,.0f}")
-    L += dim_v(Xt(rx) + 5, Yt(0), Yt(-ry), f"{ry:,.0f}", side=1)
+    L += dim_v(Xt(rx) + 10, Yt(0), Yt(-ry), f"{ry:,.0f}", side=1)
     L += leader(Xt(P["fan_x"]), Yt(0), Xt(P["fan_x"]) + 8, Yt(-500), f"FAN AT X {P['fan_x']:.0f}")
     L += leader(Xt(0), Yt(P["inlet_y"]), Xt(700), Yt(P["inlet_y"] + 200), f"10 MAKE-UP AIR, Z {P['inlet_z']:.0f}")
 
@@ -144,7 +145,7 @@ def main():
     Zr = lambda mz: y + h - (mz - bb.min.Z) * k
     Yr = lambda my: x + (my - bb.min.Y) * k
     L += dim_v(Yr(-ry) - 4, Zr(P["inlet_z"] + P["inlet"][1] / 2), Zr(0), f"{P['inlet_z'] + P['inlet'][1] / 2:.0f}")
-    L += leader(Yr(-ry / 2), Zr(P["inlet_z"]), Yr(-ry / 2) + 4, Zr(700), "10 GRILLE (FAR WALL)")
+    L += leader(Yr(-ry / 2), Zr(P["inlet_z"]), Yr(-ry / 2) + 4, Zr(700), "10 GRILLE")
 
     s._layers += L
     s.add_svg(hv["iso"], 276, 32, 140, 70, label="Detector head, items 1 to 4",
