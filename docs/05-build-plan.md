@@ -3,9 +3,9 @@ doc_id: HGD-BLD-001
 title: H2Guard prototype build plan
 project: H2Guard
 doc_type: Build plan
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: First build plan, with pictures by component and step; design made constructable (HGD-DDR-003)
+  - version: "0.2"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "Safety stop S5: head placement, airflow proving, valve, oxygen sensor and set point conditions decided on 2026-10-02 (HGD-DEC-001)"
 ---
 
 # H2Guard prototype build plan
@@ -31,7 +35,7 @@ The prototype is one H2Guard installed in a teaching room of about 30 m³ (4 x 3
 
 ## 2. What changed to make it buildable
 
-The concept showed what H2Guard does and where each part goes in the room; some of its parts could not be made, fitted or held as drawn. Each change below keeps what the system does, and all of them are recorded in decision record HGD-DDR-003, open for Amish's review.
+The concept showed what H2Guard does and where each part goes in the room; some of its parts could not be made, fitted or held as drawn. Each change below keeps what the system does, and all of them are recorded in decision record HGD-DDR-003, accepted by Amish on 2026-10-02.
 
 *Table 1. Changes from the concept.*
 
@@ -444,7 +448,7 @@ Stop at each point. Carry on only when everything listed is true.
 - **S2. Before the sensors are powered.** The epoxy round the discs has cured for its full time with the head open; no silicone, flux cleaner or solvent has been used in or near the head.
 - **S3. Before any gas reaches the valve.** A competent gas fitter has connected the valve after the regulator and flow restrictor and leak tested every joint with inert gas. The fault checks of section 5 (power loss, hardware trip, sensor fault, fan stop) all close the valve.
 - **S4. Before the first bump test.** The test gas is a certified mixture of no more than 1 % hydrogen in air, in a disposable cylinder with its own regulator set to about 1 L/min. The fan is running. Someone stands by the controller with the key. Expect the system to trip; reset only when the reading is below 10 % LFL.
-- **S5. Before hydrogen from the room's supply is turned on.** The hydrogen inventory in the room is within the 300 L limit (1 % of room volume at atmospheric pressure), or a flow restrictor limits a failure to 5 L/min. The bump test has passed that day. The room has a second, certified means of protection wherever codes or insurers require one.
+- **S5. Before hydrogen from the room's supply is turned on.** The hydrogen inventory in the room is within the 300 L limit (1 % of room volume at atmospheric pressure), or a flow restrictor limits a failure to 5 L/min. The bump test has passed that day. The room has a second, certified means of protection wherever codes or insurers require one. The head hangs from the ceiling on a drop rod directly over the apparatus (wall mounting only if the TRL 4 plume test showed a trip at the wall position). A differential pressure switch at the fan proves airflow. The valve is rated for hydrogen with a stated seat leak rate, or the brass valve has the maker's hydrogen and seat leak ratings and has passed a seat leak proof test. If inert gas cylinders share the room, the oxygen sensor is fitted. The set points are the stricter of the defaults, the national code, ISO 26142 and the host institution's safety office rules.
 - **S6. Every teaching session.** Bump test before use and after any exposure to silicone or solvent vapour; check by hand that air flows at the inside grille and that the valve closes on TEST. A blocked duct or a leaking valve seat is not detected by the system.
 
 ## 7. Tools, skills and workspace

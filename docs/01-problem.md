@@ -3,9 +3,9 @@ doc_id: HGD-PRB-001
 title: H2Guard problem statement
 project: H2Guard
 doc_type: Problem statement
-version: "0.6"
+version: "0.7"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -33,6 +33,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Cost constraint restated against the value-engineering target after the design for construction (HGD-DDR-003)
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O2 and O3 decided by Amish on 2026-10-02 (HGD-DEC-001)
 ---
 
 # H2Guard problem statement
@@ -101,7 +105,7 @@ Decided by Amish, 2026-09-25: go with recommendation (HGD-DDR-001 and HGD-DDR-00
 - Sensor baseline: catalytic plus metal oxide pair, with the certified sensing element documented as the upgrade (D1).
 - Inventory limit: 1 % of room volume at atmospheric pressure, or a flow restrictor, as a condition for H2Bench and other lab projects (D5).
 
-Still open, proposed, awaiting Amish:
+Decided by Amish on 2026-10-02 (HGD-DEC-001):
 
-- Should it also watch for oxygen depletion when used with cylinders of inert gas in the same room (O2)?
-- Where do the set points and the inventory rule come from in each country the first users are in (O3)?
+- Oxygen depletion (O2): an oxygen sensor is added, as a standard kit option, whenever inert gas cylinders share the room.
+- Set points and the inventory rule (O3): from the stricter of the national code and ISO 26142, and from the host institution's safety office where its rules are stricter; 10 % and 25 % LFL stay the defaults.

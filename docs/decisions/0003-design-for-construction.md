@@ -3,9 +3,9 @@ doc_id: HGD-DDR-003
 title: H2Guard design for construction
 project: H2Guard
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Changes that make the concept physically buildable, with the reason for each; made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Accepted by Amish; A1 decided as a ceiling drop rod (changed recommendation) and A2 accepted for the supervised prototype only
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-10-01
-- **Status:** draft. Every change in Table 1 was made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. Nothing here changes what H2Guard does, its pitch or its safety case. The items in Table 3 touch the safety case and are proposed, awaiting Amish. The cost is reported against the value-engineering target (Table 2) and needs no decision.
+- **Status:** accepted. Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This covers every change in Table 1 and the recommendations for A1 and A2 in Table 3 as written for the register on 2026-10-01 (HGD-DEC-001): A1 was changed from the wall mounting proposed here to a ceiling drop rod, and A2 was sharpened. Every change in Table 1 was made under Amish's 2026-09-30 instruction to make the design physically buildable. Nothing in Table 1 changes what H2Guard does, its pitch or its safety case. The cost is reported against the value-engineering target (Table 2) and needs no decision.
 
 ## Context
 
@@ -55,16 +59,17 @@ The changes keep what the system does: the same room, the same detector head siz
 | Calculation note | HGD-CAL-001 v0.3; HGD-REQ-001 v0.5 (R13, R14 status). No other figure changed. | Follows the model. |
 | Drawings and media | HGD-DWG-001 Rev P4; making sketches HGD-DWG-101 to 109 added; concept blueprint HGD-DWG-010 Rev P4; concept media and STEP and STL files regenerated. | Follows the model. |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Proposed for Amish; decided on 2026-10-02 as shown under each recommendation.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | The head is mounted on the back wall above the bench, so its ports sit 110 mm horizontally from the back edge of the apparatus and 260 mm from its centre, against a plume radius of about 141 mm at the ports [E7]. This touches the head placement rule, which is part of the safety case. | (a) keep the wall mounting and set the offset limit by test at TRL 4, as decided; (b) hang the head from the ceiling directly over the apparatus on a drop rod. | (a) for the prototype, since the offset limit is already a TRL 4 test; revisit if the test shows the offset matters. |
-| A2 | The fan motor now sits inside the wall sleeve rather than partly in the room. The safety case already notes the motor is in the exhaust stream and not rated for hazardous areas. | (a) accept; (b) specify a fan with the motor outside the air stream (a belt or external-rotor design). | (a); no change to the ignition-source argument, which relies on continuous running. |
+| A1 | The head is mounted on the back wall above the bench, so its ports sit 110 mm horizontally from the back edge of the apparatus and 260 mm from its centre, against a plume radius of about 141 mm at the ports [E7]. This touches the head placement rule, which is part of the safety case. | (a) keep the wall mounting and set the offset limit by test at TRL 4, as decided; (b) hang the head from the ceiling directly over the apparatus on a drop rod. | (a) for the prototype, since the offset limit is already a TRL 4 test; revisit if the test shows the offset matters. Changed in the recommendation to Amish and decided on 2026-10-02: (b), the head hangs from the ceiling on a drop rod directly over the apparatus; wall mounting only if the TRL 4 plume test shows a trip at the wall position. At the wall position the design leak would only warn, and the valve would wait for the 5 min escalation with about 28 L released. |
+| A2 | The fan motor now sits inside the wall sleeve rather than partly in the room. The safety case already notes the motor is in the exhaust stream and not rated for hazardous areas. | (a) accept; (b) specify a fan with the motor outside the air stream (a belt or external-rotor design). | (a); no change to the ignition-source argument, which relies on continuous running. Decided on 2026-10-02: (a) for the supervised teaching prototype; (b) for any room used without close supervision, since the argument rests on supervision. |
 
 ## Consequences
 
-- `design_state: constructable` in `project.yaml`. The build plan HGD-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`), and the design decisions register HGD-DEC-001 lists what is still open.
+- `design_state: constructable` in `project.yaml`. The build plan HGD-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`), and the design decisions register HGD-DEC-001 indexes the decisions.
+- With A1 decided as (b), the model, drawings, build plan and calculation E7 still show the wall mounting and must be updated to the ceiling drop rod before any gas is connected (`docs/REVIEW.md`, 2026-10-02, follow-up actions).
 - Requirement status: 0 not met, 3 at risk (R4, R7, R13), 1 not verifiable at TRL 3 (R1), 6 met on paper, 4 met by design, and R14 over the value-engineering target by USD 24 (HGD-CAL-001 v0.3).
 - The photoreal renders, the appearance model `cad/src/product_model.py`, `media/card.png` and `media/social-preview.png` still show the concept head, controller and valve without the brackets, fan plate and enlarged sleeve; they are stale and need updating on Amish's Mac, where Blender is.
 - The box, fan and valve are chosen at TRL 4. The head box lid face, the controller box bosses and corner holes, the fan's inlet-face fixing holes and the valve's tapped mounting holes must be checked then, and the made parts drilled to suit.

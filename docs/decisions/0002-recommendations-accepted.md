@@ -3,9 +3,9 @@ doc_id: HGD-DDR-002
 title: H2Guard recommendations accepted
 project: H2Guard
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record the review recommendations accepted by Amish on 2026-09-25 and what changed in the repo
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O2 to O7 decided by Amish on 2026-10-02 (recommendations approved, HGD-DEC-001)
 ---
 
 # 0002: Recommendations accepted
 
 - **Date:** 2026-09-25
-- **Status:** accepted. Every item below with a recommendation is decided by Amish, 2026-09-25: go with recommendation. Items without a recommendation remain proposed, awaiting Amish.
+- **Status:** accepted. Every item below with a recommendation is decided by Amish, 2026-09-25: go with recommendation. Items without a recommendation (O2 to O7) were decided on 2026-10-02, when Amish approved the recommendations later written for them ("i approve your recommendations for all 555 open decisions."); see Table 2 and HGD-DEC-001.
 
 ## Context
 
@@ -43,16 +47,16 @@ The options for each item are those listed in `docs/REVIEW.md` and HGD-DDR-001.
 
 No pitch or problem rewording was recommended, so `project.yaml` and the README keep their pitch and problem text. No part was added or resized, so the model geometry, STEP and STL files and the BOM lines are unchanged; the drawing changes only in its notes.
 
-*Table 2. Items still open, proposed, awaiting Amish (no recommendation was made).*
+*Table 2. Items left open here (no recommendation was made then), decided on 2026-10-02.*
 
-| # | Item |
-| --- | --- |
-| O2 | Oxygen depletion monitoring when inert gas cylinders share the room |
-| O3 | Where the set points and the inventory rule come from in each country the first users are in |
-| O4 | How airflow is proven: tachometer only, or a differential pressure switch |
-| O5 | Low-cost solenoid valve or a certified gas valve |
-| O6 | Whether a full-span bump test trips the system (proof test with a key reset) or a lower span gas is used; no recommendation until the cup delivery factor is known |
-| O7 | A second interlock output (dry contact) for H2Bench's bench supply; raised as an interface point, with no recommendation |
+| # | Item | Decided by Amish, 2026-10-02 (HGD-DEC-001) |
+| --- | --- | --- |
+| O2 | Oxygen depletion monitoring when inert gas cylinders share the room | Oxygen sensor added, as a standard kit option, whenever inert gas cylinders share the room |
+| O3 | Where the set points and the inventory rule come from in each country the first users are in | Stricter of the national code and ISO 26142, and the host institution's safety office where stricter; 10 % and 25 % LFL stay the defaults |
+| O4 | How airflow is proven: tachometer only, or a differential pressure switch | Differential pressure switch at the fan |
+| O5 | Low-cost solenoid valve or a certified gas valve | Valve rated for hydrogen with a stated seat leak rate; the brass valve only with the maker's hydrogen and seat leak ratings and a seat leak proof test at TRL 4 |
+| O6 | Whether a full-span bump test trips the system (proof test with a key reset) or a lower span gas is used; no recommendation until the cup delivery factor is known | The 1 % full-span bump test trips the system; the pass level is set once the cup delivery factor is measured |
+| O7 | A second interlock output (dry contact) for H2Bench's bench supply; raised as an interface point, with no recommendation | Dry-contact relay output that opens on a trip or loss of power |
 
 ## Consequences
 

@@ -81,7 +81,7 @@ The [prototype build plan](docs/05-build-plan.md) (HGD-BLD-001) shows how to mak
 
 ## Safety
 
-> Hydrogen is flammable in air from about 4 % to 74 % by volume. This is a research and teaching prototype and not a certified gas detection system; use certified equipment for any real installation. Its parts are not rated for hazardous areas. It protects only against small, flow-limited leaks; keep hydrogen inventories small, and have gas fittings made and leak-tested by a competent person. Mains power enters only through a certified supply.
+> Hydrogen is flammable in air from about 4 % to 74 % by volume. This is a research and teaching prototype and not a certified gas detection system; use certified equipment for any real installation. Its parts are not rated for hazardous areas. It protects only against small, flow-limited leaks, and only with its head hung directly over the leak point; keep hydrogen inventories small, and have gas fittings made and leak-tested by a competent person. Mains power enters only through a certified supply.
 
 ## Repository layout
 

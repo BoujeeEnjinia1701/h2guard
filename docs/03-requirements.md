@@ -3,9 +3,9 @@ doc_id: HGD-REQ-001
 title: H2Guard requirements
 project: H2Guard
 doc_type: Requirements
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Design for construction (HGD-DDR-003); R13 and R14 status from HGD-CAL-001 v0.3; R14 reported against the value-engineering target
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: R1 placement and R5 airflow proving from the decisions of 2026-10-02 (HGD-DEC-001); set point source rule
 ---
 
 # H2Guard requirements
@@ -39,11 +43,11 @@ Table 1. Requirements. LFL is the lower flammability limit of hydrogen in air, t
 
 | ID | Requirement | Target | Verification (TRL 3 or later) | Status at TRL 3 (HGD-CAL-001) |
 | --- | --- | --- | --- | --- |
-| R1 | Measure hydrogen at the high point of the room | 0 to 100 % LFL (0 to 4 % vol), resolution 1 % LFL or better; head within 0.3 m of the ceiling and directly above each likely leak point, with a second head where leak points are far apart; the horizontal offset limit is set at TRL 4 from the measured plume width | Sensor datasheet review; installation rule in the precis; offset limit by test at TRL 4 | **Not verifiable at TRL 3:** resolution needs sensor data; height met (ports 175 mm below the ceiling [L1]); plume radius about 141 mm at the ports [E7] |
+| R1 | Measure hydrogen at the high point of the room | 0 to 100 % LFL (0 to 4 % vol), resolution 1 % LFL or better; head within 0.3 m of the ceiling and directly above each likely leak point, with a second head where leak points are far apart; the horizontal offset limit is set at TRL 4 from the measured plume width | Sensor datasheet review; installation rule in the precis; offset limit by test at TRL 4 | **Not verifiable at TRL 3:** resolution needs sensor data; height met (ports 175 mm below the ceiling [L1]); plume radius about 141 mm at the ports [E7]. Placement: the head hangs from the ceiling on a drop rod directly over the apparatus (decided 2026-10-02); the model still shows the wall position, 260 mm off the apparatus centre, which does not meet the rule |
 | R2 | Warn early | At 10 % LFL (0.4 % vol): fan to boost, amber light, intermittent sounder; self-clearing | Set point and logic review | Met on paper: design leak plume at the head about 15 % LFL [E2] |
 | R3 | Trip and shut off the supply | At 25 % LFL (1.0 % vol): valve closed, fan on boost, continuous sounder and beacon; latched until reset with a key and the reading is below 10 % LFL. A warning held for 5 min also closes the valve and latches in the same way (firmware rule) | Set point and logic review | Met by design: on the plume axis the design leak trips (about 30 % LFL [E2]); off the axis the escalation closes the valve at 5.6 min with 28 L released [F7] |
 | R4 | Respond fast enough | Sensor t90 of 30 s or less; alarm within 60 s of a step to 1.1 % vol (twice t90, following the ISO 26142 test approach); valve closed within 2 s of the trip | Datasheets, then a bench test at TRL 4 | **At risk:** 35.7 s leak to valve closed with an assumed 30 s t90; 0.17 s trip to valve closed [F3, F4] |
-| R5 | Fail safe | The supply is closed within 2 s of any of: loss of 24 V power, sensor open or short circuit, heater failure, controller watchdog timeout, fan stopped (no tachometer pulses for 10 s) | Failure modes and effects analysis (FMEA) | Met on paper: worst listed fault 1.12 s [F6]; the first-pass FMEA finds four dangerous undetected faults outside this list |
+| R5 | Fail safe | The supply is closed within 2 s of any of: loss of 24 V power, sensor open or short circuit, heater failure, controller watchdog timeout, fan stopped (no tachometer pulses for 10 s), airflow not proven by the differential pressure switch at the fan (added 2026-10-02) | Failure modes and effects analysis (FMEA) | Met on paper: worst listed fault 1.12 s [F6]; the first-pass FMEA finds four dangerous undetected faults outside this list. The pressure switch (decided 2026-10-02) covers the blocked duct, and a hydrogen-rated valve with a seat leak proof test covers the leaking valve; both are still to be added to the design and the FMEA |
 | R6 | Trip without firmware | A hardware comparator on the catalytic sensor bridge, with its own latch, opens a relay in series with the microcontroller's valve switch at the trip level, even if the microcontroller has stopped | Circuit review | Met by design (block diagram level) |
 | R7 | Ventilate the room | Continuous exhaust at high level of 5 air changes per hour or more (150 m3/h for the 30 m3 reference room); boost of 10 air changes per hour or more; make-up air at low level on the far side | Fan curve against duct and grille losses | **At risk:** 347 m3/h boost with the re-specified fan on an assumed curve; the TRL 2 fan gave 237 m3/h [G3] |
 | R8 | Keep the design leak below the trip level | With the design leak of 5 L/min and continuous ventilation, the well-mixed room stays below 10 % LFL | First-order dilution calculation | Met on paper: 5.0 % LFL well mixed and in the upper layer [D1, D3] |
@@ -60,5 +64,5 @@ Table 1. Requirements. LFL is the lower flammability limit of hydrogen in air, t
 - Reference room: 4 x 3 x 2.5 m (30 m3), one door, general ventilation unknown and taken as zero.
 - Design leak: 5 L/min of hydrogen, representing a failed fitting downstream of a regulator with a flow restrictor. A small electrolyzer of about 100 W makes only about 0.39 L/min (HGD-CAL-001, B1), so this covers it with margin. A failed regulator on an unrestricted cylinder can release far more, and H2Guard does not protect against that (R9).
 - Hydrogen rises from the leak as a buoyant plume and collects under the ceiling. HGD-CAL-001 uses plume theory for the head and a well-mixed or displacement model for the room.
-- Set points follow common practice for hydrogen detection (warning at 10 % LFL, shutdown at 25 % LFL); ISO 26142 describes alarm levels at 25 % or 50 % LFL. The set points are decided by Amish, 2026-09-25 (HGD-DDR-001, D2).
+- Set points follow common practice for hydrogen detection (warning at 10 % LFL, shutdown at 25 % LFL); ISO 26142 describes alarm levels at 25 % or 50 % LFL. The set points are decided by Amish, 2026-09-25 (HGD-DDR-001, D2). On 2026-10-02 Amish decided that each site takes its set points and inventory rule from the stricter of the national code and ISO 26142, and from the host institution's safety office where its rules are stricter; 10 % and 25 % LFL stay the defaults.
 - Value-engineering target: the USD 265 in `project.yaml` (raised from USD 180 by Amish's acceptance of the recommendation, HGD-DDR-002) is a hypothetical control target, not a limit. It covers the H2Guard kit including the fan and make-up grille, but not the gas system, span gas, wall openings or installation labor.

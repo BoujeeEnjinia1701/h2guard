@@ -3,9 +3,9 @@ doc_id: HGD-PRC-001
 title: H2Guard design precis
 project: H2Guard
 doc_type: Design precis
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Design made constructable (HGD-DDR-003) with a build plan (HGD-BLD-001); cost against the value-engineering target; drawing HGD-DWG-001 to Rev P4
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Decisions of 2026-10-02 carried in: ceiling drop rod, pressure switch, hydrogen-rated valve, oxygen sensor option, set point sources, bump test, relay output, clear lid, fan motor rule"
 ---
 
 # H2Guard design precis
@@ -121,33 +125,41 @@ The choices below are decided by Amish, 2026-09-25: go with recommendation (HGD-
 7. **Key-switch reset** (D6). Stops students from clearing a trip without a supervisor.
 8. **One detector head per room** (D6). A second head is an option where the ceiling has beams or pockets, or where leak points are far apart (see Key numbers).
 9. **Timed escalation** (HGD-DDR-002). A warning held for 5 min closes the valve and latches. Options were (a) this; (b) a lower trip at 20 % LFL; (c) warning only for small leaks. Decided: (a).
-10. **Head placement rule** (HGD-DDR-002). A head directly above each likely leak point, with the horizontal offset limit set from the plume width at TRL 4.
+10. **Head placement rule** (HGD-DDR-002). A head directly above each likely leak point, with the horizontal offset limit set from the plume width at TRL 4. On 2026-10-02 Amish decided that the head hangs from the ceiling on a drop rod directly over the apparatus; wall mounting is allowed only if the TRL 4 plume test shows a trip at the wall position.
+
+Decided by Amish on 2026-10-02 (HGD-DEC-001):
+
+- **Airflow proven by a differential pressure switch** at the fan, as well as the tachometer.
+- **A valve rated for hydrogen with a stated seat leak rate.** The low-cost brass valve is accepted only if its maker states hydrogen compatibility and a seat leak rating and it passes a seat leak proof test at TRL 4.
+- **Oxygen sensor** as a standard kit option whenever inert gas cylinders share the room.
+- **Set points** from the stricter of the national code and ISO 26142, and from the host institution's safety office where its rules are stricter; 10 % and 25 % LFL stay the defaults.
+- **Full-span bump test** with 1 % hydrogen that trips the system; the pass level is set once the cup delivery factor is measured.
+- **Dry-contact relay output** that opens on a trip or loss of power, for H2Bench to cut its own supply.
+- **Clear-lid IP65 controller box**, so the lights and display show without opening it.
+- **Fan motor in the sleeve** for the supervised teaching prototype only; a fan with its motor outside the air stream for any room used without close supervision.
 
 ## Relation to other lab projects
 
-- **H2Bench** is the first host. Its README states that it is "Protected by H2Guard", and its gas system (electrolyzer, low-pressure store, regulator and tubing) is where the valve and any flow restrictor go. The inventory rule (R9, D5) applies to H2Bench's storage; its 2 L tank at 300 kPa gauge holds 7.9 L, 2.6 % of the limit. H2Bench's review asks for interlock outputs to cut its power supply and close its tank solenoid; H2Guard has one valve output at present (see the review note).
+- **H2Bench** is the first host. Its README states that it is "Protected by H2Guard", and its gas system (electrolyzer, low-pressure store, regulator and tubing) is where the valve and any flow restrictor go. The inventory rule (R9, D5) applies to H2Bench's storage; its 2 L tank at 300 kPa gauge holds 7.9 L, 2.6 % of the limit. H2Bench's review asks for interlock outputs to cut its power supply and close its tank solenoid; H2Guard is to add a dry-contact relay output that opens on a trip or loss of power, for H2Bench to cut its own supply (decided 2026-10-02).
 - H2Guard does not use a SwapCell pack or any lithium cell, and it does not depend on FieldNode, CellGuard, MotionCore, ThermaCart, TwinKit or CalRig.
 
 ## Safety
 
 > **Safety:** Hydrogen is flammable in air from about 4 % to 74 % by volume and ignites with very little energy. H2Guard is a research and teaching prototype, not a certified gas detection system, and it must not be the only safeguard in any room where codes or insurers require certified detection. Use certified equipment for any real installation.
 
-> **Safety:** The parts are not certified for hazardous areas. The catalytic sensor element runs hot, and the fan motor, relays and supply are possible ignition sources. The design limits this by keeping the controller and supply low on the wall, running the fan continuously and fitting flame arrestors to the sensor ports, but it does not remove the risk.
+> **Safety:** The parts are not certified for hazardous areas. The catalytic sensor element runs hot, and the fan motor, relays and supply are possible ignition sources. The motor in the exhaust sleeve is accepted only for the supervised teaching prototype; a room used without close supervision needs a fan with its motor outside the air stream. The design limits this by keeping the controller and supply low on the wall, running the fan continuously and fitting flame arrestors to the sensor ports, but it does not remove the risk.
 
 > **Safety:** The design leak assumes a flow restrictor. A failed regulator on an unrestricted high-pressure cylinder can release gas far faster than the fan can remove it. Keep inventories within the R9 limit (300 L at atmospheric pressure for the 30 m3 room) or fit a restrictor, and have gas fittings made and leak-tested by a competent person.
 
-> **Safety:** Catalytic sensors need oxygen and can be poisoned by silicones, sulfur compounds and some solvents, which makes them read low without warning. Bump test before each teaching session and after any exposure to these vapors, and replace the sensor when it fails a bump test.
+> **Safety:** Catalytic sensors need oxygen and can be poisoned by silicones, sulfur compounds and some solvents, which makes them read low without warning. Bump test before each teaching session and after any exposure to these vapors, and replace the sensor when it fails a bump test. An oxygen-poor room makes the catalytic sensor read low, so fit the oxygen sensor option whenever inert gas cylinders share the room.
 
-> **Safety:** A blocked duct or a stuck shutter is not detected while the fan still turns, and a leaking valve seat is not detected at all (HGD-CAL-001, Table 4). Check the airflow and the valve at every session until airflow proving and a valve proof test are designed.
+> **Safety:** A blocked duct or a stuck shutter is not detected while the fan still turns, and a leaking valve seat is not detected at all (HGD-CAL-001, Table 4). Amish decided on 2026-10-02 to add a differential pressure switch at the fan and to require a hydrogen-rated valve with a seat leak proof test; until both are in the design, check the airflow and the valve at every session.
 
 > **Safety:** Mains power enters only through a certified plug-in supply. Do not open it or wire mains inside the controller.
 
 ## Open questions
 
 - Confirm t90, power and poisoning behavior of the chosen catalytic sensor from its datasheet, and whether its hydrogen output gives 1 % LFL resolution (R1, R4).
-- Measure the delivery factor of the open bump test cup and set the pass level.
-- How airflow is proven: tachometer only, or a differential pressure switch (HGD-DDR-001, O4). Proposed, awaiting Amish.
-- Low-cost solenoid valve or a certified gas valve (O5). Proposed, awaiting Amish.
-- Where set points and the inventory rule come from for each country the first users are in (O3); oxygen depletion monitoring (O2). Proposed, awaiting Amish.
-- Whether a full-span bump test should trip the system or use a lower span gas. Proposed, awaiting Amish (no recommendation until the cup delivery factor is known).
+- Measure the delivery factor of the open bump test cup and set the bump test pass level (the 1 % full-span test trips the system, decided 2026-10-02).
+- Airflow proving, the valve, set point sources and oxygen monitoring were decided on 2026-10-02 (listed under the key design choices; HGD-DDR-001, O2 to O5).
 - The horizontal offset limit for the head placement rule, from a measured plume width (TRL 4, on hold).

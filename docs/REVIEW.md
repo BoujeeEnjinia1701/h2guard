@@ -282,3 +282,56 @@ No new hazard is introduced. The build plan adds safety stops before power, befo
 ### Recommended next step
 
 Amish reviews HGD-DDR-003 and the register. TRL 4 (building and testing to the plan) remains on hold.
+
+## Session 2026-10-02: open decisions decided
+
+On 2026-10-02 Amish approved every recommendation written for the open decisions: "i approve your recommendations for all 555 open decisions." Nothing was built or tested; TRL 4 remains on hold.
+
+### Decisions recorded
+
+12 decisions moved from "Open decisions" to "Decisions made" in the design decisions register, dated 2026-10-02. Design for construction (HGD-DDR-003) accepted; the head moves to a ceiling drop rod directly over the apparatus (changed recommendation); fan motor in the sleeve for the supervised prototype only; oxygen sensor option, set point sources, differential pressure switch, hydrogen-rated valve, tripping bump test and dry-contact output added; render choices and a clear-lid controller box accepted. Nothing should be connected to gas until the follow-ups for decisions 2, 6 and 7 are carried into the design.
+
+### Documents changed
+
+- `docs/01-problem.md` (HGD-PRB-001 v0.7)
+- `docs/02-concept.md` (HGD-PRC-001 v0.6)
+- `docs/03-requirements.md` (HGD-REQ-001 v0.6)
+- `docs/05-build-plan.md` (HGD-BLD-001 v0.2)
+- `docs/06-design-decisions.md` (HGD-DEC-001 v0.2)
+- `docs/decisions/0001-trl2-review-decisions.md` (HGD-DDR-001 v0.3)
+- `docs/decisions/0002-recommendations-accepted.md` (HGD-DDR-002 v0.2)
+- `docs/decisions/0003-design-for-construction.md` (HGD-DDR-003 v0.2)
+- `README.md` (not a controlled document)
+- `bom/bom-notes.md` (not a controlled document)
+- `docs/pdf/`: every controlled document re-rendered.
+
+### Follow-up actions to carry approved decisions into the design
+
+The model, drawings, build plan pictures, BOM quantities and prices, and calculations were not changed in this session. These actions carry the approved decisions into them:
+
+1. Decision 2 (model): Move the head in cad/src/model.py to a ceiling drop rod with its ports directly over the apparatus, 175 mm below the ceiling; re-run the constructability checks; re-export STEP and STL. Must be done before any gas is connected.
+2. Decision 2 (drawings): HGD-DWG-001 and a making sketch for the drop rod and its ceiling plate; update the concept blueprint HGD-DWG-010.
+3. Decision 2 (pictures): Build plan: rewrite step 4 and the head section for the drop rod and regenerate the overview, joint and step pictures; update the "Head over the leak point" check.
+4. Decision 2 (calcs): HGD-CAL-001 E7 and the R1 row: recompute the port offset for the drop rod position (zero offset) and correct the placement status flagged in the review.
+5. Decision 2 (bom): Add the drop rod, ceiling plate and fixings and price them.
+6. Decision 3 (docs): State in the installation notes that a room used without close supervision needs a fan with its motor outside the air stream; specify that fan as an alternative BOM line.
+7. Decision 4 (bom): Add the oxygen sensor as a standard kit option (sensor, cable, controller input) and price it.
+8. Decision 4 (model): Add the oxygen sensor option and its mounting position (breathing height) to the model and the wiring diagram.
+9. Decision 6 (model): Add the differential pressure switch and its tubing at the fan to the model and wiring; add its fault to the controller logic.
+10. Decision 6 (bom): Add the differential pressure switch and tubing and price them.
+11. Decision 6 (calcs): HGD-CAL-001 Table 4 (FMEA): move the blocked duct and stuck shutter from dangerous undetected to detected; R5 fault time for the pressure switch.
+12. Decision 7 (bom): BOM line 11: specify a valve rated for hydrogen with a stated seat leak rate, or record the brass valve maker's ratings; reprice if needed.
+13. Decision 7 (calcs): HGD-CAL-001 Table 4: the leaking valve seat stays a dangerous fault covered by the valve rating and the TRL 4 seat leak proof test; say so.
+14. Decision 8 (calcs): Set the bump test pass level once the cup delivery factor is measured (TRL 4).
+15. Decision 9 (model): Add the dry-contact relay output and terminal on the controller mounting plate (model, wiring diagram, build plan picture).
+16. Decision 9 (bom): Add the relay and terminal for the dry-contact output and price them.
+17. Decision 11 (bom): BOM line 5: change to a clear-lid IP65 controller box at the next revision.
+18. Decision 10 (pictures): Add a caption to the product renders saying the head and valve are drawn beside the controller; at the next render session, redraw them to the constructable design.
+
+### Points found in the review
+
+Raised when the recommendations were written (2026-10-01) and not yet acted on:
+
+- The calculation note marks placement as met for the head-placement requirement, but the modelled ports are 260 mm from the apparatus centre against a 141 mm plume radius, which does not meet the decided rule of a head directly above each likely leak point.
+- Four dangerous undetected faults remain in the fault table (blocked duct, poisoned sensor, blocked port, leaking valve); items 6 and 7 address two of them and should be decided before any gas is connected.
+- The value-engineering note quotes USD 226 without the fan and grille; that is a different scope from the USD 265 target.
