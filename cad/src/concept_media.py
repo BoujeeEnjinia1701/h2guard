@@ -37,8 +37,11 @@ spec = [("head", "Detector head enclosure", "#F59E0B", 1),
         ("psu", "24 V DC supply, certified", "#1F2937", 8),
         ("fan", "Exhaust fan, 150 mm mixed flow", "#2563EB", 9),
         ("inlet", "Make-up air grille, low level", "#93C5FD", 10),
-        ("valve", "NC solenoid valve, 24 V DC", "#D4A017", 11),
-        ("beacon", "Sounder and beacon", "#DC2626", 12)]
+        ("valve", "NC solenoid valve, hydrogen rated", "#D4A017", 11),
+        ("beacon", "Sounder and beacon", "#DC2626", 12),
+        ("drop", "Ceiling drop rod for the head", "#78716C", 17),
+        ("dps", "Pressure switch proving airflow", "#0891B2", 18),
+        ("o2", "Oxygen sensor (option)", "#65A30D", 20)]
 parts = [Part(name, S[key], color, bom) for key, name, color, bom in spec]
 parts.append(Part("Bump test port (tube shown grey)", port, "#7C3AED", 15))
 
@@ -48,6 +51,7 @@ targets = {
     12: (150, -120, 700), 8: (150, -150, 470), 11: (150, -120, 250),
     5: (650, -47, 900), 6: (650, -260, 900), 7: (650, -470, 900), 15: (380, -700, 1150),
     9: (700, -40, 470), 10: (700, -40, 150),
+    17: (150, -40, 1330), 18: (900, -40, 700), 20: (380, -700, 800),
 }
 for p in parts:
     c = p.shape.bounding_box().center()
@@ -80,11 +84,13 @@ KEY_FIGURES = ["Warn at 10 % LFL (0.4 % vol H2); trip at 25 % LFL (1.0 % vol)",
                "Fail-safe: NC valve, series hardware trip relay, 1 s watchdog",
                "24 V DC build; mains only inside a certified supply",
                "Warning held 5 min also closes the valve (DDR-002)",
-               "Estimated cost USD 289; value-engineering target USD 265"]
+               "Head on a ceiling drop rod, ports over the leak point",
+               "Pressure switch proves airflow; dry-contact output",
+               "Estimated cost USD 411; value-engineering target USD 265"]
 
 render_all(
     parts, project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010",
-    key_figures=KEY_FIGURES, date="2026-10-01", cut=False, scale_figure=False, context=ctx, flow=flow,
+    key_figures=KEY_FIGURES, date="2026-10-02", cut=False, scale_figure=False, context=ctx, flow=flow,
 )
 
 # Hero again with a clearer note (the kit lists every context part name, which is long here)
@@ -98,12 +104,13 @@ room_ctx = [c for c in ctx if not c.name.startswith("Person")]
 md = ROOT / "media"
 views = project_views(Compound(children=[p.shape for p in parts + room_ctx]), md / "_views")
 views["iso"] = project_views(Compound(children=[p.shape for p in parts + ctx]), md / "_views_fig")["iso"]
-sheet = Sheet(project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010", rev="P4",
-              author="Amish Chadha", date="2026-10-01", theme="blueprint",
+sheet = Sheet(project="H2Guard", title="Leak detector and interlock concept", dwg_no="HGD-DWG-010", rev="P5",
+              author="Amish Chadha", date="2026-10-02", theme="blueprint",
               material="Built from cad/src/model.py; room, bench and gas store are context. GA is HGD-DWG-001",
               revisions=[("P1", "Concept sheet", "2026-09-25", "AC"), ("P2", "From the TRL 3 parametric model", "2026-09-25", "AC"),
                          ("P3", "Key figures after DDR-002", "2026-09-25", "AC"),
-                         ("P4", "Constructable design (DDR-003)", "2026-10-01", "AC")])
+                         ("P4", "Constructable design (DDR-003)", "2026-10-01", "AC"),
+                         ("P5", "Drop rod, pressure switch, O2 option (DEC-001)", "2026-10-02", "AC")])
 sheet.add_ortho(views)
 sheet.add_svg(views["iso"], 276, 32, 140, 118, label="Isometric view",
               sublabel="Not to scale; figure is a 1.75 m person")
@@ -127,12 +134,12 @@ near = []
 for p in parts:
     if p.bom in (1, 2, 4):
         sh = cut_x(p.shape, HX - P["port_dx"])
-        near.append(Part(p.name, Pos(CX - HX, -330, CZ + 60 - HZ) * sh, p.color, p.bom))
+        near.append(Part(p.name, Pos(CX - HX, -370 - P["head_y"], CZ + 60 - HZ) * sh, p.color, p.bom))
     elif p.bom in (5, 6, 7):
         near.append(Part(p.name, cut_x(p.shape, CX - 50), p.color, p.bom))
 _render(near, md / "cutaway.png", azim=180, elev=15, labels=True,
         title="H2Guard: section through detector head (right) and controller (left)",
-        note="Head shown beside the controller; installed with its ports 175 mm below the ceiling. MOS sensor (3) is behind the cut plane.")
+        note="Head shown beside the controller; installed on its ceiling drop rod with its ports 175 mm below the ceiling. MOS sensor (3) is behind the cut plane.")
 
 for d in md.glob("_views*"):
     shutil.rmtree(d, ignore_errors=True)

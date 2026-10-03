@@ -18,13 +18,13 @@
 [E4] Head reading with the fan running: layer 5 % LFL plus plume 15 to 30 % LFL; plume mean above the warning, plume axis above the trip
 [E5] Leak that brings the plume axis at the head to 25 % LFL: 3.8 L/min; plume mean to 10 % LFL: 2.7 L/min
 [E6] Entrainment coefficient 0.08 to 0.12 instead of 0.10: head values x0.78 to x1.35, axis 24 to 41 % LFL
-[E7] Plume top-hat radius at the sensor ports 141 mm (6/5 alpha z); the head placement rule keeps the ports over the leak point, offset limit set at TRL 4
+[E7] Plume top-hat radius at the sensor ports 141 mm (6/5 alpha z); port centre 0 mm from the apparatus centre on the drop rod (inside the plume), against 260 mm for the former wall position (outside)
 [F1] Arrestor disc 25 x 2 mm, porosity 0.4, tortuosity 3.0: D_eff 9.2 x 10^-6 m2/s; slab 0.43 s; cavity 1.08 mL behind it, 90 % in 1.10 s; total 1.5 s
 [F2] TRL 2 arrangement (5 mm disc, sensor 15 mm behind it): 21 s
 [F3] Leak to valve closed: rise 4.0 + arrestor 1.5 + sensor t90 30 (assumed) + comparator 0.05 + relay 0.02 + valve 0.1 = 35.7 s
 [F4] Trip to valve closed 0.17 s (R4 limit 2 s); alarm within 32 s of a step at the head (R4 limit 60 s)
 [F5] Released before closing: 3.0 L at 5 L/min; plus downstream line (3 m of 4.3 mm bore at 10 bar gauge) 0.47 L
-[F6] Fault to valve closed: watchdog 1.0 s + relay + valve = 1.12 s; sensor open or short via comparator 0.17 s; fan stop detected at 10 s then 0.12 s (R5 limit 2 s after detection)
+[F6] Fault to valve closed: watchdog 1.0 s + relay + valve = 1.12 s; sensor open or short via comparator 0.17 s; fan stop detected at 10 s then 0.12 s; airflow not proved by the pressure switch (fan stopped, duct blocked, shutter stuck) detected at 10 s then 0.12 s (R5 limit 2 s after detection)
 [F7] Timed escalation, off-axis design leak (warning only): warning at 35.5 s, valve closed at 336 s (5.6 min); 28 L released at 5 L/min (9 % of the R9 inventory limit); 15 L at the 2.7 L/min warning threshold leak
 [F8] Well-mixed room when the escalation closes the valve: 1.9 % LFL (steady state 5.0 % LFL); leaks below 2.7 L/min at the head give no warning and are not escalated
 [G1] Duct velocity at 150 m3/h: 2.36 m/s; exhaust side K 3.44; make-up grille free area 0.024 m2, K 2.0
@@ -33,11 +33,13 @@
 [G3] TRL 3 spec (mixed flow, 450 m3/h free air, 200 Pa shut-off, assumed): full speed 347 m3/h (11.6 air changes per hour), +16 % against the 300 m3/h boost
 [G4] Continuous 150 m3/h at 43 % speed; fan power about 3.8 W continuous, 36 W on boost (35 W rated input assumed)
 [G5] Room depression at boost 19.4 Pa across the make-up grille
-[H1] Normal: 13.1 W
-[H1] Warning (valve open, fan boost, sounder): 48.3 W
+[G6] Pressure switch, fan inlet tap against the room: 5.7 Pa at 150 m3/h, 30.5 Pa at full speed (347 m3/h); set point 2.8 Pa (half the continuous value) is reached at 106 m3/h; no flow gives about 0 Pa
+[H1] Normal: 13.5 W
+[H1] Warning (valve open, fan boost, sounder): 48.7 W
 [H1] Trip (valve closed, fan boost, alarm): 40.3 W
-[H2] Peak 48.3 W against the 60 W supply: margin x1.24; valve coil heat 8 W continuous; energy in normal state 0.31 kWh/day
-[J1] Bump test at 1.0 L/min: tube 2.72 m, 13.3 mL, delay 0.8 s; cup 114 mL, five volumes in 34 s; reading settles after about 67 s (R12 limit 120 s)
+[H2] Peak 48.7 W against the 60 W supply: margin x1.23; valve coil heat 8 W continuous; energy in normal state 0.32 kWh/day
+[H3] With the oxygen sensor option: peak 49.2 W, margin x1.22
+[J1] Bump test at 1.0 L/min: tube 3.11 m, 15.3 mL, delay 0.9 s; cup 114 mL, five volumes in 34 s; reading settles after about 67 s (R12 limit 120 s)
 [J2] Span gas 1.36 L per test (with 15 s margin); a 34 L disposable cylinder gives about 25 tests
 [J3] Log: one 16 B record per minute for 90 days = 2.07 MB, plus events; needs a board with 4 MB flash or more
 [K1] Sounder 90 dB at 1 m: 90 dB at 1 m (free field)
@@ -46,6 +48,7 @@
 [K2] Farthest point in the room 5.0 m: 76 dB, 16 dB above a 60 dB lab background
 [L1] Sensor ports 175 mm below the ceiling (R1: 300 mm or less); fan grille top 80 mm below the ceiling
 [L2] Controller top 1025 mm below the ceiling (R15: 1000 mm or more); beacon top 450 mm; supply on the floor
-[M1] Installation estimate 370 min (6.2 h) with both wall openings; 255 min (4.2 h) with the openings made by others as builder's work, as R13 now scopes it (HGD-DDR-002; limit 240 min, +15 min)
-[N1] BOM 16 lines, estimated cost of the constructable design $289.00; value-engineering target $265 (budget_usd, a hypothetical control target): $24.00 over the target (+9.1 %)
-[N2] Without the fan and make-up grille ($63.00): $226.00
+[M1] Installation estimate 415 min (6.9 h) with both wall openings; 300 min (5.0 h) with the openings made by others as builder's work, as R13 now scopes it (HGD-DDR-002; limit 240 min, +60 min)
+[N1] BOM 21 lines, estimated cost of the constructable design $411.00; value-engineering target $265 (budget_usd, a hypothetical control target): $146.00 over the target (+55.1 %)
+[N2] Without the fan and make-up grille ($63.00): $348.00
+[N3] Options, priced but not in the total: line 20 $110.00; line 21 $450.00; with the oxygen sensor $521.00; with the alternative fan in place of line 9 $806.00

@@ -6,9 +6,9 @@ Run from the repo root:
 
 Exports:
     h2guard-assembly.step / .stl   every H2Guard part in place in the 30 m3 reference room
-    detector-head.step / .stl      detector head with sensors, flame arrestors and bump test cup
-    controller.step / .stl         controller enclosure, mounting plate, modules, lid and front panel
-    exhaust-fan.step / .stl        fan plate, fan, wall sleeve, inside grille, shutter and weather hood
+    detector-head.step / .stl      detector head with sensors, flame arrestors, bump test cup and ceiling drop rod
+    controller.step / .stl         controller enclosure, mounting plate, modules, dry-contact relay, lid and front panel
+    exhaust-fan.step / .stl        fan plate, fan, wall sleeve, inside grille, shutter, weather hood and pressure switch
 
 Axes: the back wall of the reference room lies in the XZ plane with its inside face at
 Y = 0; the room extends to negative Y. The side wall with the make-up air grille is at X = 0
@@ -31,10 +31,14 @@ PARAMS = {
     "room": (4000.0, 3000.0, 2500.0), "wall_t": 150.0,
     # context: bench and the apparatus whose fittings are the likely leak source
     "bench": (1200.0, 650.0, 900.0), "bench_x": 2000.0,
-    "apparatus": (350.0, 300.0, 250.0), "app_x": 1700.0,
-    # 1 detector head enclosure (outer, lid included), wall thickness, gap from ceiling to top of the head
-    "head": (110.0, 80.0, 90.0), "head_wall": 3.0, "head_ceiling_gap": 85.0, "head_y": -40.0,
+    "apparatus": (350.0, 300.0, 250.0), "app_x": 1700.0, "app_y": -300.0,   # apparatus centre (its fittings are the leak point)
+    # 1 detector head enclosure (outer, lid included), wall thickness, gap from ceiling to top of the head;
+    # the head hangs on the ceiling drop rod with its ports directly over the apparatus (HGD-DEC-001, decision 2)
+    "head": (110.0, 80.0, 90.0), "head_wall": 3.0, "head_ceiling_gap": 85.0, "head_y": -300.0,
     "port_d": 22.0, "port_dx": 22.0,          # two sensor ports in the floor; the 25 mm disc rests on the 1.5 mm ledge
+    "gland_dx": -38.0,                        # head cable gland, offset from the drop rod in the top of the head
+    # 17 ceiling drop rod: 1/2 in steel pipe nipple (OD, wall, length) in a 1/2 in floor flange used as the ceiling plate
+    "drop_pipe": (21.3, 2.8, 89.0), "drop_flange": (80.0, 5.0, 32.0, 15.0), "drop_pcd": 60.0, "drop_nut": (30.0, 4.0),
     # 2 catalytic sensor can, 3 MOS sensor can
     "cat": (20.0, 17.0), "mos": (9.2, 8.0),
     # 4 flame arrestor discs (sintered stainless) and the drip skirt that doubles as the bump test cup
@@ -59,13 +63,18 @@ PARAMS = {
     "beacon_x": 3800.0, "beacon_z": 2000.0,
     # 15 bump test port on an angle bracket beside the controller, 4 mm tube up to the cup
     "tube_od": 4.0, "tube_id": 2.5, "test_x": 3165.0, "test_z": 1250.0,
+    # 18 differential pressure switch beside the fan; its low port is tubed to a static tap in the fan inlet
+    "dps_x": 2370.0, "dps_z": 2330.0, "dps": (85.0, 55.0, 85.0), "dp_tube": (6.0, 4.0), "dp_tap_dz": -62.0,
+    # 20 oxygen sensor option (inert gas cylinders in the room): transmitter on the back wall, cell at breathing height
+    "o2_x": 2850.0, "o2_z": 1560.0, "o2_box": (80.0, 55.0, 110.0), "o2_cell": (30.0, 25.0),
     # context: small gas store with regulator and flow restrictor (gas system, not H2Guard)
     "store_x": 650.0, "store_y": -170.0, "supply_z": 1300.0,
 }
 
 
 def tube_points(p=PARAMS):
-    """Centre line of the bump test tube: test port, up the wall, along under the ceiling, down to the cup."""
+    """Centre line of the bump test tube: test port, up the wall, along the wall under the ceiling,
+    out across the ceiling to the head on its drop rod, down to the cup."""
     rz = p["room"][2]
     tx, tz = p["test_x"], p["test_z"]
     hx, hy = p["app_x"], p["head_y"]
@@ -74,8 +83,9 @@ def tube_points(p=PARAMS):
     xe = hx + p["cup"][0] / 2 + 20                # end of the push-in fitting
     xr = xe + 17                                  # vertical run beside the head
     run_z = rz - 60
+    cz = rz - p["tube_od"]                        # run on the ceiling, held by ceiling clips
     return [(tx, -18, tz + 20), (tx, -18, tz + 40), (tx, -2, tz + 60), (tx, -2, run_z), (xr, -2, run_z),
-            (xr, -2, port_face + 20), (xr, hy, nz + 7), (xr, hy, nz), (xe, hy, nz)]
+            (xr, -2, cz), (xr, hy, cz), (xr, hy, nz), (xe, hy, nz)]
 
 
 def derived(p=PARAMS):
@@ -102,12 +112,16 @@ def derived(p=PARAMS):
         "sensor_cavity_ml": math.pi / 4 * p["disc"][0] ** 2 * (p["board_gap"] - 0.8 - p["cat"][1] - p["disc"][1]) / 1e3,
         "cup_ml": (cupx - 2 * t) * (cupy - 2 * t) * (cupz - t) / 1e3,
         "src_z": src_z, "plume_rise": port_face - src_z, "src_to_ceiling": rz - src_z,
+        # horizontal distance from the centre of the two sensor ports to the apparatus centre (the leak point)
+        "port_offset": math.hypot(p["app_x"] - p["app_x"], p["head_y"] - p["app_y"]),
+        "drop_visible": p["head_ceiling_gap"] - p["drop_flange"][1] - p["drop_flange"][3] - p["drop_nut"][1],
         "ctrl_top": ctrl_top, "ctrl_below_ceiling": rz - ctrl_top,
         "fan_top": p["fan_z"] + p["grille"][0] / 2, "fan_below_ceiling": rz - p["fan_z"] - p["grille"][0] / 2,
         "beacon_top": p["beacon_z"] + 50.0, "beacon_below_ceiling": rz - p["beacon_z"] - 50.0,
         "sleeve_len": p["wall_t"] + 40.0,     # 150 mm air path through the fan and its spigots
         "tube_run": tube_run, "tube_ml": math.pi / 4 * p["tube_id"] ** 2 * tube_run / 1e3,
         "fan_to_inlet_x": p["fan_x"],
+        "o2_cell_z": p["o2_z"] - p["o2_box"][2] / 2 - p["o2_cell"][1] / 2,
     }
 
 
@@ -170,6 +184,12 @@ def _clip(pt, along, r):
     return c
 
 
+def _cclip(pt, r, rz):
+    """Ceiling clip for the 4 mm tube running along Y: 8 mm along the run, 10 across, 6 deep, bore cut out."""
+    x, y, z = pt
+    return box(x, y, rz - 3, 10, 8, 6) - ycyl(x, y, z, r, 10)
+
+
 def build_components(p=PARAMS):
     """Every part a maker handles, by name: {key: solid}. Fixings are grouped with the part they hold."""
     b = _b3d()
@@ -177,28 +197,43 @@ def build_components(p=PARAMS):
     rz = p["room"][2]
     C = {}
 
-    # ---- 1 detector head: bought box with its lid on the room-side face, drilled
+    # ---- 1 detector head: bought box with its lid on the room-side face, drilled, hung on the drop rod
     hx, hy, hz = p["app_x"], p["head_y"], D["head_z"]
     hw, hd, hh = p["head"]
     t = p["head_wall"]
     pf = D["port_face"]
     top = hz + hh / 2
     fl = pf + t                                   # inside face of the floor
+    y0 = hy + hd / 2                              # back face of the box (the lid face is at y0 - hd)
+    gx = hx + p["gland_dx"]
     # cavity runs from the open front (lid face) back to the inside of the back wall
-    body = box(hx, -(hd - t) / 2, hz, hw, hd - t, hh) - box(hx, (-(hd - t) - 0.01 - t) / 2, hz, hw - 2 * t, hd - 2 * t + 0.01, hh - 2 * t)
+    body = box(hx, y0 - (hd - t) / 2, hz, hw, hd - t, hh) - box(hx, y0 + (-(hd - t) - 0.01 - t) / 2, hz, hw - 2 * t, hd - 2 * t + 0.01, hh - 2 * t)
     for dx in (-p["port_dx"], p["port_dx"]):
         body = body - zcyl(hx + dx, hy, pf + t / 2, p["port_d"] / 2, t + 2)
-    body = body - zcyl(hx, hy, top - t / 2, 8.1, t + 2)                      # gland hole in the top
+    po, pw_, pl_ = p["drop_pipe"]
+    body = body - zcyl(hx, hy, top - t / 2, po / 2 + 0.2, t + 2)              # drop rod hole in the top, centred
+    body = body - zcyl(gx, hy, top - t / 2, 8.1, t + 2)                      # gland hole in the top
     sx, sy = p["standoff_xy"]
     so = [(hx + i * sx, hy + j * sy) for i in (-1, 1) for j in (-1, 1)]
     for x, y in so:
         body = body - zcyl(x, y, pf + t / 2, 1.7, t + 2)                     # holes for the standoff screws
-    for dx in (-35, 35):
-        body = body - ycyl(hx + dx, -t / 2, top - 15, 2.2, t + 2)          # wall screw holes in the back
     C["head_body"] = body
-    C["head_lid"] = box(hx, -hd + t / 2, hz, hw, t, hh)
-    C["head_gland"] = zcyl(hx, hy, top + 6, 9, 12) + zcyl(hx, hy, top - t - 2, 10.5, 4) + zcyl(hx, hy, top - t / 2, 8.0, t)
-    C["head_screws"] = fuse(ycyl(hx + dx, -t - 1.5, top - 15, 4, 3) + ycyl(hx + dx, 13.5, top - 15, 2.0, 33) for dx in (-35, 35))
+    C["head_lid"] = box(hx, y0 - hd + t / 2, hz, hw, t, hh)
+    C["head_gland"] = zcyl(gx, hy, top + 6, 9, 12) + zcyl(gx, hy, top - t - 2, 10.5, 4) + zcyl(gx, hy, top - t / 2, 8.0, t)
+
+    # ---- 17 ceiling drop rod: floor flange screwed to the ceiling, pipe nipple, locknuts either side of the head top
+    fd, ft, hubd, hubh = p["drop_flange"]
+    fl_ = zcyl(hx, hy, rz - ft / 2, fd / 2, ft) + (zcyl(hx, hy, rz - ft - hubh / 2, hubd / 2, hubh) - zcyl(hx, hy, rz - ft - hubh / 2, po / 2 + 0.05, hubh + 0.01))
+    pcd = p["drop_pcd"] / 2
+    fsc_ = [(hx + pcd * math.cos(math.radians(a)), hy + pcd * math.sin(math.radians(a))) for a in (90, 210, 330)]
+    for x, y in fsc_:
+        fl_ = fl_ - zcyl(x, y, rz - ft / 2, 2.75, ft + 2)
+    C["drop_flange"] = fl_
+    C["drop_rod"] = zcyl(hx, hy, rz - ft - pl_ / 2, po / 2, pl_) - zcyl(hx, hy, rz - ft - pl_ / 2, po / 2 - pw_, pl_ + 1)
+    nd, nt = p["drop_nut"]
+    C["drop_nuts"] = ((zcyl(hx, hy, top + nt / 2, nd / 2, nt) - zcyl(hx, hy, top + nt / 2, po / 2 + 0.03, nt + 1))
+                      + (zcyl(hx, hy, top - t - nt / 2, nd / 2, nt) - zcyl(hx, hy, top - t - nt / 2, po / 2 + 0.03, nt + 1)))
+    C["drop_screws"] = fuse(zcyl(x, y, rz - ft - 1.75, 4.5, 3.5) + zcyl(x, y, rz - ft + 20, 2.5, 40) for x, y in fsc_)
 
     # ---- 4 flame arrestor discs, bonded on the floor over each port (they rest on the 1.5 mm ledge)
     dd, dt = p["disc"]
@@ -253,15 +288,17 @@ def build_components(p=PARAMS):
     gl_top = [cxx - 60, cxx - 20, cxx + 20, cxx + 60]
     for gx in gl_top:
         cb = cb - zcyl(gx, -45, czz + ch / 2 - ct / 2, 8.1, ct + 2)
-    cb = cb - zcyl(cxx + 60, -45, czz - ch / 2 + ct / 2, 8.1, ct + 2)
+    gl_bot = [cxx - 60, cxx - 20, cxx + 20, cxx + 60]   # oxygen sensor, pressure switch, dry-contact output, supply lead
+    for gx in gl_bot:
+        cb = cb - zcyl(gx, -45, czz - ch / 2 + ct / 2, 8.1, ct + 2)
     wsx = [(cxx + i * 85, czz + j * 110) for i in (-1, 1) for j in (-1, 1)]
     for x, z in wsx:
         cb = cb - ycyl(x, -ct / 2, z, 2.2, ct + 2)
     C["ctrl_body"] = cb
     glands = fuse(zcyl(gx, -45, czz + ch / 2 + 7.5, 9, 15) + zcyl(gx, -45, czz + ch / 2 - ct / 2, 8.0, ct)
                   + zcyl(gx, -45, czz + ch / 2 - ct - 2, 10.5, 4) for gx in gl_top)
-    glands = glands + zcyl(cxx + 60, -45, czz - ch / 2 - 7.5, 9, 15) + zcyl(cxx + 60, -45, czz - ch / 2 + ct / 2, 8.0, ct) \
-        + zcyl(cxx + 60, -45, czz - ch / 2 + ct + 2, 10.5, 4)
+    glands = glands + fuse(zcyl(gx, -45, czz - ch / 2 - 7.5, 9, 15) + zcyl(gx, -45, czz - ch / 2 + ct / 2, 8.0, ct)
+                           + zcyl(gx, -45, czz - ch / 2 + ct + 2, 10.5, 4) for gx in gl_bot)
     C["ctrl_glands"] = glands
     C["ctrl_screws"] = fuse(ycyl(x, -ct - 1.5, z, 4, 3) + ycyl(x, 13.5, z, 2.0, 33) for x, z in wsx)
 
@@ -305,6 +342,13 @@ def build_components(p=PARAMS):
         mods = m if mods is None else mods + m
     mods = mods + box(cxx, pf_ - 7, czz - 80, 150, 14, 18)                    # terminal strip
     C["modules"] = mods
+    # ---- 19 dry-contact output: relay module (opens on a trip or loss of power) with its 2-way output terminal
+    rx_, rz_ = cxx + 45, czz - 38
+    dr = box(rx_, pf_ - 6 - 0.8, rz_, 44, 1.6, 34) + box(rx_ - 6, pf_ - 7.6 - 7.5, rz_ + 2, 20, 15, 16) \
+        + box(rx_ + 14, pf_ - 7.6 - 5, rz_ + 2, 10, 10, 12)
+    for sxo in (-1, 1):
+        dr = dr + ycyl(rx_ + sxo * 18, pf_ - 3, rz_, 2.5, 6)
+    C["dry_relay"] = dr
 
     # ---- 8 power supply brick on the floor by the outlet
     pw8, pd8, ph8 = p["psu"]
@@ -383,6 +427,29 @@ def build_components(p=PARAMS):
     bx, bzb = p["beacon_x"], p["beacon_z"]
     C["beacon"] = box(bx, -25, bzb, 100, 50, 100) + ycyl(bx, -80, bzb, 38, 60) + b.Pos(bx, -110, bzb) * b.Sphere(38)
 
+    # ---- 18 differential pressure switch on the wall left of the fan; low port tubed to a static tap in the fan inlet
+    dx_, dz_ = p["dps_x"], p["dps_z"]
+    dw, dd_, dh = p["dps"]
+    dyc = -dd_ / 2
+    dbot = dz_ - dh / 2
+    C["dp_switch"] = (box(dx_, dyc, dz_, dw, dd_, dh) + ycyl(dx_, -dd_ - 3, dz_ + 10, 14, 6)          # body and set-point knob
+                      + zcyl(dx_ + 15, dyc, dbot - 6, 3, 12) + zcyl(dx_ - 15, dyc, dbot - 4, 3, 8)    # low port (tubed), high port (open)
+                      - fuse(ycyl(dx_ + i * 30, -2, dz_ + 30, 2.2, 5) + ycyl(dx_ + i * 30, -6.05, dz_ + 30, 4.3, 4.1) for i in (-1, 1)))
+    C["dp_screws"] = fuse(ycyl(dx_ + i * 30, -5.5, dz_ + 30, 4, 3) + ycyl(dx_ + i * 30, 12.5, dz_ + 30, 2.0, 33) for i in (-1, 1))
+    tz_ = p["fan_z"] + p["dp_tap_dz"]
+    to_, ti_ = p["dp_tube"]
+    C["dp_tube"] = path([(dx_ + 15, dyc, dbot - 12), (dx_ + 15, dyc, tz_), (p["fan_x"], dyc, tz_),
+                         (p["fan_x"], -p["fan_plate"][1] - 3, tz_)], to_ / 2, joints=True)
+
+    # ---- 20 oxygen sensor option: transmitter box on the back wall, cell facing down at breathing height
+    ox, oz = p["o2_x"], p["o2_z"]
+    ow, od, oh = p["o2_box"]
+    cdia, clen = p["o2_cell"]
+    C["o2_box"] = (box(ox, -od / 2, oz, ow, od, oh) + zcyl(ox, -od / 2, oz - oh / 2 - clen / 2, cdia / 2, clen)
+                   + zcyl(ox + 25, -od / 2, oz + oh / 2 + 6, 7, 12)                                   # cable gland on top
+                   - fuse(ycyl(ox, -2, oz + i * 40, 2.2, 5) + ycyl(ox, -6.05, oz + i * 40, 4.3, 4.1) for i in (-1, 1)))
+    C["o2_screws"] = fuse(ycyl(ox, -5.5, oz + i * 40, 4, 3) + ycyl(ox, 12.5, oz + i * 40, 2.0, 33) for i in (-1, 1))
+
     # ---- 15 bump test port on its angle bracket, tube and clips
     tx, tz = p["test_x"], p["test_z"]
     ang = box(tx, -15, tz - 1.5, 40, 30, 3) + box(tx, -1.5, tz + 12, 40, 3, 30)     # 30 x 30 x 3 angle, 40 long
@@ -398,14 +465,17 @@ def build_components(p=PARAMS):
     C["tube"] = path(pts, r, joints=True)
     clips = [((tx, -2, z), "z") for z in (1500.0, 1900.0, 2300.0)]
     clips += [((x, -2, rz - 60), "x") for x in (2000.0, 2350.0, 2850.0)]
-    clips += [((pts[4][0], -2, rz - 100), "z")]
     C["clips"] = fuse(_clip(q, a, r) for q, a in clips)
+    C["ceil_clips"] = fuse(_cclip((pts[5][0], y, pts[5][2]), r, rz) for y in (-80.0, hy + 60))
     return C
 
 
-# BOM line of each component (lines 13 and 14 are cable and hardware; 16 is the made brackets and plates)
+# BOM line of each component (lines 13 and 14 are cable and hardware; 16 is the made brackets and plates;
+# 17 drop rod, 18 pressure switch, 19 dry-contact output, 20 oxygen sensor option; 21 is the alternative fan, not modelled)
 COMPONENT_BOM = {
-    "head_body": 1, "head_lid": 1, "head_gland": 1, "head_screws": 14, "discs": 4, "standoffs": 14,
+    "head_body": 1, "head_lid": 1, "head_gland": 1, "discs": 4, "standoffs": 14,
+    "drop_flange": 17, "drop_rod": 17, "drop_nuts": 17, "drop_screws": 17,
+    "dp_switch": 18, "dp_tube": 18, "dp_screws": 18, "dry_relay": 19, "o2_box": 20, "o2_screws": 20, "ceil_clips": 15,
     "sensor_board": 2, "cat": 2, "mos": 3, "board_screws": 14, "cup": 4, "cup_screws": 14, "cup_fitting": 15,
     "ctrl_body": 5, "ctrl_glands": 5, "ctrl_screws": 14, "ctrl_lid": 5, "panel_parts": 7, "mplate": 16,
     "mplate_screws": 14, "modules": 6, "psu": 8, "fan_plate": 16, "fan": 9, "sleeve": 9, "grille": 9,
@@ -416,15 +486,16 @@ COMPONENT_BOM = {
 # concept-media groups (one coloured part per BOM line, as before)
 GROUPS = {
     "head": ["head_body", "head_lid", "head_gland"], "cat": ["sensor_board", "cat", "standoffs"], "mos": ["mos"],
-    "arrest": ["discs", "cup"], "ctrl": ["ctrl_body", "ctrl_lid", "ctrl_glands"], "board": ["mplate", "modules"],
+    "arrest": ["discs", "cup"], "ctrl": ["ctrl_body", "ctrl_lid", "ctrl_glands"], "board": ["mplate", "modules", "dry_relay"],
     "panel": ["panel_parts"], "psu": ["psu"], "fan": ["fan_plate", "fan", "sleeve", "grille", "shutter", "hood"],
     "inlet": ["inlet"], "valve": ["valve", "valve_bracket"], "beacon": ["beacon"],
-    "bump": ["test_bracket", "test_port", "cup_fitting", "tube", "clips"],
+    "bump": ["test_bracket", "test_port", "cup_fitting", "tube", "clips", "ceil_clips"],
+    "drop": ["drop_flange", "drop_rod", "drop_nuts"], "dps": ["dp_switch", "dp_tube"], "o2": ["o2_box"],
 }
 
 
 def build_parts(p=PARAMS, comps=None):
-    """Return {key: solid} for the H2Guard parts by BOM line (lines 1 to 12 and 15), fixings left out."""
+    """Return {key: solid} for the H2Guard parts by BOM line (lines 1 to 12, 15, 17, 18 and 20), fixings left out."""
     C = comps or build_components(p)
     return {k: fuse(C[n] for n in names) for k, names in GROUPS.items()}
 
@@ -432,11 +503,12 @@ def build_parts(p=PARAMS, comps=None):
 def bump_kit(p=PARAMS, comps=None):
     """BOM line 15 as (test port on its bracket, tube with its clips)."""
     C = comps or build_components(p)
-    return C["test_bracket"] + C["test_port"], C["tube"] + C["clips"] + C["cup_fitting"]
+    return C["test_bracket"] + C["test_port"], C["tube"] + C["clips"] + C["ceil_clips"] + C["cup_fitting"]
 
 
 BOM_ORDER = [("head", 1), ("cat", 2), ("mos", 3), ("arrest", 4), ("ctrl", 5), ("board", 6), ("panel", 7),
-             ("psu", 8), ("fan", 9), ("inlet", 10), ("valve", 11), ("beacon", 12), ("bump", 15)]
+             ("psu", 8), ("fan", 9), ("inlet", 10), ("valve", 11), ("beacon", 12), ("bump", 15),
+             ("drop", 17), ("dps", 18), ("o2", 20)]
 
 
 def context(p=PARAMS):
@@ -457,7 +529,7 @@ def context(p=PARAMS):
         for dy in (-bd + 30, -30):
             bench = bench + box(p["bench_x"] + dx, dy, (bh - 40) / 2, 40, 40, bh - 40)
     aw, ad, ah = p["apparatus"]
-    bench = bench + box(p["app_x"], -ad / 2 - 150, bh + ah / 2, aw, ad, ah)
+    bench = bench + box(p["app_x"], p["app_y"], bh + ah / 2, aw, ad, ah)
     sx, sy = p["store_x"], p["store_y"]
     store = (zcyl(sx, sy, 450, 90, 900) + b.Pos(sx, sy, 900) * b.Sphere(90) + zcyl(sx, sy, 1010, 18, 60)
              + box(sx, sy, 1060, 70, 60, 50) + box(sx, -45, 700, 200, 90, 20))
@@ -469,8 +541,15 @@ def context(p=PARAMS):
     cx, cz = p["ctrl_x"], p["ctrl_z"]
     ch = p["ctrl"][2]
     top = D["head_z"] + p["head"][2] / 2
+    gx, hy = p["app_x"] + p["gland_dx"], p["head_y"]
+    ox, oz = p["o2_x"], p["o2_z"] + p["o2_box"][2] / 2
     cables = (path([(p["valve_x"], -10, sz + 110), (p["valve_x"], -10, tr), (cx + 60, -10, tr), (cx + 60, -10, cz + ch / 2 + 30), (cx + 60, -45, cz + ch / 2 + 15)], 5)
-              + path([(p["app_x"], p["head_y"], top + 12), (p["app_x"], p["head_y"], top + 25), (p["app_x"], -10, top + 40), (p["app_x"], -10, tr)], 5)
+              + path([(gx, hy, top + 12), (gx, hy, rz - 6), (gx, -6, rz - 6), (gx, -10, tr)], 5)
+              + path([(p["dps_x"] - 30, -10, p["dps_z"] + p["dps"][2] / 2), (p["dps_x"] - 30, -10, tr)], 4)
+              + path([(ox + 25, -27.5, oz + 12), (ox + 25, -27.5, oz + 40), (ox + 25, -10, oz + 40), (ox + 25, -10, 1150),
+                      (cx - 60, -10, 1150), (cx - 60, -45, cz - ch / 2 - 15)], 4)
+              + path([(cx - 20, -45, cz - ch / 2 - 15), (cx - 20, -10, cz - ch / 2 - 40), (cx - 20, -10, 1100), (p["dps_x"] - 60, -10, 1100),
+                      (p["dps_x"] - 60, -10, tr)], 4)
               + path([(p["fan_x"], -10, p["fan_z"] + 130), (p["fan_x"], -10, tr)], 5)
               + path([(p["beacon_x"], -10, p["beacon_z"] + 50), (p["beacon_x"], -10, tr)], 5)
               + path([(p["valve_x"], p["store_y"] + 20, sz + 100), (p["valve_x"], -10, sz + 110)], 5)
@@ -492,7 +571,10 @@ def assembly(p=PARAMS, with_room=False):
 CONTACTS = [  # (a, b): faces must touch (distance under 0.05 mm) without overlapping
     ("head_lid", "head_body"), ("discs", "head_body"), ("standoffs", "head_body"), ("sensor_board", "standoffs"),
     ("cat", "sensor_board"), ("mos", "sensor_board"), ("cup", "head_body"), ("cup_screws", "cup"),
-    ("board_screws", "sensor_board"), ("head_gland", "head_body"), ("head_screws", "head_body"),
+    ("board_screws", "sensor_board"), ("head_gland", "head_body"),
+    ("drop_rod", "drop_flange"), ("drop_nuts", "drop_rod"), ("drop_nuts", "head_body"), ("drop_screws", "drop_flange"),
+    ("dp_screws", "dp_switch"), ("dp_tube", "dp_switch"), ("o2_screws", "o2_box"), ("dry_relay", "mplate"),
+    ("ceil_clips", "tube"),
     ("cup_fitting", "cup"), ("tube", "cup_fitting"),
     ("ctrl_lid", "ctrl_body"), ("mplate", "ctrl_body"), ("modules", "mplate"), ("panel_parts", "ctrl_lid"),
     ("ctrl_glands", "ctrl_body"), ("ctrl_screws", "ctrl_body"), ("mplate_screws", "mplate"),
@@ -505,10 +587,15 @@ CLEAR = [  # (a, b, minimum gap mm)
     ("tube", "ctrl_body", 10.0), ("tube", "grille", 10.0), ("tube", "fan_plate", 10.0), ("test_port", "ctrl_body", 10.0),
     ("modules", "panel_parts", 5.0), ("ctrl_glands", "modules", 5.0), ("valve", "tube", 100.0),
     ("cup_screws", "discs", 2.0), ("standoffs", "cat", 2.0), ("standoffs", "mos", 2.0),
+    ("drop_rod", "sensor_board", 20.0), ("drop_nuts", "head_gland", 5.0), ("tube", "drop_flange", 20.0), ("tube", "drop_nuts", 20.0),
+    ("dp_tube", "fan", 2.0), ("dp_tube", "grille", 2.0), ("dp_tube", "fan_plate", 2.0), ("dp_switch", "fan_plate", 50.0),
+    ("dp_switch", "clips", 20.0), ("dp_switch", "tube", 20.0), ("dry_relay", "panel_parts", 5.0), ("dry_relay", "modules", 5.0),
+    ("ctrl_glands", "dry_relay", 5.0), ("o2_box", "tube", 100.0), ("o2_box", "test_port", 100.0),
 ]
 WALL_ITEMS = {  # parts that bear on the room: back wall (y = 0), side wall (x = 0), floor (z = 0)
-    "head_body": "y", "ctrl_body": "y", "fan_plate": "y", "test_bracket": "y", "valve_bracket": "y", "beacon": "y",
-    "clips": "y", "inlet": "x", "psu": "z", "sleeve": "y", "hood": "y150",
+    "ctrl_body": "y", "fan_plate": "y", "test_bracket": "y", "valve_bracket": "y", "beacon": "y",
+    "clips": "y", "inlet": "x", "psu": "z", "sleeve": "y", "hood": "y150", "dp_switch": "y", "o2_box": "y",
+    "drop_flange": "c", "ceil_clips": "c",
 }
 
 
@@ -516,6 +603,7 @@ def check(p=PARAMS, verbose=True):
     """Constructability checks on build_components(). Returns (passed, failed) lists of strings."""
     C = build_components(p)
     ok, bad = [], []
+    D = derived(p)
 
     def ivol(x, y):
         try:
@@ -552,9 +640,14 @@ def check(p=PARAMS, verbose=True):
             good = abs(bb.min.Y - wt) < 0.05
         elif face == "x":
             good = abs(bb.min.X) < 0.05
+        elif face == "c":
+            good = abs(bb.max.Z - p["room"][2]) < 0.05
         else:
             good = abs(bb.min.Z) < 0.05
         rec(good, f"bears on the room ({face}): {k}")
+    rec(D["port_offset"] < 1.0, f"head ports over the apparatus centre: offset {D['port_offset']:.0f} mm")
+    rec(D["port_below_ceiling"] <= 300.0, f"sensor ports {D['port_below_ceiling']:.0f} mm below the ceiling (300 or less)")
+    rec(1400.0 <= D["o2_cell_z"] <= 1700.0, f"oxygen cell at breathing height: {D['o2_cell_z']:.0f} mm")
     if verbose:
         for t in bad:
             print("FAIL", t)
@@ -575,9 +668,12 @@ if __name__ == "__main__":
     groups = {
         "h2guard-assembly": list(CC.values()),
         "detector-head": [CC[k] for k in ("head_body", "head_lid", "head_gland", "discs", "standoffs", "sensor_board", "cat", "mos",
-                                          "board_screws", "cup", "cup_screws", "cup_fitting")],
-        "controller": [CC[k] for k in ("ctrl_body", "ctrl_lid", "ctrl_glands", "mplate", "mplate_screws", "modules", "panel_parts")],
-        "exhaust-fan": [CC[k] for k in ("fan_plate", "fan", "sleeve", "grille", "fan_screws", "shutter", "hood")],
+                                          "board_screws", "cup", "cup_screws", "cup_fitting", "drop_flange", "drop_rod", "drop_nuts",
+                                          "drop_screws")],
+        "controller": [CC[k] for k in ("ctrl_body", "ctrl_lid", "ctrl_glands", "mplate", "mplate_screws", "modules", "dry_relay",
+                                       "panel_parts")],
+        "exhaust-fan": [CC[k] for k in ("fan_plate", "fan", "sleeve", "grille", "fan_screws", "shutter", "hood", "dp_switch",
+                                        "dp_tube", "dp_screws")],
     }
     for name, shapes in groups.items():
         c = Compound(children=shapes)
@@ -586,7 +682,7 @@ if __name__ == "__main__":
         bb = c.bounding_box()
         print(f"{name}: {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm")
     D = derived()
-    print(f"room {D['room_m3']:.1f} m3; sensor ports {D['port_below_ceiling']:.0f} mm below the ceiling; "
+    print(f"room {D['room_m3']:.1f} m3; sensor ports {D['port_below_ceiling']:.0f} mm below the ceiling, {D['port_offset']:.0f} mm from the apparatus centre; "
           f"leak source {D['src_z']:.0f} mm above the floor, {D['plume_rise']:.0f} mm below the ports")
     print(f"controller top {D['ctrl_below_ceiling']:.0f} mm below the ceiling; fan grille top {D['fan_below_ceiling']:.0f} mm; "
           f"beacon top {D['beacon_below_ceiling']:.0f} mm")

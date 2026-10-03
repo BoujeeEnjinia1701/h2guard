@@ -1,4 +1,4 @@
-"""H2Guard sizing calculations, HGD-CAL-001 v0.2 (TRL 3).
+"""H2Guard sizing calculations, HGD-CAL-001 v0.4 (TRL 3).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Every number quoted in docs/04-calcs/01-sizing.md is printed here, tagged [A1], [B2] and so on.
@@ -122,9 +122,12 @@ say("E5", f"Leak that brings the plume axis at the head to 25 % LFL: {q_trip:.1f
 # plume flow scales with alpha^(4/3), so the head concentration scales with alpha^(-4/3)
 f_lo, f_hi = (0.10 / 0.12) ** (4 / 3), (0.10 / 0.08) ** (4 / 3)
 say("E6", f"Entrainment coefficient 0.08 to 0.12 instead of 0.10: head values x{f_lo:.2f} to x{f_hi:.2f}, axis {100 * c_axis * f_lo / LFL:.0f} to {100 * c_axis * f_hi / LFL:.0f} % LFL")
-# E7 plume width at the ports: basis for the head placement rule (offset limit set at TRL 4)
+# E7 plume width at the ports against the horizontal offset of the ports from the leak point (drop rod, HGD-DEC-001 decision 2)
 b_top = 6 / 5 * alpha * z
-say("E7", f"Plume top-hat radius at the sensor ports {b_top * 1000:.0f} mm (6/5 alpha z); the head placement rule keeps the ports over the leak point, offset limit set at TRL 4")
+off = D["port_offset"]
+off_wall = abs(-40.0 - P["app_y"])                 # the wall-mounted head of v0.3 had its port centre 40 mm from the wall
+say("E7", f"Plume top-hat radius at the sensor ports {b_top * 1000:.0f} mm (6/5 alpha z); port centre {off:.0f} mm from the apparatus centre on the drop rod "
+    f"({'inside' if off < b_top * 1000 else 'outside'} the plume), against {off_wall:.0f} mm for the former wall position (outside)")
 
 # ---------------- F. response time chain (R4, R5) ----------------
 D_h2 = 0.61e-4 * (T / 273.15) ** 1.75          # m2/s, H2 in air
@@ -153,7 +156,8 @@ line_l = math.pi / 4 * 4.3 ** 2 * 3000 / 1e6 * (11 / 1.013)
 say("F5", f"Released before closing: {rel:.1f} L at {LEAK:.0f} L/min; plus downstream line (3 m of 4.3 mm bore at 10 bar gauge) {line_l:.2f} L")
 wd = 1.0
 say("F6", f"Fault to valve closed: watchdog {wd:.1f} s + relay + valve = {wd + t_relay + t_valve:.2f} s; sensor open or short via comparator {t_comp + t_relay + t_valve:.2f} s; "
-    f"fan stop detected at 10 s then {t_relay + t_valve:.2f} s (R5 limit 2 s after detection)")
+    f"fan stop detected at 10 s then {t_relay + t_valve:.2f} s; airflow not proved by the pressure switch (fan stopped, duct blocked, shutter stuck) "
+    f"detected at 10 s then {t_relay + t_valve:.2f} s (R5 limit 2 s after detection)")
 
 # F7 timed escalation (HGD-DDR-002): a warning held for ESCALATE_S closes the valve through the microcontroller
 t_warn = t_rise + t_arr + t90_sensor
@@ -205,18 +209,35 @@ P_fan_full = 35.0
 p_fan_cont = P_fan_full * s_cont ** 3 + 1.0
 say("G4", f"Continuous {VENT:.0f} m3/h at {100 * s_cont:.0f} % speed; fan power about {p_fan_cont:.1f} W continuous, {P_fan_full + 1:.0f} W on boost (35 W rated input assumed)")
 say("G5", f"Room depression at boost {sys_dp(q_new) - sum(K_exh.values()) * 0.5 * RHO_AIR * (q_new / 3600 / A) ** 2:.1f} Pa across the make-up grille")
+# G6 airflow proving (HGD-DEC-001 decision 6): static tap in the fan inlet, just inside the grille, against the room.
+# The tap sees the grille loss plus the inlet velocity head; with no flow (fan stopped, duct blocked, shutter stuck) it falls to about 0.
+K_tap = K_exh["inside grille"] + 1.0
+
+
+def tap_dp(q_m3h):
+    v = q_m3h / 3600 / A
+    return K_tap * 0.5 * RHO_AIR * v ** 2
+
+
+dp_c, dp_b = tap_dp(VENT), tap_dp(q_new)
+sp = 0.5 * dp_c
+say("G6", f"Pressure switch, fan inlet tap against the room: {dp_c:.1f} Pa at {VENT:.0f} m3/h, {dp_b:.1f} Pa at full speed ({q_new:.0f} m3/h); "
+    f"set point {sp:.1f} Pa (half the continuous value) is reached at {VENT * math.sqrt(sp / dp_c):.0f} m3/h; no flow gives about 0 Pa")
 
 # ---------------- H. power (R11) ----------------
 cat_w, mos_w, ctl_w, valve_w, alarm_w = 0.5, 0.28, 0.5, 8.0, 3.0
+dry_w = 0.4               # dry-contact relay coil, energized while healthy (opens on a trip or loss of power)
+o2_w = 0.5                # oxygen transmitter option, 4 to 20 mA loop at 24 V (not in the base kit)
 states = {
-    "Normal": cat_w + mos_w + ctl_w + valve_w + p_fan_cont,
-    "Warning (valve open, fan boost, sounder)": cat_w + mos_w + ctl_w + valve_w + P_fan_full + 1 + alarm_w,
+    "Normal": cat_w + mos_w + ctl_w + valve_w + p_fan_cont + dry_w,
+    "Warning (valve open, fan boost, sounder)": cat_w + mos_w + ctl_w + valve_w + P_fan_full + 1 + alarm_w + dry_w,
     "Trip (valve closed, fan boost, alarm)": cat_w + mos_w + ctl_w + P_fan_full + 1 + alarm_w,
 }
 for k_, v_ in states.items():
     say("H1", f"{k_}: {v_:.1f} W")
 pmax = max(states.values())
 say("H2", f"Peak {pmax:.1f} W against the 60 W supply: margin x{60 / pmax:.2f}; valve coil heat {valve_w:.0f} W continuous; energy in normal state {states['Normal'] * 24 / 1000:.2f} kWh/day")
+say("H3", f"With the oxygen sensor option: peak {pmax + o2_w:.1f} W, margin x{60 / (pmax + o2_w):.2f}")
 
 # ---------------- J. bump test and log (R12) ----------------
 q_span = 1.0            # L/min
@@ -244,9 +265,10 @@ say("L1", f"Sensor ports {D['port_below_ceiling']:.0f} mm below the ceiling (R1:
 say("L2", f"Controller top {D['ctrl_below_ceiling']:.0f} mm below the ceiling (R15: 1000 mm or more); beacon top {D['beacon_below_ceiling']:.0f} mm; supply on the floor")
 
 # ---------------- M. installation time (R13) ----------------
-tasks = [("Plan and mark out", 20), ("Detector head bracket and head", 30), ("Core drill 206 mm through the wall; sleeve, fan plate with fan, and hood", 90),
+tasks = [("Plan and mark out", 20), ("Ceiling drop rod and detector head", 35), ("Core drill 206 mm through the wall; sleeve, fan plate with fan, and hood", 90),
          ("Opening and make-up air grille", 60), ("Controller", 25), ("Sounder and beacon", 15), ("Power supply", 5),
-         ("15 m of cable in surface conduit", 60), ("Bump test tube and port", 20), ("Valve bracket on the wall and valve coil connection (gas fitting by others)", 20),
+         ("Pressure switch and its tube", 15),
+         ("22 m of cable in surface conduit", 80), ("Bump test tube and port, with ceiling clips", 25), ("Valve bracket on the wall and valve coil connection (gas fitting by others)", 20),
          ("Commissioning: test button and first bump test", 25)]
 t_all = sum(t for _, t in tasks)
 t_nowall = t_all - 90 - 60 + 20 + 15
@@ -263,5 +285,9 @@ fan_grille = sum(float(r["unit_cost_usd"]) * float(r["qty"]) for r in bom if r["
 say("N1", f"BOM {len(bom)} lines, estimated cost of the constructable design ${total:.2f}; value-engineering target ${budget:.0f} (budget_usd, a hypothetical control target): "
     f"${abs(total - budget):.2f} {'under' if total <= budget else 'over'} the target ({100 * (total / budget - 1):+.1f} %)")
 say("N2", f"Without the fan and make-up grille (${fan_grille:.2f}): ${total - fan_grille:.2f}")
+opts = [r for r in bom if float(r["qty"]) == 0]
+say("N3", "Options, priced but not in the total: " + "; ".join(f"line {r['item'].split()[0]} ${float(r['unit_cost_usd']):.2f}" for r in opts)
+    + f"; with the oxygen sensor ${total + float(opts[0]['unit_cost_usd']):.2f}; with the alternative fan in place of line 9 "
+    f"${total - sum(float(r['unit_cost_usd']) for r in bom if r['item'].split()[0] == '9') + float(opts[1]['unit_cost_usd']):.2f}")
 
 (Path(__file__).parent / "results.txt").write_text("\n".join(OUT) + "\n")

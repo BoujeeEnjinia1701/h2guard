@@ -2,7 +2,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1388476795.svg)](https://zenodo.org/badge/latestdoi/1388476795) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/h2guard/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/h2guard/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/h2guard/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/h2guard)
 
-**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** USD 265 (estimated cost USD 289) · **Difficulty:** 3 of 5
+**Area:** Hydrogen · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** USD 265 (estimated cost USD 411) · **Difficulty:** 3 of 5
 
 A hydrogen leak detector and ventilation interlock for small labs, workshops and electrolyzer rooms: it senses hydrogen near the ceiling, runs a fan and cuts the supply when readings rise.
 
@@ -58,20 +58,21 @@ Full problem statement: [docs/01-problem.md](docs/01-problem.md)
 
 ## Concept
 
-A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan or a crashed controller also close the valve, and a hardware comparator trip works without the firmware. The TRL 3 calculations give 35.7 s from a 5 L/min leak to the valve closing (with an assumed 30 s sensor response), and about 5 % LFL in the 30 m3 reference room with the fan running. They also show that the design leak trips the system at once only if the detector head is on the plume axis above the leak. Two rules accepted by Amish cover the rest: a warning held for 5 min also closes the valve (about 5.6 min for the design leak off the axis), and a head goes directly above each likely leak point.
+A detector head at the ceiling above the hydrogen source measures 0 to 100 % of the lower flammability limit (LFL). A wall controller keeps an exhaust fan running and holds a normally closed valve on the supply open. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve, sounds the alarm and latches until a key reset. Power loss, sensor faults, a stopped fan, lost airflow (a pressure switch on the fan inlet) or a crashed controller also close the valve, and a hardware comparator trip works without the firmware. The TRL 3 calculations give 35.7 s from a 5 L/min leak to the valve closing (with an assumed 30 s sensor response), and about 5 % LFL in the 30 m3 reference room with the fan running. They also show that the design leak trips the system at once only if the detector head is on the plume axis above the leak. Two rules accepted by Amish cover the rest: a warning held for 5 min also closes the valve (about 5.6 min for the design leak off the axis), and the head hangs from the ceiling on a short drop rod directly above the likely leak point.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [docs/03-requirements.md](docs/03-requirements.md) · Calculations: [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) · Decisions: [DDR-001](docs/decisions/0001-trl2-review-decisions.md), [DDR-002](docs/decisions/0002-recommendations-accepted.md), [DDR-003](docs/decisions/0003-design-for-construction.md), [register](docs/06-design-decisions.md)
 
 ## Key components
 
-- Detector head with a catalytic hydrogen sensor (0 to 100 % LFL) and a metal oxide early-warning sensor, behind thin sintered flame arrestors, with a drip skirt that doubles as a bump test cup
-- Controller with an independent hardware trip (latched comparator and series relay), display, key-switch reset, event log and a bump test gas port
+- Detector head on a ceiling drop rod, with a catalytic hydrogen sensor (0 to 100 % LFL) and a metal oxide early-warning sensor, behind thin sintered flame arrestors, with a drip skirt that doubles as a bump test cup
+- Controller in a clear-lid box with an independent hardware trip (latched comparator and series relay), display, key-switch reset, event log, a dry-contact output for the host bench and a bump test gas port
 - Certified 24 V DC power supply
-- 150 mm mixed-flow exhaust fan at high level, running continuously, and a low-level make-up air grille
-- Normally closed 24 V DC solenoid valve on the supply
+- 150 mm mixed-flow exhaust fan at high level, running continuously, with a differential pressure switch that proves airflow, and a low-level make-up air grille
+- Normally closed 24 V DC solenoid valve rated for hydrogen on the supply
+- Oxygen sensor option where inert gas cylinders share the room
 - Sounder and beacon
 
-The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Value-engineering target: USD 265. Estimated cost of the constructable design: USD 289 at indicative prices (USD 24 over the target); the [design decisions register](docs/06-design-decisions.md) lists the main cost drivers and savings worth trying. The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
+The priced bill of materials is in [bom/bom.csv](bom/bom.csv). Value-engineering target: USD 265. Estimated cost of the constructable design: USD 411 (USD 146 over the target), at indicative prices; the [design decisions register](docs/06-design-decisions.md) lists the main cost drivers and savings worth trying. The parametric model is `cad/src/model.py`, with STEP and STL exports in `cad/step/` and `cad/stl/`.
 
 ## Building the prototype
 

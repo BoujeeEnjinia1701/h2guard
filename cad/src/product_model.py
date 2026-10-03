@@ -2,10 +2,11 @@
 
 Finished-product look for photoreal renders: filleted detector head with a parting line, label,
 cable gland, drip skirt bump test cup, sintered arrestor discs and the two sensor cans on their
-carrier board; an IP65 controller box with a lid frame, a clear polycarbonate window over the
-board and the series trip and fan interlock relays, lid screws, glands, an OLED readout, a
-key-switch reset, a teal test button and a lit green status light; the capped bump test port and
-its tube; and the normally closed solenoid valve on the supply line. Context is a compact section
+carrier board, hung from a ceiling section on its drop rod (floor flange, pipe nipple, locknuts);
+an IP65 controller box with a clear polycarbonate lid over the board, the series trip, fan
+interlock and dry-contact relays, lid screws, eight glands, an OLED readout, a key-switch reset,
+a teal test button and a lit green status light; the capped bump test port on its angle bracket
+and its tube; and the hydrogen-rated normally closed solenoid valve on its flat-bar bracket. Context is a compact section
 of back wall and ceiling with surface conduit and the supply pipe and clips.
 APPEARANCE MODEL ONLY: no tolerances, no fabrication detail. CONCEPT, NOT FOR FABRICATION.
 A research and teaching prototype, not a certified gas detection system.
@@ -13,12 +14,13 @@ A research and teaching prototype, not a certified gas detection system.
 Every main dimension, mounting height and interface comes from PARAMS, derived(), build_parts()
 and bump_kit() in model.py. Axes as model.py: back wall inside face at Y = 0 with the room
 toward -Y, floor at Z = 0, ceiling at Z = room[2]. The controller is at its model.py position.
-For a compact product render the detector head (with a short section of ceiling) and the valve
-are shown on their own wall panels beside the controller (HEAD_AT, VALVE_AT below), so the head
-is drawn lower than installed: in the room its ports are 175 mm below the ceiling and the
-controller top is at least 1 m below the ceiling, as model.py and HGD-DWG-001 give. All sizes,
-offsets from the wall and the head-to-ceiling gap are unchanged. See docs/REVIEW.md, session
-2026-09-26.
+For a compact product render the detector head (on its drop rod under a short section of
+ceiling) and the valve (on its bracket) are shown beside the controller (HEAD_AT, VALVE_AT below),
+so the head is drawn lower than installed: in the room its ports are 175 mm below the ceiling and
+the controller top is at least 1 m below the ceiling, as model.py and HGD-DWG-001 give. All sizes,
+offsets from the wall and the head-to-ceiling gap are unchanged; the drop rod, test port, glands
+and valve bracket are model.py's own parts, moved with the head or valve. The render captions say
+so (HGD-DEC-001, decision 10). See docs/REVIEW.md, sessions 2026-09-26 and 2026-10-02.
 
     from product_model import product_parts
     for p in product_parts(): print(p["name"], p["group"], p["material"])
@@ -30,22 +32,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from build123d import (Axis, Box, Cylinder, Plane, Pos, RegularPolygon, Rot, Solid, Sphere, Vector,
                        extrude, fillet)
-from model import PARAMS, derived
+from model import PARAMS, derived, build_components
 
 TITLE = "H2Guard: hydrogen leak detector and ventilation interlock"
 
 RENDER_VIEWS = [
     {"name": "hero", "groups": ["shell", "internal", "accessory", "context"], "explode": False, "el": 20, "az": -50,
-     "note": "Product render from the front right and above (about 20 deg elevation); detector head under a "
-             "ceiling section at left with the shut-off valve below it, controller at right with the relays "
-             "behind its clear window and the green status light lit. Panels are not at installed heights"},
+     "note": "Product render from the front right and above (about 20 deg elevation). The detector head on its "
+             "ceiling drop rod and the shut-off valve on its bracket are drawn beside the controller, not at their "
+             "installed positions; relays behind the clear lid, green status light lit"},
     {"name": "exploded", "groups": ["shell", "internal", "accessory"], "explode": True, "el": 28, "az": -55,
      "note": "Exploded view from the front right and above (about 28 deg elevation): detector head, sensors, "
-             "arrestor discs and test cup; controller box, board with trip and fan interlock relays, lid, "
-             "window and controls; bump test port; solenoid valve"},
+             "arrestor discs, test cup and drop rod; controller box, board with trip, fan and dry-contact relays, "
+             "clear lid and controls; bump test port; solenoid valve and bracket. Head and valve drawn beside the controller"},
     {"name": "detail", "groups": ["shell", "internal"], "explode": False, "el": 14, "az": -62,
-     "note": "Detail from the front right, slightly above (about 14 deg elevation): detector head (top) and "
-             "controller (bottom) without the room; relays behind the clear window, green status light lit"},
+     "note": "Detail from the front right, slightly above (about 14 deg elevation): detector head on its drop rod "
+             "(top) and controller (bottom), drawn beside each other; relays behind the clear lid, green status light lit"},
 ]
 
 # Render layout (not the installed layout). The head panel stands beside the controller panel;
@@ -55,7 +57,7 @@ VALVE_AT = (2990.0, 1330.0)    # valve centre X and pipe centre Z (Y stays at st
 PANEL_Z0 = 1150.0              # bottom of both context panels
 HEAD_PANEL_W = 220.0
 CTRL_PANEL = (3140.0, 3460.0, 1560.0)   # x0, x1, top Z of the controller panel
-CEIL_DEPTH = 140.0             # ceiling section projects this far into the room (-Y)
+CEIL_DEPTH = abs(PARAMS["head_y"]) + 120.0   # ceiling section reaches past the head on its drop rod (-Y)
 
 # Colours (restrained product palette; kit accent)
 C_SHELL = "#E9EAEC"
@@ -161,6 +163,9 @@ def product_parts(P=PARAMS):
     rz = P["room"][2]
     Pv = dict(P, app_x=HEAD_AT[0], valve_x=VALVE_AT[0], supply_z=VALVE_AT[1])
     dzh = HEAD_AT[1] - rz                              # head drawn this far below its installed height
+    MC = build_components(P)
+    TH = Pos(HEAD_AT[0] - P["app_x"], 0, dzh)          # moves model.py head parts to the render layout
+    TV = Pos(VALVE_AT[0] - P["valve_x"], 0, VALVE_AT[1] - P["supply_z"])
     out = []
 
     def add(name, shape, color, material, bom, group, explode):
@@ -184,21 +189,15 @@ def product_parts(P=PARAMS):
     housing -= Pos(0, 0, 18.0) * ring
     add("Detector head housing", housing, C_SHELL, "plastic", 1, "shell", EH)
 
-    plate = _box(hx, -t / 2 - 2, hz, hw + 30, 4, hh)
-    plate = _fillet_try(plate, _edges_par(plate, Axis.Y), [6.0, 4.0])
-    plate -= outer
-    add("Detector head wall plate", plate, C_SHELL2, "plastic", 1, "shell", (0, 0, 0))
-    screws = None
-    for sx in (-1, 1):
-        s = _ycyl(hx + sx * (hw / 2 + 8), -6.3, hz, 3.0, 1.6)
-        s = _fillet_try(s, _front(s), [0.6, 0.3])
-        s -= _box(hx + sx * (hw / 2 + 8), -7.2, hz, 3.6, 1.0, 0.8)
-        screws = s if screws is None else screws + s
-    add("Wall plate screws", screws, C_METAL, "metal", 14, "shell", (0, -30, 0))
+    # ceiling drop rod (BOM 17): model.py's flange, pipe nipple and locknuts, moved with the head
+    add("Drop rod ceiling flange", TH * MC["drop_flange"], C_DARK, "metal", 17, "shell", (0, 0, 0))
+    add("Drop rod pipe nipple", TH * MC["drop_rod"], C_METAL, "metal", 17, "shell", (0, 0, 0))
+    add("Drop rod locknuts", TH * MC["drop_nuts"], C_METAL, "metal", 17, "shell", EH)
 
     gz = hz + hh / 2
-    gland = _hex_z(hx, hy, gz + 2.5, 20.0, 5.0) + _zcyl(hx, hy, gz + 8.0, 8.0, 6.0)
-    gland += Pos(hx, hy, gz + 11.0) * Sphere(7.0) & _box(hx, hy, gz + 14, 20, 20, 6)
+    gx = hx + P["gland_dx"]
+    gland = _hex_z(gx, hy, gz + 2.5, 20.0, 5.0) + _zcyl(gx, hy, gz + 8.0, 8.0, 6.0)
+    gland += Pos(gx, hy, gz + 11.0) * Sphere(7.0) & _box(gx, hy, gz + 14, 20, 20, 6)
     add("Head cable gland", gland, C_DARK, "plastic", 1, "shell", (0, -90, 70))
 
     # front label and accent band (thin raised parts)
@@ -273,7 +272,7 @@ def product_parts(P=PARAMS):
     wz = czz - 4
     lid = lid_o - _box(cxx, (ly0 + ly1) / 2, wz, ww, 20, wh)
     lid -= _box(cxx, ly1 - 0.5, czz, cw - 6, 1.2, ch - 6) - _box(cxx, ly1 - 0.5, czz, cw - 8, 2, ch - 8)
-    add("Controller lid frame", lid, C_SHELL2, "plastic", 5, "shell", (0, -320, 0))
+    add("Controller lid frame (clear)", lid, C_WINDOW, "clear", 5, "shell", (0, -320, 0))
 
     # clear polycarbonate window, cut round the front panel parts (BOM 7)
     pane = _box(cxx, -91, wz, ww + 4, 2.0, wh + 4)
@@ -349,6 +348,10 @@ def product_parts(P=PARAMS):
     frelay = _box(cxx + 40, -24, czz + 10, 28, 30, 20)
     frelay = _fillet_try(frelay, frelay.edges(), [1.2, 0.6])
     add("Fan interlock relay and valve driver", frelay, C_RELAY, "plastic", 6, "internal", EB)
+    drelay = _box(cxx + 40, -20, czz - 30, 24, 22, 16)
+    drelay = _fillet_try(drelay, drelay.edges(), [1.0, 0.5])
+    drelay += _box(cxx + 62, -16, czz - 30, 10, 14, 12)
+    add("Dry-contact relay and terminal", drelay, C_RELAY, "plastic", 19, "internal", EB)
     rlab = _box(cxx + 40, -39.2, czz + 50, 18, 0.4, 10) + _box(cxx + 40, -39.2, czz + 10, 18, 0.4, 10)
     add("Relay labels", rlab, C_LABEL, "paper", 6, "internal", EB)
     term = _box(cxx, -16, czz - 90, 150, 14, 18)
@@ -364,37 +367,28 @@ def product_parts(P=PARAMS):
         + _box(cxx - 55, -11, czz - 20, 14, 3, 14) + _box(cxx - 55, -11, czz + 5, 10, 2, 10)
     add("Board components", caps, C_CHIP, "plastic", 6, "internal", EB)
 
-    # cable glands on the controller (BOM 5)
-    gl = None
-    for x, y, z, sgn in [(cxx - 60, -45, czz - ch / 2, -1), (cxx, -45, czz - ch / 2, -1),
-                         (cxx + 60, -10 - 12, czz + ch / 2, 1)]:
-        g = _hex_z(x, y, z + sgn * 2.5, 22.0, 5.0) + _zcyl(x, y, z + sgn * 9.0, 9.0, 8.0)
-        g = _fillet_try(g, (_bottom(g) if sgn < 0 else _top(g)), [2.0, 1.0])
-        gl = g if gl is None else gl + g
-    add("Controller cable glands", gl, C_DARK, "plastic", 5, "shell", (0, 0, 0))
+    # cable glands on the controller (BOM 5): model.py's four in the top and four in the bottom
+    add("Controller cable glands", MC["ctrl_glands"], C_DARK, "plastic", 5, "shell", (0, 0, 0))
 
-    # bump test port beside the controller (BOM 15), from model.py bump_kit
-    port_x, port_z = cxx - cw / 2 - 20, czz - 60
-    brk = _box(cxx - cw / 2 - 10, -20, port_z, 20, 40, 30)
-    brk = _fillet_try(brk, _edges_par(brk, Axis.Y), [2.0, 1.0])
-    add("Test port bracket", brk, C_SHELL2, "plastic", 15, "shell", (-60, 0, 0))
-    bulk = _ycyl(port_x, -40, port_z, 8, 30)
-    bulk += Pos(port_x, -44, port_z) * Rot(90, 0, 0) * extrude(RegularPolygon(10.4, 6), amount=4)
-    add("Bump test port body", bulk, C_METAL, "metal", 15, "shell", (-60, -60, 0))
-    cap = _ycyl(port_x, -60, port_z, 10, 10)
-    cap = _fillet_try(cap, _front(cap), [2.5, 1.5])
-    add("Bump test port dust cap", cap, C_ACCENT, "rubber", 15, "shell", (-60, -110, 0))
+    # bump test port on its angle bracket beside the controller (BOM 15, 16): model.py's parts
+    tx, tz = P["test_x"], P["test_z"]
+    add("Test port bracket", MC["test_bracket"], C_METAL, "metal", 16, "shell", (-60, 0, 0))
+    add("Bump test port", MC["test_port"] - _zcyl(tx, -18, tz - 3 - 15 - 7.5, 9.5, 15.2), C_METAL, "metal", 15, "shell", (-60, 0, -60))
+    cap = _zcyl(tx, -18, tz - 3 - 15 - 7.5, 9, 15)
+    cap = _fillet_try(cap, _bottom(cap), [2.5, 1.5])
+    add("Bump test port dust cap", cap, C_ACCENT, "rubber", 15, "shell", (-60, 0, -110))
 
-    # ------------------------------------------------------------ solenoid valve (BOM 11)
-    vx, vy, vz = Pv["valve_x"], P["store_y"], P["supply_z"]
+    # ------------------------------------------------------------ solenoid valve (BOM 11) on its bracket (BOM 16)
+    vx, vy, vz = Pv["valve_x"], P["store_y"], Pv["supply_z"]
+    add("Valve bracket (aluminium flat bar)", TV * MC["valve_bracket"], C_METAL, "metal", 16, "accessory", (-230, 0, -40))
     vw, vd, vh = P["valve"]
     cr, cl = P["coil"]
     vb = _box(vx, vy, vz, vw, vd, vh)
     vb = _fillet_try(vb, vb.edges(), [3.0, 2.0, 1.0])
-    add("Solenoid valve body (brass)", vb, C_BRASS, "metal", 11, "accessory", (-230, 0, -40))
+    add("Solenoid valve body (stainless, hydrogen rated)", vb, C_METAL, "metal", 11, "accessory", (-230, 0, -40))
     stubs = _xcyl(vx, vy, vz, 7, vw + 24)
     stubs += _hex_x(vx - vw / 2 - 8, vy, vz, 17.0, 8.0) + _hex_x(vx + vw / 2 + 8, vy, vz, 17.0, 8.0)
-    add("Valve port fittings", stubs, C_BRASS, "metal", 11, "accessory", (-230, 0, -40))
+    add("Valve port fittings", stubs, C_METAL, "metal", 11, "accessory", (-230, 0, -40))
     coil = _zcyl(vx, vy, vz + vh / 2 + cl / 2, cr / 2, cl)
     coil = _fillet_try(coil, coil.edges(), [3.0, 2.0])
     add("Valve coil (24 V DC)", coil, C_BLACK, "plastic", 11, "accessory", (-230, 0, 70))
@@ -420,17 +414,17 @@ def product_parts(P=PARAMS):
 
     r_c = 6.0
     cone = vz + vh / 2 + cl + 22
-    conduit = _pipe([(hx, hy, gz + 13), (hx, hy, zc + 1)], 4.0)
+    conduit = _pipe([(gx, hy, gz + 13), (gx, hy, zc + 1)], 4.0)
     conduit += _pipe([(vx, vy, cone), (vx, vy, cone + 20), (vx, -10, cone + 20), (vx, -10, z0 + 1)], r_c)
-    conduit += _pipe([(cxx + 60, -22, czz + ch / 2 + 13), (cxx + 60, -22, cpt - 1)], r_c)
-    conduit += _pipe([(cxx - 60, -45, czz - ch / 2 - 13), (cxx - 60, -45, z0 + 1)], r_c)
-    conduit += _pipe([(cxx, -45, czz - ch / 2 - 13), (cxx, -45, z0 + 1)], r_c)
+    for gxx in (cxx - 60, cxx - 20, cxx + 20, cxx + 60):
+        conduit += _pipe([(gxx, -45, czz + ch / 2 + 16), (gxx, -45, cpt - 1)], r_c)
+        conduit += _pipe([(gxx, -45, czz - ch / 2 - 16), (gxx, -45, z0 + 1)], r_c)
     add("Surface conduit and cables", conduit, C_CONDUIT, "plastic", 13, "context", (0, 0, 0))
 
     rt = P["tube_od"] / 2
     nx = hx + P["cup"][0] / 2 + 10
-    run = _pipe([(port_x, -25, port_z + 15), (port_x, -25, cpt - 1)], rt)
-    run += _pipe([(nx, hy, nz), (nx, -25, nz), (nx, -25, zc - 1)], rt)
+    run = _pipe([(tx, -18, tz + 20), (tx, -18, tz + 40), (tx, -2, tz + 60), (tx, -2, cpt - 1)], rt)
+    run += _pipe([(nx, hy, nz), (nx + 17, hy, nz), (nx + 17, hy, zc - 1)], rt)
     add("Bump test tube (4 mm)", run, C_TUBE, "plastic", 15, "context", (0, 0, 0))
 
     sup = _pipe([(hp0 + 1, vy, vz), (vx - vw / 2 - 12, vy, vz)], 4.0)

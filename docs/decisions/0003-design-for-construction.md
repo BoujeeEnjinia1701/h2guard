@@ -3,7 +3,7 @@ doc_id: HGD-DDR-003
 title: H2Guard design for construction
 project: H2Guard
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Accepted by Amish; A1 decided as a ceiling drop rod (changed recommendation) and A2 accepted for the supervised prototype only
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Consequences updated after the approved follow-ups were carried into the model, drawings, build plan, calculations and appearance model
 ---
 
 # 0003: Design for construction
@@ -69,7 +73,7 @@ The changes keep what the system does: the same room, the same detector head siz
 ## Consequences
 
 - `design_state: constructable` in `project.yaml`. The build plan HGD-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`), and the design decisions register HGD-DEC-001 indexes the decisions.
-- With A1 decided as (b), the model, drawings, build plan and calculation E7 still show the wall mounting and must be updated to the ceiling drop rod before any gas is connected (`docs/REVIEW.md`, 2026-10-02, follow-up actions).
-- Requirement status: 0 not met, 3 at risk (R4, R7, R13), 1 not verifiable at TRL 3 (R1), 6 met on paper, 4 met by design, and R14 over the value-engineering target by USD 24 (HGD-CAL-001 v0.3).
-- The photoreal renders, the appearance model `cad/src/product_model.py`, `media/card.png` and `media/social-preview.png` still show the concept head, controller and valve without the brackets, fan plate and enlarged sleeve; they are stale and need updating on Amish's Mac, where Blender is.
+- With A1 decided as (b), the model, drawings, build plan and calculation E7 were updated to the ceiling drop rod on 2026-10-02 (`docs/REVIEW.md`, approved follow-ups carried out).
+- Requirement status after the decisions of 2026-10-02: 1 not met on estimate (R13), 2 at risk (R4, R7), 1 not verifiable at TRL 3 (R1), 6 met on paper, 4 met by design, and R14 over the value-engineering target by USD 146 (HGD-CAL-001 v0.4).
+- The appearance model `cad/src/product_model.py` was updated to the constructable design on 2026-10-02 and its render scenes exported; the photoreal renders, `media/card.png` and `media/social-preview.png` are to be regenerated from them on Amish's Mac, where Blender is.
 - The box, fan and valve are chosen at TRL 4. The head box lid face, the controller box bosses and corner holes, the fan's inlet-face fixing holes and the valve's tapped mounting holes must be checked then, and the made parts drilled to suit.

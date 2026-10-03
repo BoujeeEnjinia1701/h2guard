@@ -1,4 +1,4 @@
-"""H2Guard general arrangement sheet HGD-DWG-001, Rev P4 (TRL 3, constructable design).
+"""H2Guard general arrangement sheet HGD-DWG-001, Rev P5 (TRL 3, constructable design).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/HGD-DWG-001.svg, .pdf and .png from the parametric model in
@@ -16,6 +16,7 @@ from model import PARAMS as P, build_parts, context, derived  # noqa: E402
 
 DATE = "2026-09-25"
 DATE4 = "2026-10-01"
+DATE5 = "2026-10-02"
 
 
 def safe_project_views(part, workdir, line_weight=0.35, names=("front", "top", "right", "iso")):
@@ -53,8 +54,9 @@ def ortho_cells(sheet, views, names=("front", "top", "right")):
     dims = {n: _viewbox(Path(views[n]).read_text())[2:] for n in names}
     fw, fh = dims["front"]; tw, th = dims["top"]; rw, rh = dims["right"]
     k = sheet.scale
-    ax += (aw - (k * (max(fw, tw) + rw) + gap)) / 2
-    ay += (ah - (k * (th + max(fh, rh)) + gap + 2 * lab)) / 2
+    dl = 11                                       # room the kit leaves for overall dimensions (drawing.add_ortho)
+    ax += (aw - (k * (max(fw, tw) + rw) + gap + dl)) / 2 + dl
+    ay += (ah - (k * (th + max(fh, rh)) + gap + 2 * lab + dl)) / 2 + dl
     colw = k * max(fw, tw)
     front_y = ay + k * th + lab + gap
     row_h = k * max(fh, rh)
@@ -97,16 +99,17 @@ def main():
     work = ROOT / "cad" / "drawings" / "_views"
     asm = Compound(children=list(S.values()) + [C["room"], C["bench"], C["store"]])
     views = safe_project_views(asm, work, names=("front", "top", "right"))
-    head = Compound(children=[S[k] for k in ("head", "cat", "mos", "arrest")])
+    head = Compound(children=[S[k] for k in ("head", "cat", "mos", "arrest", "drop")])
     hv = safe_project_views(head, work / "head", names=("iso",))
     bb = asm.bounding_box()
-    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P4",
-              author="Amish Chadha", date=DATE4, scale=None, theme="technical",
+    s = Sheet(project="H2Guard", title="General arrangement in the 30 m3 reference room", dwg_no="HGD-DWG-001", rev="P5",
+              author="Amish Chadha", date=DATE5, scale=None, theme="technical",
               material="Bought-in parts per bom/bom.csv; room, bench and gas store are context. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
                          ("P2", "Notes: head placement rule, timed escalation (DDR-002)", DATE, "AC"),
                          ("P3", "Layout and labels tidied", DATE, "AC"),
-                         ("P4", "Design for construction (DDR-003): brackets, plates, sleeve", DATE4, "AC")])
+                         ("P4", "Design for construction (DDR-003): brackets, plates, sleeve", DATE4, "AC"),
+                         ("P5", "Head on ceiling drop rod; pressure switch; O2 option (DEC-001)", DATE5, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -118,7 +121,7 @@ def main():
     X = lambda mx: x + (mx - bb.min.X) * k
     Z = lambda mz: y + h - (mz - bb.min.Z) * k
     z0 = Z(0)
-    xl = X(bb.min.X) - 4
+    xl = X(bb.min.X) - 13
     heights = [(D["port_face"], f"{D['port_face']:.0f} sensor ports"),
                (P["beacon_z"], f"{P['beacon_z']:.0f} beacon"), (D["ctrl_top"], f"{D['ctrl_top']:.0f} controller top"),
                (D["src_z"], f"{D['src_z']:.0f} leak source")]
@@ -126,7 +129,9 @@ def main():
         xd = xl - 5 * (i + 1)
         L += [ext(X(bb.min.X), Z(zz), xd - 1, Z(zz))]
         L += dim_v(xd, Z(zz), z0, label)
-    L += leader(X(P["app_x"]), Z(D["head_z"]), X(P["app_x"]) - 2, Z(rz) - 6, "1-4 DETECTOR HEAD ABOVE SOURCE", "end")
+    L += leader(X(P["app_x"]), Z(D["head_z"]), X(P["app_x"]) - 2, Z(rz) - 6, "1-4, 17 HEAD ON DROP ROD OVER SOURCE", "end")
+    L += leader(X(P["dps_x"]), Z(P["dps_z"]), X(1760), Z(rz) - 11, "18 PRESSURE SWITCH")
+    L += leader(X(P["o2_x"]), Z(P["o2_z"] - 80), X(2620), Z(420), "20 O2 SENSOR (OPTION)")
     L += leader(X(P["fan_x"]), Z(P["fan_z"]), X(P["fan_x"]) + 6, Z(rz) - 6, f"9 EXHAUST FAN, CENTER {P['fan_z']:.0f}")
     L += leader(X(P["ctrl_x"] - 60), Z(P["ctrl_z"] + 60), X(3400), Z(1250), "5-7 CONTROLLER, 15 TEST PORT", "end")
     L += leader(X(P["valve_x"]), Z(P["supply_z"]), X(P["valve_x"]) + 8, Z(P["supply_z"] + 280), "11 NC VALVE ON SUPPLY")
@@ -150,18 +155,19 @@ def main():
     L += leader(Yr(-ry / 2), Zr(P["inlet_z"]), Yr(-ry / 2) + 4, Zr(700), "10 GRILLE")
 
     s._layers += L
-    s.add_svg(hv["iso"], 276, 32, 140, 70, label="Detector head, items 1 to 4",
+    s.add_svg(hv["iso"], 276, 42, 140, 60, label="Detector head on its drop rod, items 1 to 4 and 17",
               sublabel="Not to scale; ports and bump test cup face down")
     s.add_notes("Main dimensions and interfaces (mm)", [
         f"Room {rx:.0f} x {ry:.0f} x {rz:.0f} ({D['room_m3']:.0f} m3); leak source {D['src_z']:.0f} above floor",
-        f"Head {P['head'][0]:.0f} x {P['head'][1]:.0f} x {P['head'][2]:.0f}; ports {D['port_below_ceiling']:.0f} below ceiling, {D['plume_rise']:.0f} above source",
+        f"Head {P['head'][0]:.0f} x {P['head'][1]:.0f} x {P['head'][2]:.0f} on drop rod; ports {D['port_below_ceiling']:.0f} below ceiling, {D['plume_rise']:,.0f} above source",
         f"Arrestor discs {P['disc'][0]:.0f} x {P['disc'][1]:.0f}; sensor {D['sensor_gap']:.1f} behind disc",
         f"Bump cup {P['cup'][0]:.0f} x {P['cup'][1]:.0f} x {P['cup'][2]:.0f} ({D['cup_ml']:.0f} mL); tube 4 OD, {D['tube_run']:,.0f} run",
         f"Controller {P['ctrl'][0]:.0f} x {P['ctrl'][2]:.0f} x {P['ctrl'][1]:.0f}; top {D['ctrl_below_ceiling']:,.0f} below ceiling",
         f"Fan 150 spigots, body in a {P['sleeve'][0]:.0f} wall sleeve; grille top {D['fan_below_ceiling']:.0f} below ceiling",
         f"Make-up grille {P['inlet'][0]:.0f} x {P['inlet'][1]:.0f} on far wall, center {P['inlet_z']:.0f}",
-        "Valve 1/4 in NC on a wall bracket; gas fitting by a competent person",
-        "Head directly above each likely leak point; offset limit set at TRL 4",
+        "Valve 1/4 in NC, hydrogen rated, on a wall bracket; gas fitting by others",
+        f"Ports {D['port_offset']:.0f} from apparatus centre (plume radius 141)",
+        f"Pressure switch at fan; O2 cell {D['o2_cell_z']:,.0f} above floor (option)",
         "Warning held 5 min closes valve and latches (firmware, DDR-002)",
         "Third-angle; front view from -Y (room side); HGD-CAL-001",
     ], x=276, y=118, width=146)

@@ -3,7 +3,7 @@ doc_id: HGD-PRC-001
 title: H2Guard design precis
 project: H2Guard
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -33,25 +33,29 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: "Decisions of 2026-10-02 carried in: ceiling drop rod, pressure switch, hydrogen-rated valve, oxygen sensor option, set point sources, bump test, relay output, clear lid, fan motor rule"
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Model, BOM and calculations updated to the decisions of 2026-10-02 (HGD-CAL-001 v0.4); components table, key numbers and safety notes brought into line; drawing HGD-DWG-001 to Rev P5
 ---
 
 # H2Guard design precis
 
-H2Guard protects one small room where hydrogen is used. A detector head at the ceiling carries a catalytic sensor that reads 0 to 100 % of the lower flammability limit (LFL) and a metal oxide sensor for early warning. A wall controller at chest height keeps a 150 mm exhaust fan running at high level, holds a normally closed solenoid valve on the hydrogen supply open only while all is well, and drives a sounder and beacon. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve and latches the alarm. Loss of power, a sensor fault, a stopped fan or a crashed controller all close the valve, and a hardware comparator opens a relay in series with the valve without the firmware. The TRL 3 calculations (HGD-CAL-001) give 35.7 s from a leak to the valve closing with an assumed 30 s sensor t90, about 5 % LFL in the 30 m3 room for the 5 L/min design leak with the fan running, and an estimated cost of USD 289 for the constructable design against a USD 265 value-engineering target (USD 24 over). A warning held for 5 min also closes the supply, so a leak that the head sees off the plume axis is stopped within about 6 min. H2Guard is a research and teaching prototype, not a certified gas detection system.
+H2Guard protects one small room where hydrogen is used. A detector head at the ceiling carries a catalytic sensor that reads 0 to 100 % of the lower flammability limit (LFL) and a metal oxide sensor for early warning. A wall controller at chest height keeps a 150 mm exhaust fan running at high level, holds a normally closed solenoid valve on the hydrogen supply open only while all is well, and drives a sounder and beacon. At 10 % LFL it warns and boosts the fan; at 25 % LFL it closes the valve and latches the alarm. Loss of power, a sensor fault, a stopped fan, lost airflow or a crashed controller all close the valve, and a hardware comparator opens a relay in series with the valve without the firmware. The TRL 3 calculations (HGD-CAL-001) give 35.7 s from a leak to the valve closing with an assumed 30 s sensor t90, about 5 % LFL in the 30 m3 room for the 5 L/min design leak with the fan running, and an estimated cost of USD 411 for the constructable design against a USD 265 value-engineering target (USD 146 over). A warning held for 5 min also closes the supply, so a leak that the head sees off the plume axis is stopped within about 6 min. H2Guard is a research and teaching prototype, not a certified gas detection system.
 
 ![Hero render](../media/hero.png)
 
-*Figure 1. H2Guard in the 30 m3 reference room, with a 1.75 m person for scale. Detector head (orange) above the bench apparatus, exhaust fan (blue) high on the back wall, make-up air grille low on the far side wall, solenoid valve (gold) on the supply line, controller with its bump test port, and beacon near the door. Grey parts are context. Built from the parametric model.*
+*Figure 1. H2Guard in the 30 m3 reference room, with a 1.75 m person for scale. Detector head (orange) on its ceiling drop rod over the bench apparatus, exhaust fan (blue) high on the back wall, make-up air grille low on the far side wall, solenoid valve (gold) on the supply line, controller with its bump test port, and beacon near the door. Grey parts are context. Built from the parametric model.*
 
 ## How it works
 
-1. **Sense.** Hydrogen rises from a leak as a buoyant plume and spreads under the ceiling. The detector head sits directly above the likely leak point, with its sensor ports 175 mm below the ceiling. The placement rule (HGD-DDR-002) puts a head over each likely leak point, with a second head where leak points are far apart; the plume is only about 141 mm in radius at the ports, and the allowed horizontal offset is to be set from a measured plume width at TRL 4. The catalytic sensor measures 0 to 100 % LFL and sets the warning and trip. The metal oxide sensor responds from about 30 ppm and shows small, slow leaks as a trend long before the catalytic reading moves; it never trips the system alone, because humidity and other vapors affect it. Each sensor sits about 2 mm behind a 2 mm sintered arrestor disc, which adds about 1.5 s of lag.
+1. **Sense.** Hydrogen rises from a leak as a buoyant plume and spreads under the ceiling. The detector head hangs from the ceiling on a short drop rod directly above the likely leak point, with its sensor ports 175 mm below the ceiling. The placement rule (HGD-DDR-002) puts a head over each likely leak point, with a second head where leak points are far apart; the plume is only about 141 mm in radius at the ports, and the allowed horizontal offset is to be set from a measured plume width at TRL 4. The catalytic sensor measures 0 to 100 % LFL and sets the warning and trip. The metal oxide sensor responds from about 30 ppm and shows small, slow leaks as a trend long before the catalytic reading moves; it never trips the system alone, because humidity and other vapors affect it. Each sensor sits about 2 mm behind a 2 mm sintered arrestor disc, which adds about 1.5 s of lag.
 2. **Decide.** The controller reads both sensors. The microcontroller handles set points, display, logging and self-test, and switches the valve through a MOSFET. In parallel, a hardware window comparator watches the catalytic sensor bridge: above the trip level, or if the bridge reads open or shorted, it sets a hardware latch that opens a relay in series with that MOSFET. Either switch opening closes the valve, and only the key resets the latch.
 3. **Act.**
    - **Normal:** fan at continuous speed, valve energized (open), green light.
    - **Warning, 10 % LFL (0.4 % vol):** fan to boost, amber light, intermittent sounder. Clears itself when the reading falls. If the warning is held for 5 min, the microcontroller closes the valve and latches as for a trip (timed escalation, HGD-DDR-002). This is a firmware rule; the hardware comparator still acts only at 25 % LFL.
    - **Trip, 25 % LFL (1.0 % vol):** valve de-energized (closed), fan on boost, continuous sounder and red beacon. Latched: the supply stays closed until someone turns the reset key and the reading is below 10 % LFL.
-   - **Fault:** any loss of 24 V power, sensor fault, heater failure, watchdog timeout (1 s) or fan stop (no tachometer pulses for 10 s) closes the valve and shows the fault.
+   - **Fault:** any loss of 24 V power, sensor fault, heater failure, watchdog timeout (1 s), fan stop (no tachometer pulses for 10 s) or lost airflow (the pressure switch on the fan inlet not proving flow for 10 s with the fan running) closes the valve and shows the fault. A dry-contact relay, held while all is well, opens on a trip, a fault or loss of power so that H2Bench can cut its own supply.
 4. **Ventilate.** The fan runs all the time, so it is never switched on in a flammable mixture, and so no gas can flow unless the room is being ventilated. Make-up air enters through a low grille on the far side of the room, sweeping the room toward the high exhaust.
 5. **Record and test.** The controller logs readings, warnings, trips, faults and resets. A test button runs the sounder, beacon, fan boost and valve close. For a bump test, certified 1 % vol hydrogen span gas is connected to a capped port beside the controller; a 4 mm tube carries it up the cable route to a nozzle in the drip skirt under the head, which acts as a test cup. The reading settles in about 67 s. Because 1 % vol is the trip level, a full-span bump test also trips the system and proves the chain.
 
@@ -65,29 +69,34 @@ Table 1. Main components. Numbers match `bom/bom.csv`, Figure 3 and drawing HGD-
 
 | # | Component | Choice | Notes |
 | --- | --- | --- | --- |
-| 1 | Detector head enclosure | ABS or polycarbonate box 110 x 80 x 90 mm, two 26 mm sensor ports facing down | Directly above the source, ports 175 mm below the ceiling |
+| 1 | Detector head enclosure | ABS or polycarbonate box 110 x 80 x 90 mm, two 22 mm sensor ports facing down | On the ceiling drop rod (17) directly above the source, ports 175 mm below the ceiling |
 | 2 | Catalytic hydrogen sensor | Catalytic (pellistor) sensor with hydrogen response, 0 to 100 % LFL, for example Figaro TGS6812 | Primary trip sensor; needs oxygen and can be poisoned by silicones |
 | 3 | Metal oxide hydrogen sensor | About 30 to 3,000 ppm, for example Figaro TGS2616-C00 | Early warning and trend only |
 | 4 | Flame arrestor discs and bump test cup | Sintered stainless discs 25 x 2 mm, pores 50 µm or less; drip skirt 96 x 66 x 22 mm forming the test cup | Not a certified flameproof assembly |
-| 5 | Controller enclosure | IP65 polycarbonate wall box 200 x 250 x 90 mm | Top 1,025 mm below the ceiling |
-| 6 | Controller board | RP2040-class microcontroller with 4 MB flash; comparator with hardware latch and series relay; drivers for valve, fan and alarm; tachometer input; event log | Firmware beyond a labeled sketch is TRL 4 work |
+| 5 | Controller enclosure | IP65 polycarbonate wall box 200 x 250 x 90 mm with a clear lid, eight cable glands | Top 1,025 mm below the ceiling |
+| 6 | Controller board | RP2040-class microcontroller with 4 MB flash; comparator with hardware latch and series relay; drivers for valve, fan and alarm; tachometer and pressure switch inputs; event log | Firmware beyond a labeled sketch is TRL 4 work |
 | 7 | Front panel | OLED display, key-switch reset, test button, status lights | The key keeps students from clearing a trip |
 | 8 | 24 V DC power supply | Certified plug-in supply, 24 V, 60 W | Only mains part; bought certified |
 | 9 | Exhaust fan | 150 mm mixed-flow EC duct fan, 24 V, about 450 m3/h free air, 200 Pa shut-off, tachometer; grille, sleeve, backdraft shutter, weather hood | Re-specified at TRL 3; runs continuously at about 43 % speed |
 | 10 | Make-up air grille | Low-level wall grille 300 x 160 mm with insect mesh | Far side of the room from the fan |
-| 11 | Normally closed solenoid valve | 1/4 in, direct acting, brass, FKM seals, 24 V DC, 0 to 10 bar, Zener clamp | After the regulator; closes on loss of power |
+| 11 | Normally closed solenoid valve | 1/4 in, direct acting, stainless steel, rated for hydrogen with a stated seat leak rate, 24 V DC, 0 to 10 bar, Zener clamp | After the regulator; closes on loss of power |
 | 12 | Sounder and beacon | 24 V, about 90 dB at 1 m, red flashing | By the door, top 450 mm below the ceiling |
-| 15 | Bump test port and tube | Capped push-fit port beside the controller, about 3 m of 4 mm tube to the cup nozzle | New at TRL 3 for R12 |
+| 15 | Bump test port and tube | Capped push-fit port beside the controller, about 3.1 m of 4 mm tube across the ceiling to the cup nozzle | New at TRL 3 for R12 |
+| 17 | Ceiling drop rod | 1/2 in floor flange on the ceiling, 89 mm pipe nipple, locknuts either side of the head top | Holds the head with its ports over the apparatus |
+| 18 | Differential pressure switch | Low-range air pressure switch beside the fan, tubed to a static tap in the fan inlet | Proves airflow; no flow closes the valve |
+| 19 | Dry-contact output | Relay and 2-way terminal on the controller mounting plate | Opens on a trip, a fault or loss of power |
+| 20 | Oxygen sensor (option) | Electrochemical transmitter, 4 to 20 mA, cell at breathing height | Fitted whenever inert gas cylinders share the room |
+| 21 | Fan with motor outside the air stream (option) | Bifurcated 150 mm duct fan in place of line 9 | For rooms used without close supervision |
 
 ![Exploded view](../media/exploded.png)
 
-*Figure 3. Exploded view of the H2Guard parts with BOM numbers. Cabling (BOM line 13) and fixings (line 14) are not shown.*
+*Figure 3. Exploded view of the H2Guard parts with BOM numbers. Cabling (BOM line 13), fixings (line 14), the dry-contact relay (line 19, on the controller board) and the alternative fan (line 21) are not shown separately.*
 
 ![Cutaway](../media/cutaway.png)
 
 *Figure 4. Sections through the controller (left) and the detector head (right), each cut on a vertical plane and seen from the side. The head section passes through the catalytic sensor, its arrestor disc and the bump test cup. The head is drawn beside the controller for this view.*
 
-The general arrangement drawing [HGD-DWG-001](../cad/drawings/HGD-DWG-001.pdf) (Rev P4) gives the mounting heights and main dimensions from the parametric model `cad/src/model.py`. The blueprint concept sheet ([PDF](../media/concept-blueprint.pdf)) and the [interactive 3D model](../media/viewer.html) show the parts in place. The design is constructable: every part can be made or bought and has a fixing (HGD-DDR-003), and the [prototype build plan](05-build-plan.md) (HGD-BLD-001) shows how each is made and fitted. The changes for construction are the openings in the bump test cup, 22 mm ports with the arrestor discs bonded on a ledge, standoffs that hold the sensor board and cup, a mounting plate and drilled lid in the controller, a bracket for the test port, a 200 mm wall sleeve and fan plate for the fan, and a bracket for the valve.
+The general arrangement drawing [HGD-DWG-001](../cad/drawings/HGD-DWG-001.pdf) (Rev P5) gives the mounting heights and main dimensions from the parametric model `cad/src/model.py`. The blueprint concept sheet ([PDF](../media/concept-blueprint.pdf)) and the [interactive 3D model](../media/viewer.html) show the parts in place. The design is constructable: every part can be made or bought and has a fixing (HGD-DDR-003), and the [prototype build plan](05-build-plan.md) (HGD-BLD-001) shows how each is made and fitted. The changes for construction are the openings in the bump test cup, 22 mm ports with the arrestor discs bonded on a ledge, standoffs that hold the sensor board and cup, a mounting plate and drilled lid in the controller, a bracket for the test port, a 200 mm wall sleeve and fan plate for the fan, and a bracket for the valve. The decisions of 2026-10-02 added the ceiling drop rod, the pressure switch, the dry-contact output and the oxygen sensor option to the model.
 
 ## Key numbers
 
@@ -105,12 +114,13 @@ Table 2. Key numbers for the 30 m3 reference room and the 5 L/min design leak.
 | Hydrogen released before closing | 3.0 L, plus 0.47 L in the line downstream |
 | Fan delivery against duct losses | 347 m3/h at full speed (the TRL 2 fan gave 237 m3/h) |
 | Inventory limit | 300 L at 1 atm (25.1 g); a 0.13 mm orifice at 10 bar gauge limits a failure to 5 L/min |
-| Power | 13.1 W normal, 48.3 W warning, 40.3 W trip |
+| Power | 13.5 W normal, 48.7 W warning, 40.3 W trip (49.2 W peak with the oxygen sensor) |
+| Airflow proving | Fan inlet tap 5.7 Pa at 150 m3/h, 30.5 Pa at full speed; switch set at about 2.8 Pa; no flow gives about 0 Pa |
 | Bump test | About 67 s; 1.36 L of span gas per test |
 | Timed escalation, off-axis design leak | Valve closed at 5.6 min, 28 L released, room about 1.9 % LFL |
-| Estimated cost | USD 289.00 for the constructable design; value-engineering target USD 265, USD 24 over (without fan and grille USD 226) |
+| Estimated cost | Value-engineering target: USD 265. Estimated cost of the constructable design: USD 411 (USD 146 over the target); oxygen sensor option USD 110 more |
 
-Two findings matter for the design. First, the design leak trips the system only if the head is on the plume axis; beside it, the head sees about 15 % LFL and warns without closing the supply, although the room stays at about 5 % LFL. Second, a fan rated at the boost flow in free air cannot deliver it through a real duct, so the fan is re-specified. Amish accepted two remedies for the first on 2026-09-25 (HGD-DDR-002): the timed escalation and the head placement rule, both now in the design.
+Two findings matter for the design. First, the design leak trips the system only if the head is on the plume axis; beside it, the head sees about 15 % LFL and warns without closing the supply, although the room stays at about 5 % LFL. Second, a fan rated at the boost flow in free air cannot deliver it through a real duct, so the fan is re-specified. Amish accepted two remedies for the first on 2026-09-25 (HGD-DDR-002): the timed escalation and the head placement rule. On 2026-10-02 he decided that the head hangs on a ceiling drop rod directly over the apparatus; the model now puts the ports 0 mm from the apparatus centre, inside the plume.
 
 ## Key design choices
 
@@ -129,7 +139,7 @@ The choices below are decided by Amish, 2026-09-25: go with recommendation (HGD-
 
 Decided by Amish on 2026-10-02 (HGD-DEC-001):
 
-- **Airflow proven by a differential pressure switch** at the fan, as well as the tachometer.
+- **Airflow proven by a differential pressure switch** at the fan, as well as the tachometer. The switch reads the depression in the fan inlet against the room, which falls to about zero whether the fan stops, the duct is blocked or the shutter sticks.
 - **A valve rated for hydrogen with a stated seat leak rate.** The low-cost brass valve is accepted only if its maker states hydrogen compatibility and a seat leak rating and it passes a seat leak proof test at TRL 4.
 - **Oxygen sensor** as a standard kit option whenever inert gas cylinders share the room.
 - **Set points** from the stricter of the national code and ISO 26142, and from the host institution's safety office where its rules are stricter; 10 % and 25 % LFL stay the defaults.
@@ -140,7 +150,7 @@ Decided by Amish on 2026-10-02 (HGD-DEC-001):
 
 ## Relation to other lab projects
 
-- **H2Bench** is the first host. Its README states that it is "Protected by H2Guard", and its gas system (electrolyzer, low-pressure store, regulator and tubing) is where the valve and any flow restrictor go. The inventory rule (R9, D5) applies to H2Bench's storage; its 2 L tank at 300 kPa gauge holds 7.9 L, 2.6 % of the limit. H2Bench's review asks for interlock outputs to cut its power supply and close its tank solenoid; H2Guard is to add a dry-contact relay output that opens on a trip or loss of power, for H2Bench to cut its own supply (decided 2026-10-02).
+- **H2Bench** is the first host. Its README states that it is "Protected by H2Guard", and its gas system (electrolyzer, low-pressure store, regulator and tubing) is where the valve and any flow restrictor go. The inventory rule (R9, D5) applies to H2Bench's storage; its 2 L tank at 300 kPa gauge holds 7.9 L, 2.6 % of the limit. H2Bench's review asks for interlock outputs to cut its power supply and close its tank solenoid; H2Guard now has a dry-contact relay output that opens on a trip or loss of power, for H2Bench to cut its own supply (decided 2026-10-02); H2Bench still has to wire it into its supply.
 - H2Guard does not use a SwapCell pack or any lithium cell, and it does not depend on FieldNode, CellGuard, MotionCore, ThermaCart, TwinKit or CalRig.
 
 ## Safety
@@ -153,7 +163,7 @@ Decided by Amish on 2026-10-02 (HGD-DEC-001):
 
 > **Safety:** Catalytic sensors need oxygen and can be poisoned by silicones, sulfur compounds and some solvents, which makes them read low without warning. Bump test before each teaching session and after any exposure to these vapors, and replace the sensor when it fails a bump test. An oxygen-poor room makes the catalytic sensor read low, so fit the oxygen sensor option whenever inert gas cylinders share the room.
 
-> **Safety:** A blocked duct or a stuck shutter is not detected while the fan still turns, and a leaking valve seat is not detected at all (HGD-CAL-001, Table 4). Amish decided on 2026-10-02 to add a differential pressure switch at the fan and to require a hydrogen-rated valve with a seat leak proof test; until both are in the design, check the airflow and the valve at every session.
+> **Safety:** The pressure switch now detects a blocked duct or a stuck shutter, but a leaking valve seat is still not detected in operation (HGD-CAL-001, Table 4). It is covered by the valve's stated hydrogen and seat leak ratings and by a seat leak proof test at TRL 4; until that test is done, check that the valve closes at every session, and prove the pressure switch at commissioning by covering its inlet tap.
 
 > **Safety:** Mains power enters only through a certified plug-in supply. Do not open it or wire mains inside the controller.
 

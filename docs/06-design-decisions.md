@@ -3,7 +3,7 @@ doc_id: HGD-DEC-001
 title: H2Guard design decisions register
 project: H2Guard
 doc_type: Design decisions register
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Amish approved the recommendations for open decisions 1 to 12 (HGD-DDR-003 accepted; head on a ceiling drop rod); moved to decisions made
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Decisions carried into the model, BOM and calculations; value engineering re-priced (USD 411); items to confirm for the drop rod, pressure switch and dry-contact relay
 ---
 
 # H2Guard design decisions register
@@ -33,20 +37,23 @@ None. All open decisions were decided on 2026-10-02.
 | --- | --- | --- | --- |
 | 1 | The catalytic sensor's response time (t90), power and hydrogen output, from its datasheet | R4 assumes a t90 of 30 s; R1's 1 % LFL resolution needs the output | HGD-CAL-001, F3 |
 | 2 | The sensor can is about 20 mm across and 17 mm tall | The standoff length sets its 2.2 mm gap above the disc | HGD-DDR-003, P4 |
-| 3 | The head box has its lid on a 110 x 90 face | The ports, gland and wall holes assume it | HGD-DDR-003, P3 |
+| 3 | The head box has its lid on a 110 x 90 face | The ports, gland and drop rod hole assume it | HGD-DDR-003, P3 |
 | 4 | The controller box's boss spacing and corner fixing holes | They set the mounting plate holes and the wall screws | HGD-DDR-003, P6, P8 |
 | 5 | The fan's body fits a 200 mm sleeve (about 180 mm across or less) and has fixing holes in its inlet face | The fan plate holds it by those holes | HGD-DDR-003, P10 |
 | 6 | The fan's curve gives at least 300 m³/h against about 60 Pa | R7 rests on an assumed curve | HGD-CAL-001, G3 |
 | 7 | The valve has two tapped holes underneath, 36 mm apart, and is rated for hydrogen with a stated seat leak rate | The bracket holes; the leaking-seat fault in Table 4 of HGD-CAL-001 | HGD-DDR-003, P11; HGD-DDR-001, O5 |
+| 8 | The pressure switch can be set to about 3 Pa (a low-range air switch) | The fan inlet tap gives only 5.7 Pa at the continuous flow; a common 20 Pa minimum switch would prove flow only on boost | HGD-CAL-001, G6; decision 6 |
+| 9 | The floor flange, pipe nipple and conduit locknuts share one 1/2 in thread, and the ceiling takes the flange screws | The drop rod holds the head over the apparatus | HGD-CAL-001, E7; decision 2 |
+| 10 | The dry-contact relay's contact rating suits H2Bench's supply cut-off circuit | H2Bench switches its own supply through it | Decision 9 |
 
 ## Value engineering
 
-Value-engineering target: USD 265 (`budget_usd`, a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 289 (USD 24 over the target), from the 16-line bill of materials at indicative prices. Main cost drivers and savings worth trying:
+Value-engineering target: USD 265. Estimated cost of the constructable design: USD 411 (USD 146 over the target). The estimate comes from the 21-line bill of materials at indicative prices; the target is `budget_usd`, a hypothetical control target, not a limit. Two options are priced with quantity 0 and are not in the total: the oxygen sensor (USD 110) and the fan with its motor outside the air stream (USD 450, in place of the USD 55 fan). Main cost drivers and savings worth trying:
 
-- The largest lines are the exhaust fan with its grille, sleeve, shutter and hood (USD 55), the catalytic sensor (USD 35), the solenoid valve (USD 30) and the controller modules (USD 25). Together they are about half the cost.
+- The largest lines are the hydrogen-rated valve (USD 95), the exhaust fan with its grille, sleeve, shutter and hood (USD 55), the catalytic sensor (USD 35), the pressure switch and tubing (USD 30) and the controller modules (USD 25). Together they are about 60 % of the cost.
 - Making the design constructable added USD 25: the made brackets and plates (USD 14), the 200 mm wall sleeve (USD 5), standoffs, screws and epoxy (USD 4) and the cup's push-in fitting and tube clips (USD 2).
-- Decided on 2026-10-02 and not yet priced: the ceiling drop rod for the head, the differential pressure switch, the dry-contact relay output, the clear-lid controller box, a hydrogen-rated valve if the brass valve fails its proof, and the oxygen sensor option where inert gas cylinders share the room. They will raise the estimate.
-- Savings worth trying: a printed controller mounting plate in place of aluminium sheet (about USD 3); buying the fan as a kit with its own shutter and hood; one combined controller board at TRL 4 in place of separate bought modules; and, where the room already has mechanical extract at high level, using it in place of the kit fan and grille (USD 63), which would bring the kit to about USD 226.
+- The decisions of 2026-10-02 added USD 122: the hydrogen-rated valve (USD 65 more than the brass valve), the pressure switch and tubing (USD 30), the ceiling drop rod (USD 11), the dry-contact relay and terminal (USD 6), the clear-lid controller box (USD 5) and more cable (USD 5).
+- Savings worth trying: a printed controller mounting plate in place of aluminium sheet (about USD 3); buying the fan as a kit with its own shutter and hood; one combined controller board at TRL 4 in place of separate bought modules; and, where the room already has mechanical extract at high level, using it in place of the kit fan and grille (USD 63), which would bring the kit to about USD 348; and the brass valve at USD 30, if its maker states hydrogen compatibility and a seat leak rating and it passes the seat leak proof test (USD 65 less).
 
 ## Decisions made
 

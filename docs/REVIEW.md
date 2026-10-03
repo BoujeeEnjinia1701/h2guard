@@ -335,3 +335,79 @@ Raised when the recommendations were written (2026-10-01) and not yet acted on:
 - The calculation note marks placement as met for the head-placement requirement, but the modelled ports are 260 mm from the apparatus centre against a 141 mm plume radius, which does not meet the decided rule of a head directly above each likely leak point.
 - Four dangerous undetected faults remain in the fault table (blocked duct, poisoned sensor, blocked port, leaking valve); items 6 and 7 address two of them and should be decided before any gas is connected.
 - The value-engineering note quotes USD 226 without the fan and grille; that is a different scope from the USD 265 target.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish approved on 2026-10-02 that every follow-up action from the open-decision sign-off be carried out ("APPROVED CHANGES, COMPLETE THESE"). Nothing was built or tested; the work stays at TRL 3.
+
+### Approved follow-ups carried out
+
+Numbers are those of the follow-up list in the section above. 17 of 18 done.
+
+1. Done. The head hangs from the ceiling on a drop rod (1/2 in floor flange, 89 mm pipe nipple, two locknuts) with its ports 175 mm below the ceiling and 0 mm from the apparatus centre; back-wall screws and holes removed, gland moved 38 mm left of the rod. Constructability checks 182 pass, 0 fail (was 127), with new checks for the drop rod contacts, the port offset, the ports' height, the oxygen cell height, the ceiling fixings and every new part's clearances. STEP and STL re-exported.
+2. Done. HGD-DWG-001 Rev P5 (also corrects the leader and dimension positions, which were offset from the parts); new making sketch HGD-DWG-110 (drop rod and ceiling plate); HGD-DWG-101 Rev P2 (head box drilling); concept blueprint HGD-DWG-010 Rev P5.
+3. Done. Build plan section 3.4 (drop rod, with joint 8) and step 4 rewritten; overview, step and joint pictures regenerated; the "Head over the leak point" check now passes when the plumb line from midway between the ports lands within 20 mm of the apparatus centre.
+4. Done. HGD-CAL-001 E7 computes the port offset (0 mm on the drop rod, inside the 141 mm plume radius; 260 mm at the former wall position); R1 placement now met on the drop rod, and the v0.3 note's error is recorded.
+5. Done. BOM line 17, ceiling drop rod, USD 11.
+6. Done. Installation notes (build plan section 3.11, BOM line 9 note) say a room used without close supervision needs a fan with its motor outside the air stream; BOM line 21, quantity 0 option, USD 450.
+7. Done. BOM line 20, oxygen sensor option (transmitter, cable, 150 ohm input on the trip board), quantity 0, USD 110.
+8. Done. Oxygen transmitter in the model on the back wall with its cell at 1,480 mm; wiring diagram and build plan step 15.
+9. Done. Pressure switch on the wall left of the fan, its low port tubed to a static tap just inside the grille in the fan inlet, in the model and wiring; controller logic: no airflow for 10 s with the fan running closes the valve and latches (build plan section 3.6.1, precis).
+10. Done. BOM line 18, pressure switch and tubing, USD 30.
+11. Done. HGD-CAL-001 G6 (inlet tap 5.7 Pa at 150 m3/h, 30.5 Pa at full speed, set point 2.8 Pa) and F6 (airflow fault 0.12 s after 10 s); Table 4 moves the blocked duct and stuck shutter to detected.
+12. Done. BOM line 11 re-specified as a stainless valve rated for hydrogen with a stated seat leak rate, USD 95 (was USD 30, brass). No brass valve maker's ratings were recorded: no maker is chosen.
+13. Done. HGD-CAL-001 Table 4 says the leaking valve seat stays a dangerous undetected fault, covered by the valve rating and the TRL 4 seat leak proof test.
+14. Not done: TRL 4 work (the pass level needs the measured cup delivery factor).
+15. Done. Dry-contact relay and 2-way terminal on the controller mounting plate in the model, wiring diagram, sketch HGD-DWG-106 Rev P2 and step 5 picture.
+16. Done. BOM line 19, USD 6.
+17. Done. BOM line 5 now a clear-lid IP65 box with eight glands, USD 20 (was USD 15).
+18. Done. Render captions (RENDER_VIEWS notes in `cad/src/product_model.py`) say the head and valve are drawn beside the controller; the head is redrawn on its drop rod and the valve on its bracket, from model.py's parts. Photoreal renders are not regenerated here (made on Amish's Mac).
+
+### Documents changed
+
+- `docs/04-calcs/01-sizing.md` (HGD-CAL-001 v0.4), `docs/04-calcs/sizing.py`, `docs/04-calcs/results.txt`
+- `docs/03-requirements.md` (HGD-REQ-001 v0.7)
+- `docs/02-concept.md` (HGD-PRC-001 v0.7)
+- `docs/01-problem.md` (HGD-PRB-001 v0.8)
+- `docs/05-build-plan.md` (HGD-BLD-001 v0.3), with every picture in `docs/05-build-plan/` and `cad/drawings/HGD-DWG-101` to `110` regenerated
+- `docs/decisions/0003-design-for-construction.md` (HGD-DDR-003 v0.3): consequences updated
+- `docs/06-design-decisions.md` (HGD-DEC-001 v0.3): value engineering re-priced; items to confirm 8 to 10 (low-range switch, drop rod threads, dry-contact rating)
+- `cad/src/model.py`, `cad/src/sheets.py`, `cad/src/concept_media.py`, `cad/src/build_plan_media.py`, `cad/src/product_model.py`; `cad/step/`, `cad/stl/`, `cad/drawings/`, `media/` (hero, blueprint, exploded, cutaway, flow, model.glb)
+- `bom/bom.csv` (21 lines), `bom/bom-notes.md`, `README.md` (not controlled documents)
+- `docs/pdf/`: every controlled document re-rendered
+
+### Requirement status changes
+
+- R1: placement now met (ports 0 mm from the apparatus centre on the drop rod); v0.3 recorded placement as met with the wall position, which did not meet the rule. Still not verifiable at TRL 3 overall (resolution needs sensor data).
+- R5: met on paper with three dangerous undetected faults (was four).
+- R13: at risk (4.2 h) becomes **not met on estimate**: 5.0 h against 4 h, after the drop rod, pressure switch, more cable and ceiling clips added 45 min.
+- R14: over the value-engineering target by USD 146 (was USD 24).
+- R11: 48.7 W peak (49.2 W with the oxygen sensor), still met.
+
+### Cost and mass
+
+Value-engineering target: USD 265. Estimated cost of the constructable design: USD 411 (USD 146 over the target). `budget_usd` is unchanged. Options not in the total: oxygen sensor USD 110; fan with its motor outside the air stream USD 450 in place of the USD 55 fan. The repo carries no mass figure, so there was no mass to update.
+
+### Cross-repo actions
+
+- H2Bench: wire H2Guard's dry-contact output (opens on a trip, a fault or loss of power; 2 A at 30 V DC) into its own supply cut-off and tank solenoid circuit, and record the interface in its documents.
+
+### Points for Amish
+
+- The pressure switch sees only 5.7 Pa at the continuous flow, so it needs a low-range switch set at about 3 Pa (register item 8). If none can be bought at the line 18 price, the alternatives are a digital differential pressure sensor read by the microcontroller, or proving airflow only on boost. Proposed, awaiting Amish if the item fails at purchase.
+- The hydrogen-rated valve is now the largest single cost (USD 95). The brass valve route (USD 65 less) needs a maker's statement and the TRL 4 proof test.
+- R13 is now 60 min over on a judgment estimate; whether to restate the 4 h target or accept it is for Amish (proposed, awaiting Amish).
+
+### Appearance model deviations (Proposed, awaiting Amish)
+
+- The head and valve stay drawn beside the controller for a compact render, as accepted on 2026-10-02 (decision 10), now with their drop rod and bracket from model.py; the fan, pressure switch, oxygen sensor, grille, sounder, beacon and supply are left out of the renders (decision 13 covers the fan, grille, sounder, beacon and supply; leaving out the pressure switch and oxygen sensor is proposed).
+- The controller's internal board is drawn as one board with relays rather than model.py's plate and separate modules, as before.
+
+### Safety
+
+- A leaking valve seat is still not detected in operation; check the valve closes on TEST every session until the TRL 4 seat leak proof test is done.
+- No gas is to be connected until the safety stops of the build plan (S3 to S5) are met; the follow-ups for decisions 2, 6 and 7 are now in the design.
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

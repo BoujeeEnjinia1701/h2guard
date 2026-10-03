@@ -5,7 +5,7 @@ With no argument it draws everything. A single picture can be drawn with, for ex
 "steps:4" or "sheets:103" or "joints:2", which keeps memory low. Every picture is drawn from
 cad/src/model.py (build_components), so the pictures and the model never disagree:
     docs/05-build-plan/overview.png        every component pulled apart, numbered in build order
-    cad/drawings/HGD-DWG-101 to 109        making sketches for the made and drilled components
+    cad/drawings/HGD-DWG-101 to 110        making sketches for the made and drilled components
     docs/05-build-plan/joint-NN.png        close-ups of the joints that need explaining
     docs/05-build-plan/step-NN.png         one picture per assembly step
     docs/05-build-plan/wiring.png          block-level wiring with wire sizes (matplotlib)
@@ -23,6 +23,7 @@ from model import PARAMS as P, build_components, derived, context, box, ycyl, xc
 OUT = ROOT / "docs" / "05-build-plan"
 DWG = ROOT / "cad" / "drawings"
 DATE = "2026-10-01"
+DATE2 = "2026-10-02"
 D = derived(P)
 C = build_components(P)
 
@@ -31,7 +32,8 @@ COL = {"head_body": "#F59E0B", "discs": "#64748B", "standoffs": "#A16207", "cup"
        "ctrl_lid": "#E5E7EB", "panel_parts": "#374151", "test_bracket": "#1D4ED8", "test_port": "#7C3AED",
        "fan_plate": "#0E7490", "fan": "#2563EB", "sleeve": "#9CA3AF", "grille": "#E5E7EB", "hood": "#6B7280",
        "inlet": "#93C5FD", "valve_bracket": "#B45309", "valve": "#D4A017", "beacon": "#DC2626", "psu": "#1F2937",
-       "tube": "#7C3AED", "bolt": "#111827", "wall": "#E7E5E4"}
+       "tube": "#7C3AED", "bolt": "#111827", "wall": "#E7E5E4", "drop": "#78716C", "dps": "#0891B2", "o2": "#65A30D",
+       "dry_relay": "#1E3A8A"}
 
 
 def _fuse(shapes):
@@ -72,10 +74,10 @@ VX, VY, VZ = P["valve_x"], P["store_y"], P["supply_z"]
 
 # ----------------------------------------------------------------- named parts, in build order
 def short_tube():
-    """The tube drawn short for the overview, with its seven clips in a row."""
+    """The tube drawn short for the overview, with its eight clips in a row."""
     import build123d as b
-    t = xcyl(0, 0, 0, 2, 300)
-    clips = _fuse(b.Pos(-120 + 40 * i, 0, -12) * (box(0, 0, 0, 8, 6, 10) - xcyl(0, 0, 0, 2, 10)) for i in range(7))
+    t = xcyl(0, 0, 0, 2, 340)
+    clips = _fuse(b.Pos(-140 + 40 * i, 0, -12) * (box(0, 0, 0, 8, 6, 10) - xcyl(0, 0, 0, 2, 10)) for i in range(8))
     return t + clips
 
 
@@ -89,9 +91,10 @@ def made():
         part("Bump test cup, printed, with push-in fitting", S("cup", "cup_fitting"), COL["cup"]),
         part("Sensor board with both sensors", S("sensor_board", "cat", "mos"), COL["sensor_board"]),
         part("Head lid and cable gland", S("head_lid", "head_gland"), COL["head_lid"]),
-        part("Controller box, drilled, with 5 glands", S("ctrl_body", "ctrl_glands"), COL["ctrl_body"]),
+        part("Ceiling drop rod: flange, pipe, locknuts", S("drop_flange", "drop_rod", "drop_nuts", "drop_screws"), COL["drop"]),
+        part("Controller box, drilled, with 8 glands", S("ctrl_body", "ctrl_glands"), COL["ctrl_body"]),
         part("Controller mounting plate", S("mplate", "mplate_screws"), COL["mplate"]),
-        part("Controller modules and terminal strip", C["modules"], COL["modules"]),
+        part("Controller modules, dry-contact relay, terminals", S("modules", "dry_relay"), COL["modules"]),
         part("Controller lid with front panel parts", S("ctrl_lid", "panel_parts"), "#CBD5E1"),
         part("Test port bracket and test port", S("test_bracket", "test_port"), COL["test_bracket"]),
         part("Fan plate", C["fan_plate"], COL["fan_plate"]),
@@ -99,10 +102,12 @@ def made():
         part("Wall sleeve, 200 mm", C["sleeve"], COL["sleeve"]),
         part("Inside grille", C["grille"], COL["grille"]),
         part("Backdraft shutter and weather hood", S("shutter", "hood"), COL["hood"]),
+        part("Pressure switch and its tube", S("dp_switch", "dp_tube", "dp_screws"), COL["dps"]),
         part("Make-up air grille", inlet, COL["inlet"]),
         part("Valve bracket", C["valve_bracket"], COL["valve_bracket"]),
         part("Normally closed solenoid valve", C["valve"], COL["valve"]),
         part("Sounder and beacon", C["beacon"], COL["beacon"]),
+        part("Oxygen sensor (option)", S("o2_box", "o2_screws"), COL["o2"]),
         part("Bump test tube (drawn short) and clips", short_tube(), COL["tube"]),
         part("24 V power supply", C["psu"], COL["psu"]),
     ]
@@ -111,10 +116,10 @@ def made():
 # ----------------------------------------------------------------- overview
 def overview():
     M = made()
-    targets = [(0, 0, 1400), (0, 0, 1290), (0, 0, 1225), (0, 0, 1130), (0, 0, 1520), (0, -170, 1400),
+    targets = [(0, 0, 1400), (0, 0, 1290), (0, 0, 1225), (0, 0, 1130), (0, 0, 1520), (0, -170, 1400), (0, 0, 1680),
                (470, 0, 1350), (470, -190, 1350), (470, -360, 1350), (470, -560, 1350), (720, 0, 1680),
-               (980, -130, 1380), (1000, 60, 1360), (1020, 330, 1340), (960, -330, 1400), (1040, 720, 1320),
-               (0, 0, 820), (420, 0, 760), (420, 0, 950), (750, 0, 850), (420, 0, 560), (1000, 0, 800)]
+               (980, -130, 1380), (1000, 60, 1360), (1020, 330, 1340), (960, -330, 1400), (1040, 720, 1320), (1060, 0, 1700),
+               (0, 0, 820), (420, 0, 760), (420, 0, 950), (750, 0, 850), (750, 0, 1100), (420, 0, 560), (1000, 0, 800)]
     for p, t in zip(M, targets):
         c = p.shape.bounding_box().center()
         p.explode = (t[0] - c.X, t[1] - c.Y, t[2] - c.Z)
@@ -137,20 +142,20 @@ def sheets(only=None):
         flip = b.Rot(180, 0, 0) * b.Pos(-c.X, -c.Y, -c.Z) * hb
         out.append(bv.component_sheet(
             part("Detector head box", hb, COL["head_body"]), [part("Head parts", S("discs", "cup", "sensor_board", "cat", "mos", "standoffs", "head_gland"), "#999")],
-            dwg_no="HGD-DWG-101", title="H2Guard detector head box: drilling sketch",
+            dwg_no="HGD-DWG-101", title="H2Guard detector head box: drilling sketch", rev="P2", revisions=[("P1", "Making sketch for the prototype build plan", DATE, "AC"), ("P2", "Drop rod hole in the top; gland moved; back holes removed", DATE2, "AC")],
             material="Bought ABS or polycarbonate box 110 x 80 x 90 mm, lid on the 110 x 90 face", view_shape=flip, inset_view=(22, -60),
             notes=["Drawn upside down: the top view shows the floor (the face with the ports).",
                    "Floor: two 22 mm sensor ports, 22 mm each side of the centre, on the",
                    "  centre line front to back. The 25 mm discs rest on the 1.5 mm ledge.",
                    "Floor: four 3.4 mm holes for the standoff screws, 40 mm each side of",
                    "  centre and 25 mm each side of the front-to-back centre line.",
-                   "Top: one 16.2 mm hole at the centre for the M16 cable gland.",
-                   "Back: two 4.4 mm wall screw holes, 35 mm each side of centre,",
-                   "  15 mm below the top. The lid face points into the room.",
+                   "Top: one 21.7 mm hole at the centre for the drop rod, and one",
+                   "  16.2 mm hole 38 mm left of it for the M16 cable gland.",
+                   "No holes in the back: the box hangs from the drop rod.",
                    "Tape the faces, pilot drill 3 mm, open the ports with a step drill.",
                    "  Deburr; clean with water only (solvent residue poisons the sensor).",
                    "Check: a disc laid on each port covers it with an even ledge all round."],
-            **base))
+            **{**base, "date": DATE2}))
 
     if want(102):
         sb = S("sensor_board", "cat", "mos")
@@ -198,12 +203,13 @@ def sheets(only=None):
         out.append(bv.component_sheet(
             part("Controller box", cb, COL["ctrl_body"]), [part("Plate and modules", S("mplate", "modules"), "#999"),
                                                             wall_patch(CX - 260, CX + 220, CZ - 200, CZ + 200)],
-            dwg_no="HGD-DWG-104", title="H2Guard controller box: drilling sketch",
-            material="Bought IP65 polycarbonate wall box 200 x 250 x 90 mm", view_shape=b.Pos(-c.X, -c.Y, -c.Z) * C["ctrl_body"], inset_view=(20, -55),
+            dwg_no="HGD-DWG-104", title="H2Guard controller box: drilling sketch", rev="P2", revisions=[("P1", "Making sketch for the prototype build plan", DATE, "AC"), ("P2", "Clear-lid box; four glands in the bottom", DATE2, "AC")],
+            material="Bought IP65 polycarbonate wall box 200 x 250 x 90 mm, clear lid", view_shape=b.Pos(-c.X, -c.Y, -c.Z) * C["ctrl_body"], inset_view=(20, -55),
             notes=["Top face: four 16.2 mm gland holes, 45 mm in from the back face,",
                    "  20 and 60 mm each side of the centre (40 mm apart).",
-                   "Bottom face: one 16.2 mm hole 45 mm in from the back, 60 mm right",
-                   "  of centre (seen from the front) for the supply lead.",
+                   "Bottom face: four 16.2 mm holes 45 mm in from the back, 20 and",
+                   "  60 mm each side of the centre: oxygen sensor, pressure switch,",
+                   "  dry-contact output and supply lead, from left to right.",
                    "Back: use the box's own corner fixing holes, outside the seal",
                    "  (about 170 x 220 mm apart here; follow the box you buy).",
                    "Inside the back: four moulded bosses, 160 x 200 mm apart, carry the",
@@ -211,7 +217,7 @@ def sheets(only=None):
                    "Tape, pilot 3 mm, step drill slowly, deburr. No solvents.",
                    "Fit an M16 gland in each hole, nut inside, seal outside.",
                    "Check: each gland seal sits flat; nothing cracks round a hole."],
-            **base))
+            **{**base, "date": DATE2}))
 
     if want(105):
         ld = S("ctrl_lid", "panel_parts")
@@ -237,21 +243,22 @@ def sheets(only=None):
         mp = C["mplate"]
         c = mp.bounding_box().center()
         out.append(bv.component_sheet(
-            part("Mounting plate", mp, COL["mplate"]), [part("Box and modules", S("ctrl_body", "modules"), "#999")],
-            dwg_no="HGD-DWG-106", title="H2Guard controller mounting plate: making sketch",
+            part("Mounting plate", mp, COL["mplate"]), [part("Box and modules", S("ctrl_body", "modules", "dry_relay"), "#999")],
+            dwg_no="HGD-DWG-106", title="H2Guard controller mounting plate: making sketch", rev="P2", revisions=[("P1", "Making sketch for the prototype build plan", DATE, "AC"), ("P2", "Dry-contact relay added below the driver", DATE2, "AC")],
             material="Aluminium sheet 2 mm, 5052 or 6061 class", view_shape=b.Pos(-c.X, -c.Y, -c.Z) * mp, inset_view=(15, -50),
             notes=["Cut 176 x 220 mm from 2 mm aluminium sheet; round the corners.",
                    "Four 4.4 mm holes at the box's bosses: 80 mm each side of the",
                    "  centre across, 100 mm each side up and down (measure your box).",
                    "Lay the modules on it as the inset and step 5 show: microcontroller",
                    "  upper left, trip board below it, relays upper right, driver below,",
-                   "  terminal strip along the bottom, 80 mm below centre.",
+                   "  dry-contact relay below that (45 right, 38 down), terminal strip",
+                   "  along the bottom, 80 mm below centre.",
                    "Mark each module's holes through the module; drill 3.2 mm for",
                    "  M3 screws on 6 mm nylon standoffs.",
                    "Deburr both faces so no chip can short a module.",
                    "Fit: four M4 x 10 self-tapping screws into the bosses.",
                    "Check: flat within 0.5 mm; the plate sits on all four bosses."],
-            **base))
+            **{**base, "date": DATE2}))
 
     if want(107):
         tb = S("test_bracket", "test_port")
@@ -314,6 +321,29 @@ def sheets(only=None):
                    "  screws from below. The gas fitter connects the valve ports.",
                    "Check: the arm is level and does not flex when the valve is pushed."],
             **base))
+
+    if want(110):
+        dr = S("drop_flange", "drop_rod", "drop_nuts", "drop_screws")
+        c = dr.bounding_box().center()
+        ceil_ = part("Ceiling", box(HX, HY, P["room"][2] + 15, 300, 260, 30), COL["wall"])
+        out.append(bv.component_sheet(
+            part("Ceiling drop rod", dr, COL["drop"]), [part("Detector head", S("head_body", "head_lid", "cup", "head_gland"), "#999"), ceil_],
+            dwg_no="HGD-DWG-110", title="H2Guard ceiling drop rod and ceiling plate: making sketch",
+            material="Bought: 1/2 in malleable iron floor flange, 1/2 in steel pipe nipple, two conduit locknuts",
+            view_shape=b.Pos(-c.X, -c.Y, -c.Z) * dr, inset_view=(12, -60),
+            notes=["Ceiling plate: a 1/2 in floor flange about 80 mm across. Drill or",
+                   "  open three 5.5 mm holes on a 60 mm circle if it has none.",
+                   "Rod: a 1/2 in steel pipe nipple, 89 mm long, 21.3 mm across,",
+                   "  threaded at both ends. Screw it hand tight into the flange.",
+                   "Run one locknut up the rod so its underside is 85 mm below the",
+                   "  flange's ceiling face: the head top sits on it, 85 mm down.",
+                   "Fit: flange on the ceiling directly over the apparatus centre",
+                   "  (plumb line), three M5 x 40 screws into ceiling plugs.",
+                   "The rod goes up through the 21.7 mm hole in the head top; the",
+                   "  second locknut goes on inside, through the open front.",
+                   "Check: ports 175 mm below the ceiling, over the apparatus; the",
+                   "  head does not turn when pushed by hand."],
+            **{**base, "date": DATE2}))
     return out
 
 
@@ -403,6 +433,31 @@ def joints(only=None):
             OUT / "joint-07.png", "Joint 7: valve on its bracket",
             subtitle="Seen from the front left and below. Two screws up through the arm into the valve body",
             elev=-12, azim=-50, size=(8, 6)))
+    if want(8):
+        rz = P["room"][2]
+        bx = (HX - 60, HX + 60, HY, HY + 60, rz - 110, rz + 30)
+        ceil_ = box(HX, HY + 30, rz + 15, 120, 60, 30)
+        out.append(bv.joint([
+            part("Ceiling", ceil_, COL["wall"]),
+            part("Floor flange (ceiling plate) and screws", win(S("drop_flange", "drop_screws"), *bx), COL["drop"]),
+            part("Pipe nipple, 89 mm", win(C["drop_rod"], *bx), "#A8A29E"),
+            part("Locknuts above and below the head top", win(C["drop_nuts"], *bx), COL["bolt"]),
+            part("Head box top", win(C["head_body"], *bx), COL["head_body"]),
+            part("Cable gland", win(C["head_gland"], *bx), "#374151")],
+            OUT / "joint-08.png", "Joint 8: the head on its ceiling drop rod (cut through the rod)",
+            subtitle="Seen from the front. The rod screws into the flange; two locknuts clamp the head top between them",
+            elev=8, azim=-90, size=(8, 6)))
+    if want(9):
+        bx = (FX - 260, FX + 40, -60, 20, FZ - 110, FZ + 90)
+        out.append(bv.joint([
+            wall_patch(FX - 280, FX + 60, FZ - 120, FZ + 100),
+            part("Pressure switch", win(S("dp_switch", "dp_screws"), *bx), COL["dps"]),
+            part("6 mm tube to the fan inlet tap", win(C["dp_tube"], *bx), "#22D3EE"),
+            part("Inside grille and fan plate", win(S("grille", "fan_plate"), *bx), "#CBD5E1"),
+            part("Fan inlet", win(C["fan"], *bx), COL["fan"])],
+            OUT / "joint-09.png", "Joint 9: pressure switch and its tap in the fan inlet",
+            subtitle="Seen from the front left. The low port's tube ends just inside the grille; the high port is open to the room",
+            elev=15, azim=-60, size=(8, 6)))
     return out
 
 
@@ -431,15 +486,20 @@ def steps(only=None):
        "sensor board and cable gland", "Board in through the open front onto the standoffs, four M3 screws; gland in the top, nut inside",
        elev=20, azim=-60, label_done=False)
     head_all = part("Detector head", S("head_body", "discs", "cup", "cup_fitting", "standoffs", "cup_screws", "sensor_board", "cat", "mos", "head_gland"), COL["head_body"])
-    wallh = wall_patch(HX - 130, HX + 130, HZ - 120, P["room"][2])
-    ceil = part("Ceiling", box(HX, -110, P["room"][2] + 10, 260, 220, 20), COL["wall"])
-    st(4, [], [mv(head_all, (0, -130, 0)), mv(part("Lid, fitted after the cable is wired", C["head_lid"], "#FCD34D"), (0, -300, 0))],
-       "detector head onto the wall above the leak point", "Top 85 mm below the ceiling, ports over the apparatus; two M4 screws with wall plugs through the back, inside the box",
-       context=[wallh, ceil], elev=15, azim=-55, label_done=False)
+    import build123d as b
+    rz_ = P["room"][2]
+    ceil = part("Ceiling", box(HX, HY, rz_ + 10, 320, 260, 20), COL["wall"])
+    inner_nut = C["drop_nuts"] & box(HX, HY, D["head_z"] + P["head"][2] / 2 - P["head_wall"] - 2, 40, 40, 4.2)
+    outer = S("drop_flange", "drop_rod", "drop_screws") + (C["drop_nuts"] - inner_nut)
+    st(4, [part("Drop rod and top locknut, on the ceiling", outer, COL["drop"])],
+       [mv(head_all, (0, 0, -150)), mv(part("Inner locknut, through the open front", inner_nut, COL["bolt"]), (0, -160, -40)),
+        mv(part("Lid, fitted after the cable is wired", C["head_lid"], "#FCD34D"), (0, -260, -150))],
+       "detector head onto the ceiling drop rod", "Seen from below. Flange screwed to the ceiling over the apparatus first; push the head up onto the rod and fit the inner locknut",
+       context=[ceil], elev=-14, azim=-55, label_done=True)
     cbox = part("Controller box with glands", S("ctrl_body", "ctrl_glands"), COL["ctrl_body"])
     st(5, [part("Controller box", C["ctrl_body"], COL["ctrl_body"])],
-       [mv(part("Glands (4 top, 1 bottom)", C["ctrl_glands"], COL["ctrl_glands"]), (0, -40, 70)),
-        mv(part("Mounting plate with modules", S("mplate", "modules", "mplate_screws"), COL["modules"]), (0, -170, 0))],
+       [mv(part("Glands (4 top, 4 bottom)", C["ctrl_glands"], COL["ctrl_glands"]), (0, -40, 70)),
+        mv(part("Mounting plate with modules and dry-contact relay", S("mplate", "modules", "dry_relay", "mplate_screws"), COL["modules"]), (0, -170, 0))],
        "glands and mounting plate into the controller box",
        "Modules fitted to the plate on the bench first; plate on the four bosses with four M4 screws",
        elev=18, azim=-50, label_done=False)
@@ -466,26 +526,37 @@ def steps(only=None):
        context=[wall_cut], elev=12, azim=-50, label_done=False)
     import build123d as b
     wall_side = part("Side wall", b.Pos(-10, P["inlet_y"], P["inlet_z"]) * b.Box(20, 500, 400), COL["wall"])
-    st(11, [], [mv(part("Make-up air grille", C["inlet"], COL["inlet"]), (160, 0, 0))], "make-up air grille",
+    wallp = wall_patch(P["dps_x"] - 120, FX + 160, FZ - 180, FZ + 140)
+    st(11, [part("Fan plate, fan and grille", S("fan_plate", "fan", "grille"), COL["fan"])],
+       [mv(part("Pressure switch, two screws with plugs", S("dp_switch", "dp_screws"), COL["dps"]), (0, -150, 0)),
+        mv(part("6 mm tube from the low port into the fan inlet", C["dp_tube"], "#22D3EE"), (0, -90, -60))],
+       "pressure switch and its tube", "Switch on the wall left of the fan, ports down; the tube's end sits just inside the grille, in the fan inlet",
+       context=[wallp], elev=12, azim=-50, label_done=True)
+    st(12, [], [mv(part("Make-up air grille", C["inlet"], COL["inlet"]), (160, 0, 0))], "make-up air grille",
        "Low on the far side wall over the builder's opening, mesh on; four screws with plugs",
        context=[wall_side], elev=15, azim=-30, label_done=False)
     wallv = wall_patch(VX - 200, VX + 200, VZ - 220, VZ + 160)
-    st(12, [], [mv(part("Valve bracket, M6 screws and plugs", S("valve_bracket"), COL["valve_bracket"]), (0, -120, 0)),
+    st(13, [], [mv(part("Valve bracket, M6 screws and plugs", S("valve_bracket"), COL["valve_bracket"]), (0, -120, 0)),
                 mv(part("Solenoid valve, two M5 screws from below", C["valve"], COL["valve"]), (0, 0, 110))],
        "valve bracket and valve", "Arm level, 1,272 mm up; the gas fitter then connects the valve into the supply after the regulator",
        context=[wallv], elev=15, azim=-55, label_done=False)
     psu_near = part("24 V power supply, on the floor by the outlet", b.Pos(0, 0, 0) * C["psu"], COL["psu"])
     wallb = wall_patch(P["beacon_x"] - 160, P["beacon_x"] + 160, P["beacon_z"] - 160, P["beacon_z"] + 160)
-    st(13, [], [mv(part("Sounder and beacon by the door", C["beacon"], COL["beacon"]), (0, -150, 0))],
+    wallo = wall_patch(P["o2_x"] - 160, P["o2_x"] + 160, P["o2_z"] - 200, P["o2_z"] + 160)
+    st(15, [], [mv(part("Oxygen sensor, cell down, two screws with plugs", S("o2_box", "o2_screws"), COL["o2"]), (0, -150, 0))],
+       "oxygen sensor (only where inert gas cylinders share the room)", "Cell at breathing height, about 1,480 mm above the floor; cable through the gland on top to the controller",
+       context=[wallo], elev=12, azim=-55, label_done=False)
+    st(14, [], [mv(part("Sounder and beacon by the door", C["beacon"], COL["beacon"]), (0, -150, 0))],
        "sounder, beacon and power supply", "Beacon top 450 mm below the ceiling, two screws with plugs. The certified 24 V supply just stands on the floor by the outlet",
        context=[wallb], elev=12, azim=-55, label_done=False)
     wallt = wall_patch(HX - 100, TX + 100, CZ - 200, P["room"][2])
-    st(14, [part("Detector head", S("head_body", "cup", "head_lid"), COL["head_body"]), part("Controller", S("ctrl_body", "ctrl_lid", "ctrl_glands"), COL["ctrl_body"]),
+    ceilt = part("Ceiling (cut back)", box((HX + TX) / 2, -170, rz_ + 10, TX - HX + 200, 340, 20), COL["wall"], alpha=0.35)
+    st(16, [part("Detector head on its drop rod", S("head_body", "cup", "head_lid", "drop_flange", "drop_rod", "drop_nuts"), COL["head_body"]), part("Controller", S("ctrl_body", "ctrl_lid", "ctrl_glands"), COL["ctrl_body"]),
             part("Test port", S("test_bracket", "test_port"), COL["test_bracket"]), part("Fan", S("fan_plate", "grille"), COL["fan"])],
-       [mv(part("4 mm tube and seven clips", S("tube", "clips"), COL["tube"]), (0, -150, 0))],
-       "bump test tube and clips", "Tube from the top of the test port, up the wall, under the ceiling and down into the cup fitting",
-       context=[wallt], elev=12, azim=-62, label_done=False)
-    st(15, [part("Controller box", S("ctrl_body", "ctrl_glands", "mplate", "modules"), COL["ctrl_body"])],
+       [mv(part("4 mm tube, six wall clips, two ceiling clips", S("tube", "clips", "ceil_clips"), COL["tube"]), (0, -150, 0))],
+       "bump test tube and clips", "Tube from the top of the test port, up the wall, along under the ceiling, across the ceiling to the head and down into the cup fitting",
+       context=[wallt, ceilt], elev=14, azim=-62, label_done=False)
+    st(17, [part("Controller box", S("ctrl_body", "ctrl_glands", "mplate", "modules", "dry_relay"), COL["ctrl_body"])],
        [mv(part("Lid with the front panel", S("ctrl_lid", "panel_parts"), COL["panel_parts"]), (0, -150, 0))],
        "wire up and close the lids", "Cables through the glands to the terminal strip, as the wiring diagram; lid on its gasket; same for the head lid",
        context=[wall_patch(CX - 160, CX + 160, CZ - 180, CZ + 180)], elev=15, azim=-50, label_done=False)
@@ -498,11 +569,11 @@ def wiring():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.patches import FancyBboxPatch
-    fig = plt.figure(figsize=(12, 7.2), dpi=150)
-    ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, 120); ax.set_ylim(0, 72); ax.set_axis_off()
+    fig = plt.figure(figsize=(12, 8.4), dpi=150)
+    ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, 120); ax.set_ylim(0, 84); ax.set_axis_off()
     INK, MUT = "#111827", "#4B5563"
-    ax.text(2, 70, "H2Guard prototype: block-level wiring", fontsize=13, fontweight="bold", color=INK, va="top")
-    ax.text(2, 66.6, "Bought modules and a hand-wired trip board; no circuit board is laid out. Stranded copper; ferrules on every screw terminal. All circuits 24 V DC or lower.",
+    ax.text(2, 82, "H2Guard prototype: block-level wiring", fontsize=13, fontweight="bold", color=INK, va="top")
+    ax.text(2, 78.6, "Bought modules and a hand-wired trip board; no circuit board is laid out. Stranded copper; ferrules on every screw terminal. All circuits 24 V DC or lower.",
             fontsize=8.5, color=MUT, va="top")
     ax.text(2, 1.5, "BUILD PLAN ILLUSTRATION, PLAN NOT YET BUILT", fontsize=7, color="#B45309")
     ax.text(118, 1.5, "github.com/BoujeeEnjinia1701/h2guard", fontsize=7, color="#0F766E", ha="right", family="monospace")
@@ -526,14 +597,17 @@ def wiring():
     blk(3, 22, 17, 14, "Detector head", "sensor board: bridge\nsupply, MOS heater,\nboth sensors", "#F59E0B")
     blk(34, 44, 22, 12, "Trip board", "fuse 3 A, 5 V supply,\ncomparator and latch", "#0F766E")
     blk(60, 44, 22, 12, "Microcontroller", "RP2040 class, 4 MB\nflash, watchdog 1 s", "#115E59")
-    blk(34, 24, 22, 13, "Relay module", "series trip relay,\nfan boost relay", "#0F766E")
+    blk(34, 24, 22, 13, "Relay modules", "series trip relay, fan\nboost relay; dry-contact\nrelay (held when healthy)", "#0F766E")
     blk(60, 24, 22, 13, "Driver module", "valve switch,\nsounder, beacon", "#0F766E")
     blk(34, 13.5, 48, 4, "", "", "#7C3AED")
-    ax.text(58, 15.5, "Terminal strip: fan, valve, sounder and beacon cables land here", ha="center", va="center", fontsize=8, fontweight="bold", color=INK)
+    ax.text(58, 15.5, "Terminal strip: fan, valve, sounder, beacon and dry-contact cables land here", ha="center", va="center", fontsize=8, fontweight="bold", color=INK)
     blk(99, 46, 18, 11, "Exhaust fan", "24 V EC; PWM in,\ntachometer out", "#2563EB")
     blk(99, 31, 18, 11, "Solenoid valve", "normally closed,\n24 V, 8 W coil", "#D4A017")
     blk(99, 16, 18, 11, "Sounder, beacon", "24 V, red", "#DC2626")
     blk(62, 3.5, 20, 6.5, "Front panel", "display, key, test, lights", "#374151")
+    blk(3, 63, 19, 11, "Oxygen sensor", "option; 4 to 20 mA,\n24 V, breathing height", "#65A30D")
+    blk(99, 63, 18, 11, "Pressure switch", "at the fan; contact\ncloses on airflow", "#0891B2")
+    blk(99, 4, 18, 8.5, "H2Bench supply", "dry contact: opens on\ntrip or power loss", "#1E3A8A")
     wire([(11.5, 44), (11.5, 40), (28, 40), (28, 50), (34, 50)], RED); lab(12.3, 41.5, "24 V lead, 1.0 mm²,\nbottom gland", RED)
     wire([(56, 50), (60, 50)], RED, 1.2); lab(58, 52.4, "5 V", RED, "center")
     wire([(20, 29), (30, 29), (30, 46), (34, 46)], BLU); lab(20.5, 31.6, "4-core 0.5 mm²: 24 V,\n0 V, CAT out, MOS out", BLU)
@@ -545,6 +619,9 @@ def wiring():
     wire([(82, 15.5), (92, 15.5), (92, 36), (99, 36)], RED); lab(92.6, 38.2, "2-core 0.75 mm²", RED)
     wire([(82, 15.5), (99, 21)], RED); lab(88, 20.5, "4-core 0.5 mm²", RED)
     wire([(82, 6.75), (84.5, 6.75), (84.5, 47), (82, 47)], GRY, 1.2); lab(85.3, 8.5, "ribbon to the\nmicrocontroller", GRY)
+    wire([(22, 68.5), (26, 68.5), (26, 53), (34, 53)], "#65A30D"); lab(27, 66.5, "2-core 0.5 mm², 4 to 20 mA, bottom gland,\nto the trip board and microcontroller", "#65A30D")
+    wire([(99, 68.5), (87.5, 68.5), (87.5, 52), (82, 52)], "#0891B2"); lab(88.2, 60.5, "2-core 0.5 mm²,\nbottom gland; no airflow\nfor 10 s closes the valve", "#0891B2")
+    wire([(82, 14.5), (96, 14.5), (96, 8), (99, 8)], "#1E3A8A"); lab(86, 12.4, "2-core, volt-free", "#1E3A8A")
     ax.text(2, 7.5, "Valve power passes through the relay contact (opened by the hardware latch)\nand then the driver's switch: either one opening closes the valve.",
             fontsize=7.4, color="#B45309", fontweight="bold", va="center")
     out = OUT / "wiring.png"
