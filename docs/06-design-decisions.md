@@ -3,9 +3,9 @@ doc_id: HGD-DEC-001
 title: H2Guard design decisions register
 project: H2Guard
 doc_type: Design decisions register
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-10-02'
+date: '2026-10-03'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,6 +21,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Decisions carried into the model, BOM and calculations; value engineering re-priced (USD 411); items to confirm for the drop rod, pressure switch and dry-contact relay
+- version: "0.4"
+  date: '2026-10-03'
+  author: Amish Chadha
+  change: "Amish accepted the cost overrun against the value-engineering target on 2026-10-03; row added to decisions made; value engineering section updated"
 ---
 
 # H2Guard design decisions register
@@ -50,6 +54,8 @@ None. All open decisions were decided on 2026-10-02.
 
 Value-engineering target: USD 265. Estimated cost of the constructable design: USD 411 (USD 146 over the target). The estimate comes from the 21-line bill of materials at indicative prices; the target is `budget_usd`, a hypothetical control target, not a limit. Two options are priced with quantity 0 and are not in the total: the oxygen sensor (USD 110) and the fan with its motor outside the air stream (USD 450, in place of the USD 55 fan). Main cost drivers and savings worth trying:
 
+Amish accepted this overrun on 2026-10-03: the estimated cost of USD 411 against the USD 265 target (USD 146 over). Amish: "Cost over target - i accept all the cost variations and overruns". It stays reported against the target as an accepted overrun, and the savings below remain worth trying.
+
 - The largest lines are the hydrogen-rated valve (USD 95), the exhaust fan with its grille, sleeve, shutter and hood (USD 55), the catalytic sensor (USD 35), the pressure switch and tubing (USD 30) and the controller modules (USD 25). Together they are about 60 % of the cost.
 - Making the design constructable added USD 25: the made brackets and plates (USD 14), the 200 mm wall sleeve (USD 5), standoffs, screws and epoxy (USD 4) and the cup's push-in fitting and tube clips (USD 2).
 - The decisions of 2026-10-02 added USD 122: the hydrogen-rated valve (USD 65 more than the brass valve), the pressure switch and tubing (USD 30), the ceiling drop rod (USD 11), the dry-contact relay and terminal (USD 6), the clear-lid controller box (USD 5) and more cable (USD 5).
@@ -78,3 +84,4 @@ Value-engineering target: USD 265. Estimated cost of the constructable design: U
 | 2026-10-02 | The render layout is kept, with a caption saying the head and valve are drawn beside the controller | Amish: "i approve your recommendations for all 555 open decisions." | Review note, 2026-09-26, item 1 |
 | 2026-10-02 | A clear-lid IP65 controller box, added to the BOM at its next revision | Amish: "i approve your recommendations for all 555 open decisions." | Review note, 2026-09-26, item 2 |
 | 2026-10-02 | Leaving the fan, grille, sounder, beacon and supply out of the product renders accepted | Amish: "i approve your recommendations for all 555 open decisions." | Review note, 2026-09-26, item 3 |
+| 2026-10-03 | Cost overrun accepted: the estimated cost of USD 411 against the USD 265 target (USD 146 over) | Amish: "Cost over target - i accept all the cost variations and overruns" | [REVIEW.md](REVIEW.md), session 2026-10-03 |
